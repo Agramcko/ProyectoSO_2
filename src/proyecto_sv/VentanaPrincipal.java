@@ -9,6 +9,7 @@ package proyecto_sv;
  * @author massimo Gramcko
  */
 
+import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
@@ -122,15 +123,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         tablaAsignacion.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Nombre", "Tamaño (Bloques)", "Bloque Inicial"
             }
-        ));
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(tablaAsignacion);
 
         scrollTabla.setViewportView(jScrollPane2);
@@ -180,7 +193,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(59, Short.MAX_VALUE))
+                .addContainerGap(75, Short.MAX_VALUE))
             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
@@ -228,7 +241,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(100, Short.MAX_VALUE))
+                .addContainerGap(116, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -408,11 +421,29 @@ private void actualizarArbol() {
 /**
  * Tarea: Recorrer el árbol, encontrar Archivos y listarlos en la JTable
  */
+/**
+ * Tarea: Recorrer el árbol, encontrar Archivos y listarlos en la JTable
+ */
 private void actualizarTablaAsignacion() {
-    // (¡¡PENDIENTE!! Lo implementaremos después)
-    // DefaultTableModel modeloTabla = (DefaultTableModel) tablaAsignacion.getModel();
-    // modeloTabla.setRowCount(0); // Limpiar tabla
-    // ... lógica para recorrer el árbol y hacer modeloTabla.addRow(...) ...
+    
+    // 1. Obtener el modelo de la JTable
+    DefaultTableModel modeloTabla = (DefaultTableModel) tablaAsignacion.getModel();
+
+    // 2. Limpiar la tabla de datos anteriores
+    modeloTabla.setRowCount(0);
+
+    // 3. Obtener la raíz del sistema de archivos
+    Directorio raiz = simulador.getSistemaArchivos().getRaiz();
+
+    // 4. Llamar a la función recursiva para llenar la tabla
+    try {
+        if (raiz != null) {
+            llenarTablaRecursivo(raiz, modeloTabla);
+        }
+    } catch (Exception e) {
+        // (Manejo de errores por si algo falla durante la actualización)
+        e.printStackTrace();
+    }
 }
 
 /**
@@ -479,5 +510,46 @@ private void actualizarVistaColas() {
 
 // --- FIN MÉTODOS DE ACTUALIZACIÓN DE GUI ---
 
+/**
+ * Método auxiliar RECURSIVO para recorrer el árbol de directorios
+ * y añadir los archivos encontrados a la tabla.
+ */
+private void llenarTablaRecursivo(Directorio directorioActual, DefaultTableModel modeloTabla) {
+    
+    // 1. Obtener la lista de hijos del directorio actual
+    ListaEnlazada<NodoArbol> hijos = directorioActual.getHijos();
+    if (hijos == null || hijos.estaVacia()) {
+        return; // No hay hijos, termina la recursión
+    }
+
+    // 2. Recorrer la lista enlazada de hijos
+    NodoLista<NodoArbol> nodoActual = hijos.getInicio();
+    while (nodoActual != null) {
+        
+        NodoArbol nodo = nodoActual.getDato();
+
+        // 3. Comprobar el tipo de nodo
+        if (nodo instanceof Archivo) {
+            // Si es un Archivo, lo añadimos a la tabla
+            Archivo archivo = (Archivo) nodo;
+            
+            // 4. Añadir la fila
+            modeloTabla.addRow(new Object[]{
+                archivo.getNombre(),
+                archivo.getTamanoEnBloques(),
+                archivo.getIdPrimerBloque()
+                // (El proyecto también pedía el Proceso que lo creó[cite: 21],
+                //  podríamos añadirlo después si guardamos esa info)
+            });
+            
+        } else if (nodo instanceof Directorio) {
+            // Si es un Directorio, llamamos recursivamente
+            llenarTablaRecursivo((Directorio) nodo, modeloTabla);
+        }
+        
+        // 5. Avanzar al siguiente hijo
+        nodoActual = nodoActual.getSiguiente();
+    }
+}
 
 }
