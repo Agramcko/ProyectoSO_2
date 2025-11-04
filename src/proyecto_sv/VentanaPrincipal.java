@@ -327,18 +327,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     spinnerTamano.setValue(1);
     
     System.out.println("GUI: Solicitud para CREAR '" + nombre + "' fue encolada.");
+    
+    // --- ¡¡LÍNEA AÑADIDA!! ---
+    // Actualizamos la GUI INMEDIATAMENTE para ver la cola "en espera"
+    actualizarGUICompleta();
     }//GEN-LAST:event_btnCrearArchivoActionPerformed
 
     private void btnEliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarArchivoActionPerformed
-        // 1. Obtener el nombre del archivo del JTree
+       // 1. Obtener el nombre del archivo del JTree
     // (Forma simple: usar el mismo campo de texto de "Nombre")
     String nombre = txtNombreArchivo.getText();
 
-    // (Forma avanzada: obtener el nodo seleccionado del 'arbolArchivos')
-    // DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
-    // if (nodoSeleccionado != null && nodoSeleccionado.getUserObject() instanceof Archivo) {
-    //    nombre = ((Archivo)nodoSeleccionado.getUserObject()).getNombre();
-    // }
+    // (Forma avanzada: ...)
+    // ...
     
     if (nombre == null || nombre.trim().isEmpty()) {
         javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para eliminar.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
@@ -356,6 +357,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     txtNombreArchivo.setText("");
     
     System.out.println("GUI: Solicitud para ELIMINAR '" + nombre + "' fue encolada.");
+    
+    // --- ¡¡LÍNEA AÑADIDA!! ---
+    // Actualizamos la GUI INMEDIATAMENTE para ver la cola "en espera"
+    actualizarGUICompleta();
     }//GEN-LAST:event_btnEliminarArchivoActionPerformed
 
     /**
@@ -555,9 +560,51 @@ private void actualizarVistaDisco() {
  * Tarea: Leer las colas del Simulador y mostrarlas en el JTextArea
  */
 private void actualizarVistaColas() {
-    // (¡¡PENDIENTE!! Lo implementaremos después)
-    // areaColasProcesos.setText(""); // Limpiar
-    // ... lógica para recorrer colaDeProcesos y colaDeIO y añadir texto ...
+    
+    // 1. Limpiamos el área de texto
+    areaColasProcesos.setText(""); // Asumiendo que se llama así
+
+    try {
+        // --- 2. Mostrar la Cola de Procesos (Listos) ---
+        areaColasProcesos.append("--- Cola de Procesos (Listos) ---\n");
+        Cola<Proceso> colaProcesos = simulador.getColaDeProcesos();
+        
+        if (colaProcesos.estaVacia()) {
+            areaColasProcesos.append("(Vacía)\n");
+        } else {
+            // Recorremos la lista interna para mostrarla
+            NodoLista<Proceso> nodoP = colaProcesos.getListaInterna().getInicio();
+            while (nodoP != null) {
+                Proceso p = nodoP.getDato();
+                areaColasProcesos.append(
+                    "PID: " + p.getPid() + " (" + p.getSolicitud().getTipo() + ")\n"
+                );
+                nodoP = nodoP.getSiguiente();
+            }
+        }
+
+        // --- 3. Mostrar la Cola de E/S (Bloqueados) ---
+        areaColasProcesos.append("\n--- Cola de E/S (Disco) ---\n");
+        Cola<SolicitudIO> colaIO = simulador.getColaDeIO();
+
+        if (colaIO.estaVacia()) {
+            areaColasProcesos.append("(Vacía)\n");
+        } else {
+            // Recorremos la lista interna
+            NodoLista<SolicitudIO> nodoIO = colaIO.getListaInterna().getInicio();
+            while (nodoIO != null) {
+                SolicitudIO s = nodoIO.getDato();
+                areaColasProcesos.append(
+                    s.getTipo() + " - " + s.getNombreArchivo() + "\n"
+                );
+                nodoIO = nodoIO.getSiguiente();
+            }
+        }
+        
+    } catch (Exception e) {
+        areaColasProcesos.setText("Error al actualizar colas:\n" + e.getMessage());
+        e.printStackTrace();
+    }
 }
 
 // --- FIN MÉTODOS DE ACTUALIZACIÓN DE GUI ---

@@ -59,10 +59,11 @@ public class PlanificadorDisco {
     // --- Políticas de Planificación ---
 
     // 1. Política FIFO (La más simple)
-    public void ejecutarFIFO(Cola<SolicitudIO> colaIO) {
+    // 1. Política FIFO (¡Modificada para que devuelva la solicitud!)
+    public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
         if (colaIO.estaVacia()) {
             System.out.println("PLANIFICADOR: No hay solicitudes en la cola de E/S.");
-            return;
+            return null; // <-- NUEVO: Devuelve null si no hizo nada
         }
         
         // Saca la primera solicitud
@@ -71,7 +72,7 @@ public class PlanificadorDisco {
         // La ejecuta
         ejecutarSolicitud(solicitud);
         
-        // (Aquí actualizarías el estado del Proceso a TERMINADO)
+        return solicitud; // <-- NUEVO: Devuelve la solicitud que procesó
     }
 
     // 2. Política SSTF (Shortest Seek Time First)
