@@ -8,7 +8,7 @@ package proyecto_sv;
  *
  * @author Alessandro
  */
-public class Proyecto_SV {
+public class Main {
 
     /**
      * @param args the command line arguments
