@@ -29,6 +29,15 @@ public class SistemaArchivos {
     public DiscoSD getDisco() {
         return disco;
     }
+    
+    public Directorio getDirectorioActual() {
+        return this.directorioActual;
+    }
+    
+    // (Opcional pero recomendado) Un setter para cambiar de directorio
+    public void setDirectorioActual(Directorio dir) {
+        this.directorioActual = dir;
+    }
 
     // --- Lógica CRUD (Backend) ---
     // [cite: 36]

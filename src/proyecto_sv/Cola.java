@@ -39,4 +39,14 @@ public class Cola<T> {
     public int getTamano() {
         return this.listaInterna.getTamano();
     }
+    
+    /**
+     * NUEVO MÉTODO:
+     * Devuelve la lista enlazada completa que usa la cola.
+     * Esto es para que el PlanificadorDisco pueda "romper las reglas"
+     * de FIFO y buscar/eliminar elementos del medio (para SSTF y SCAN).
+     */
+    public ListaEnlazada<T> getListaInterna() {
+        return this.listaInterna;
+    }
 }

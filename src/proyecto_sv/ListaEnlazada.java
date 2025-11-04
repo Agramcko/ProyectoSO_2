@@ -66,4 +66,66 @@ public class ListaEnlazada<T> {
         }
         return this.inicio.getDato();
     }
+    
+    /**
+     * NUEVO MÉTODO 1:
+     * Devuelve el primer NODO (no el dato).
+     * Esto permite que otras clases puedan recorrer la lista manualmente.
+     */
+    public NodoLista<T> getInicio() {
+        return this.inicio;
+    }
+
+    /**
+     * NUEVO MÉTODO 2:
+     * Busca un dato específico en la lista y lo elimina.
+     * Devuelve 'true' si lo encontró y eliminó, 'false' si no.
+     */
+    public boolean eliminar(T dato) {
+        // Si la lista está vacía, no hay nada que eliminar.
+        if (estaVacia()) {
+            return false;
+        }
+
+        // --- Caso 1: El elemento a eliminar es el PRIMERO (el 'inicio') ---
+        if (this.inicio.getDato().equals(dato)) {
+            // Simplemente usamos el método que ya teníamos
+            eliminarDelInicio();
+            return true;
+        }
+
+        // --- Caso 2: El elemento está en el MEDIO o al FINAL ---
+        
+        // Empezamos a buscar desde el segundo elemento
+        NodoLista<T> anterior = this.inicio;
+        NodoLista<T> actual = this.inicio.getSiguiente();
+
+        // Recorremos la lista
+        while (actual != null) {
+            
+            // Comparamos el dato actual con el que buscamos
+            if (actual.getDato().equals(dato)) {
+                
+                // ¡Lo encontramos!
+                // Hacemos que el nodo 'anterior' "salte" al 'actual'
+                // y apunte directamente al 'siguiente' de actual.
+                anterior.setSiguiente(actual.getSiguiente());
+                
+                // Si el nodo que eliminamos era el ÚLTIMO (el 'fin')
+                if (actual == this.fin) {
+                    this.fin = anterior; // El nuevo 'fin' es el 'anterior'
+                }
+                
+                this.tamano--; // Reducimos el tamaño
+                return true; // ¡Éxito!
+            }
+            
+            // Si no era este, avanzamos en la lista
+            anterior = actual;
+            actual = actual.getSiguiente();
+        }
+
+        // Si salimos del 'while', es porque recorrimos todo y no lo encontramos
+        return false;
+    }
 }
