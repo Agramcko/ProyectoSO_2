@@ -9,6 +9,8 @@ package proyecto_sv;
  * @author massimo Gramcko
  */
 
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
 import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import javax.swing.JPanel;
@@ -412,15 +414,34 @@ private void actualizarGUICompleta() {
  * Tarea: Leer el Árbol del Simulador y dibujarlo en el JTree
  */
 private void actualizarArbol() {
-    // (¡¡PENDIENTE!! Lo implementaremos después)
-    // Directorio raiz = simulador.getSistemaArchivos().getRaiz();
-    // ... lógica para construir el DefaultTreeModel ...
-    // arbolArchivos.setModel(modelo);
+    
+    try {
+        // 1. Obtener el directorio raíz de NUESTRO backend
+        Directorio raizBackend = simulador.getSistemaArchivos().getRaiz();
+        if (raizBackend == null) return;
+
+        // 2. Crear el nodo RAÍZ del árbol de SWING
+        // El texto que muestra es el nombre de nuestro directorio raíz (ej. "root")
+        DefaultMutableTreeNode raizSwing = new DefaultMutableTreeNode(raizBackend.getNombre());
+
+        // 3. Llamar al método recursivo para construir el resto del árbol
+        construirNodosArbol(raizBackend, raizSwing);
+
+        // 4. Crear un nuevo "Modelo de Árbol" de SWING con nuestra raíz
+        DefaultTreeModel modeloArbol = new DefaultTreeModel(raizSwing);
+
+        // 5. ¡LA MAGIA! Asignar el nuevo modelo a nuestro JTree
+        arbolArchivos.setModel(modeloArbol);
+
+        // (Opcional pero recomendado) Expandir la raíz para que se vean los archivos
+        arbolArchivos.expandRow(0); 
+        
+    } catch (Exception e) {
+        // (Manejo de errores por si algo falla durante la actualización)
+        e.printStackTrace();
+    }
 }
 
-/**
- * Tarea: Recorrer el árbol, encontrar Archivos y listarlos en la JTable
- */
 /**
  * Tarea: Recorrer el árbol, encontrar Archivos y listarlos en la JTable
  */
@@ -446,9 +467,6 @@ private void actualizarTablaAsignacion() {
     }
 }
 
-/**
- * Tarea: Recorrer el DiscoSD y pintar los bloques en el panelDisco
- */
 /**
  * Tarea: Recorrer el DiscoSD y pintar los bloques en el panelDisco
  */
@@ -552,4 +570,37 @@ private void llenarTablaRecursivo(Directorio directorioActual, DefaultTableModel
     }
 }
 
+/**
+ * Método auxiliar RECURSIVO para construir el árbol visual (JTree)
+ * a partir de nuestro árbol de directorios (backend).
+ */
+private void construirNodosArbol(Directorio dirPadre, DefaultMutableTreeNode nodoSwingPadre) {
+    
+    // 1. Obtener la lista de hijos del directorio (backend)
+    ListaEnlazada<NodoArbol> hijos = dirPadre.getHijos();
+    if (hijos == null || hijos.estaVacia()) {
+        return; // No hay hijos, termina la recursión
+    }
+
+    // 2. Recorrer la lista enlazada de hijos
+    NodoLista<NodoArbol> nodoActual = hijos.getInicio();
+    while (nodoActual != null) {
+        
+        NodoArbol hijoBackend = nodoActual.getDato();
+
+        // 3. Crear un nuevo nodo de SWING para este hijo
+        DefaultMutableTreeNode nodoSwingHijo = new DefaultMutableTreeNode(hijoBackend.getNombre());
+        
+        // 4. Añadir el nuevo nodo de SWING al padre de SWING
+        nodoSwingPadre.add(nodoSwingHijo);
+        
+        // 5. Si este hijo es un Directorio, llamamos recursivamente
+        if (hijoBackend instanceof Directorio) {
+            construirNodosArbol((Directorio) hijoBackend, nodoSwingHijo);
+        }
+        
+        // 6. Avanzar al siguiente hijo
+        nodoActual = nodoActual.getSiguiente();
+    }
+}
 }
