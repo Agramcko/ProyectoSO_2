@@ -9,7 +9,8 @@ package proyecto_sv;
  * @author massimo Gramcko
  */
 
-public class Directorio extends NodoArbol {
+import java.io.Serializable;
+public class Directorio extends NodoArbol implements Serializable {
     
     // ¡Usamos nuestra propia ListaEnlazada!
     private ListaEnlazada<NodoArbol> hijos;

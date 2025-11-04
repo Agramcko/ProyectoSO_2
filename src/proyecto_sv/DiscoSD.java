@@ -9,7 +9,8 @@ package proyecto_sv;
  * @author massimo Gramcko
  */
 
-public class DiscoSD {
+import java.io.Serializable;
+public class DiscoSD implements Serializable {
     // Usamos un arreglo simple para representar el disco
     private Bloque[] bloques;
     private int numBloquesTotal;

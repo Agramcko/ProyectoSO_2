@@ -11,7 +11,8 @@ package proyecto_sv;
 
 // Modificación de la clase Archivo (Fase 1)
 
-public class Archivo extends NodoArbol {
+import java.io.Serializable;
+public class Archivo extends NodoArbol implements Serializable {
     private int tamanoEnBloques;
     
     // ¡NUEVO! Guardamos el ID del primer bloque [cite: 62]

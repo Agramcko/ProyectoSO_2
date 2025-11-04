@@ -9,7 +9,8 @@ package proyecto_sv;
  * @author massimo Gramcko
  */
 
-public class SistemaArchivos {
+import java.io.Serializable;
+public class SistemaArchivos implements Serializable {
     private Directorio raiz;
     private DiscoSD disco;
     // (Opcional) Guardar el directorio actual en el que está el usuario

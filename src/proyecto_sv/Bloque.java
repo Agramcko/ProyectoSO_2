@@ -9,7 +9,8 @@ package proyecto_sv;
  * @author massimo Gramcko
  */
 
-public class Bloque {
+import java.io.Serializable;
+public class Bloque implements Serializable {
     // Para saber qué bloque es (ej: 0, 1, 2...)
     private int id; 
     

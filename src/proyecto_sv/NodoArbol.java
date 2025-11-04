@@ -9,7 +9,8 @@ package proyecto_sv;
  * @author massimo Gramcko
  */
 
-public abstract class NodoArbol {
+import java.io.Serializable;
+public abstract class NodoArbol implements Serializable {
     protected String nombre;
     protected Directorio padre; // Referencia al directorio padre
 

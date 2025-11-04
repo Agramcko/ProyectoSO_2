@@ -11,7 +11,8 @@ package proyecto_sv;
 
 
 // Representa un nodo individual de la lista enlazada
-public class NodoLista<T> {
+import java.io.Serializable;
+public class NodoLista<T> implements Serializable {
     private T dato;
     private NodoLista<T> siguiente;
 

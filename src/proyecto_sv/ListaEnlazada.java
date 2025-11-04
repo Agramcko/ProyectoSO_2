@@ -10,7 +10,8 @@ package proyecto_sv;
  */
 
 
-public class ListaEnlazada<T> {
+import java.io.Serializable;
+public class ListaEnlazada<T> implements Serializable {
     private NodoLista<T> inicio;
     private NodoLista<T> fin;
     private int tamano;

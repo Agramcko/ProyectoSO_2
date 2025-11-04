@@ -8,7 +8,12 @@ package proyecto_sv;
  * @author Alessandro Gramcko
  * @author massimo Gramcko
  */
-
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
 public class Simulador {
     
     // 1. Contiene el "Backend"
@@ -22,10 +27,11 @@ public class Simulador {
     private Cola<SolicitudIO> colaDeIO;  // Para el Planificador
     private ModoUsuario modoActual;
     private PoliticaPlanificacion politicaActual;
+    private static final String NOMBRE_ARCHIVO_ESTADO = "estado_disco.ser";
     
     public Simulador() {
         // Inicializa todos los componentes
-        this.sistemaArchivos = new SistemaArchivos(100); // Disco de 100 bloques
+        this.sistemaArchivos = cargarEstado(); // Disco de 100 bloques
         
         // Pasa el "backend" al planificador para que pueda usarlo
         this.planificador = new PlanificadorDisco(this.sistemaArchivos);
@@ -89,6 +95,53 @@ public class Simulador {
                 break; 
             }
             nodoP = nodoP.getSiguiente();
+        }
+    }
+    
+    /**
+     * ¡NUEVO MÉTODO!
+     * Carga el estado del SistemaArchivos desde el disco.
+     * Si no existe, crea uno nuevo.
+     */
+    private SistemaArchivos cargarEstado() {
+        try (FileInputStream fis = new FileInputStream(NOMBRE_ARCHIVO_ESTADO);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            
+            // Lee el objeto completo desde el archivo
+            SistemaArchivos saCargado = (SistemaArchivos) ois.readObject();
+            
+            System.out.println("¡Éxito! Estado del disco cargado desde " + NOMBRE_ARCHIVO_ESTADO);
+            return saCargado;
+
+        } catch (java.io.FileNotFoundException e) {
+            System.out.println("No se encontró archivo de estado. Creando uno nuevo...");
+            // Si no hay archivo, crea un sistema de archivos nuevo
+            return new SistemaArchivos(100); // Tamaño por defecto (100 bloques)
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error al cargar el estado. Creando uno nuevo.");
+            e.printStackTrace();
+            // Si hay otro error, también crea uno nuevo
+            return new SistemaArchivos(100);
+        }
+    }
+
+    /**
+     * ¡NUEVO MÉTODO!
+     * Guarda el estado actual del SistemaArchivos en el disco.
+     */
+    public void guardarEstado() {
+        try (FileOutputStream fos = new FileOutputStream(NOMBRE_ARCHIVO_ESTADO);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            
+            // Escribe el objeto sistemaArchivos (y todo lo que contiene) en el archivo
+            oos.writeObject(this.sistemaArchivos);
+            
+            System.out.println("¡Éxito! Estado del disco guardado en " + NOMBRE_ARCHIVO_ESTADO);
+
+        } catch (IOException e) {
+            System.err.println("Error al guardar el estado.");
+            e.printStackTrace();
         }
     }
 

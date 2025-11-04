@@ -47,11 +47,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             // 2. Actualizamos TODA la GUI para reflejar los cambios
             actualizarGUICompleta();
             actualizarPermisosGUI();
+            
+            
         }
     });
     
     timer.start(); // ¡Inicia el reloj!
     
+    this.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override
+        public void windowClosing(java.awt.event.WindowEvent e) {
+            
+            // Justo antes de que la ventana se cierre...
+            System.out.println("GUI: Guardando estado antes de salir...");
+            
+            // ¡Llamamos al método de guardar!
+            simulador.guardarEstado();
+            
+            // (Después de esto, el programa se cerrará normalmente
+            //  gracias a la propiedad 'defaultCloseOperation')
+        }
+    });
     // --- FIN DEL RELOJ ---
 }
 
