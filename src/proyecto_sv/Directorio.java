@@ -5,8 +5,8 @@
 package proyecto_sv;
 
 /**
- *
- * @author massi
+ * @author Alessandro Gramcko
+ * @author massimo Gramcko
  */
 
 public class Directorio extends NodoArbol {

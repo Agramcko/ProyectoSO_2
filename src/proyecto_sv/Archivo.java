@@ -5,19 +5,22 @@
 package proyecto_sv;
 
 /**
- *
- * @author massi
+ * @author Alessandro Gramcko
+ * @author massimo Gramcko
  */
+
+// Modificación de la clase Archivo (Fase 1)
 
 public class Archivo extends NodoArbol {
     private int tamanoEnBloques;
-    // Guardaremos la referencia al primer bloque del disco (lo añadiremos en Fase 2)
-    // private Bloque primerBloque; 
+    
+    // ¡NUEVO! Guardamos el ID del primer bloque [cite: 62]
+    private int idPrimerBloque; 
 
     public Archivo(String nombre, int tamanoEnBloques) {
         super(nombre);
         this.tamanoEnBloques = tamanoEnBloques;
-        // this.primerBloque = null;
+        this.idPrimerBloque = -1; // Aún no asignado en el disco
     }
 
     @Override
@@ -25,7 +28,16 @@ public class Archivo extends NodoArbol {
         return this.tamanoEnBloques;
     }
 
-    // Setter para cuando asignemos los bloques
+    // --- Getters y Setters nuevos ---
+    
+    public int getIdPrimerBloque() {
+        return idPrimerBloque;
+    }
+
+    public void setIdPrimerBloque(int idPrimerBloque) {
+        this.idPrimerBloque = idPrimerBloque;
+    }
+    
     public void setTamanoEnBloques(int tamano) {
         this.tamanoEnBloques = tamano;
     }
