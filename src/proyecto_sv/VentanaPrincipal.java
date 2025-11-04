@@ -5,9 +5,14 @@
 package proyecto_sv;
 
 /**
- *
- * @author massi
+ * @author Alessandro Gramcko
+ * @author massimo Gramcko
  */
+
+import java.awt.Color;
+import javax.swing.JPanel;
+import javax.swing.BorderFactory;
+
 public class VentanaPrincipal extends javax.swing.JFrame {
 
     // Esta es la variable que controlará todo el backend
@@ -413,15 +418,54 @@ private void actualizarTablaAsignacion() {
 /**
  * Tarea: Recorrer el DiscoSD y pintar los bloques en el panelDisco
  */
+/**
+ * Tarea: Recorrer el DiscoSD y pintar los bloques en el panelDisco
+ */
 private void actualizarVistaDisco() {
-    // (¡¡PENDIENTE!! Lo implementaremos después)
-    // panelDisco.removeAll(); // Limpiar el panel
-    // DiscoSD disco = simulador.getSistemaArchivos().getDisco();
-    // for (int i = 0; i < disco.getNumBloquesTotal(); i++) {
-    //    ... lógica para crear un JPanel, pintarlo y añadirlo a panelDisco ...
-    // }
-    // panelDisco.revalidate();
-    // panelDisco.repaint();
+    
+    
+    // 1. Limpiamos el panel de cualquier bloque viejo
+    panelDisco.removeAll();
+    
+    try {
+        // 2. Obtenemos el "backend" del disco
+        DiscoSD disco = simulador.getSistemaArchivos().getDisco();
+        
+        // 3. Recorremos CADA bloque del disco
+        for (int i = 0; i < disco.getNumBloquesTotal(); i++) {
+            Bloque bloqueActual = disco.getBloque(i);
+            
+            // 4. Creamos un "cuadrito" (JPanel) para representar el bloque
+            JPanel panelBloque = new JPanel();
+            
+            // 5. Le ponemos un borde para que se vea la cuadrícula
+            panelBloque.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+            
+            // 6. ¡La lógica de pintado!
+            if (bloqueActual.estaOcupado()) {
+                // Si está ocupado, lo pintamos de rojo
+                panelBloque.setBackground(Color.RED);
+                
+                // (Opcional) Mostrar a quién pertenece
+                String tooltip = "Bloque: " + i + " | Archivo: " + bloqueActual.getArchivoPropietario().getNombre();
+                panelBloque.setToolTipText(tooltip);
+                
+            } else {
+                // Si está libre, lo pintamos de verde
+                panelBloque.setBackground(Color.GREEN);
+            }
+            
+            // 7. Añadimos el "cuadrito" al panel principal
+            panelDisco.add(panelBloque);
+        }
+    } catch (Exception e) {
+        // (Manejo de errores por si algo falla durante la actualización)
+        e.printStackTrace();
+    }
+    
+    // 8. ¡MUY IMPORTANTE! Forzamos a la GUI a redibujar el panel
+    panelDisco.revalidate();
+    panelDisco.repaint();
 }
 
 /**
