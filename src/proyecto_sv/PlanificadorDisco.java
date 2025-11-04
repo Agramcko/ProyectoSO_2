@@ -15,7 +15,8 @@ public class PlanificadorDisco {
     private SistemaArchivos sistemaArchivos;
     
     private int posicionCabezal = 0; // Para SSTF, SCAN, etc.
-
+    private enum Direccion { SUBIENDO, BAJANDO }
+    private Direccion direccionSCAN = Direccion.SUBIENDO; // Empezamos "subiendo"
     public PlanificadorDisco(SistemaArchivos sa) {
         this.sistemaArchivos = sa; // Recibe el backend del Simulador
     }
@@ -165,15 +166,74 @@ private int ejecutarSolicitud(SolicitudIO solicitud) {
      * ¡NUEVO ESQUELETO!
      * 3. Política SCAN (Elevador)
      */
+    // En PlanificadorDisco.java
+
+    /**
+     * ¡VERSIÓN REAL!
+     * 3. Política SCAN (Elevador)
+     */
     public SolicitudIO ejecutarSCAN(Cola<SolicitudIO> colaIO) {
         if (colaIO.estaVacia()) {
             return null; // No hay trabajo
         }
 
-        // ¡¡PENDIENTE!!
-        // Aquí iría la lógica de SCAN
-        System.out.println("PLANIFICADOR: (SCAN aún no implementado, usando FIFO)");
-        return ejecutarFIFO(colaIO); 
+        System.out.println("PLANIFICADOR: Ejecutando lógica SCAN (Dirección: " + direccionSCAN + ")");
+
+        // --- 1. Encontrar la solicitud óptima según SCAN ---
+        ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
+        NodoLista<SolicitudIO> nodoActual = lista.getInicio();
+        
+        SolicitudIO solicitudOptima = null;
+        int distanciaMinima = Integer.MAX_VALUE;
+
+        // --- 2. Búsqueda en la dirección actual ---
+        while (nodoActual != null) {
+            SolicitudIO solActual = nodoActual.getDato();
+            int posActual = getPosicionSolicitud(solActual);
+            
+            boolean enLaMismaDireccion = false;
+            if (direccionSCAN == Direccion.SUBIENDO && posActual >= this.posicionCabezal) {
+                enLaMismaDireccion = true;
+            } else if (direccionSCAN == Direccion.BAJANDO && posActual <= this.posicionCabezal) {
+                enLaMismaDireccion = true;
+            }
+
+            // Si está en nuestro camino, vemos si es la más cercana
+            if (enLaMismaDireccion) {
+                int distancia = Math.abs(posActual - this.posicionCabezal);
+                if (distancia < distanciaMinima) {
+                    distanciaMinima = distancia;
+                    solicitudOptima = solActual;
+                }
+            }
+            nodoActual = nodoActual.getSiguiente();
+        }
+
+        // --- 3. Si no encontramos nada en nuestro camino, invertimos la dirección ---
+        if (solicitudOptima == null) {
+            System.out.println("PLANIFICADOR: SCAN llegó al final, invirtiendo dirección.");
+            // Invertimos la dirección
+            if (this.direccionSCAN == Direccion.SUBIENDO) {
+                this.direccionSCAN = Direccion.BAJANDO;
+            } else {
+                this.direccionSCAN = Direccion.SUBIENDO;
+            }
+            
+            // Volvemos a llamar al método con la dirección invertida
+            // (Esto es una recursión simple para no repetir el código de búsqueda)
+            return ejecutarSCAN(colaIO);
+        }
+
+        // --- 4. Procesar la solicitud óptima ---
+        lista.eliminar(solicitudOptima);
+        int bloqueProcesado = ejecutarSolicitud(solicitudOptima);
+        
+        if (bloqueProcesado != -1) {
+            this.posicionCabezal = bloqueProcesado;
+            System.out.println("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
+        }
+
+        return solicitudOptima;
     }
     
     /**
