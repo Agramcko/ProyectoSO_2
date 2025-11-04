@@ -240,15 +240,78 @@ private int ejecutarSolicitud(SolicitudIO solicitud) {
      * ¡NUEVO ESQUELETO!
      * 4. Política C-SCAN (Circular SCAN)
      */
+    // En PlanificadorDisco.java
+
+    /**
+     * ¡VERSIÓN REAL!
+     * 4. Política C-SCAN (Circular SCAN)
+     */
     public SolicitudIO ejecutarCSCAN(Cola<SolicitudIO> colaIO) {
         if (colaIO.estaVacia()) {
             return null; // No hay trabajo
         }
 
-        // ¡¡PENDIENTE!!
-        // Aquí iría la lógica de C-SCAN
-        System.out.println("PLANIFICADOR: (C-SCAN aún no implementado, usando FIFO)");
-        return ejecutarFIFO(colaIO); 
+        System.out.println("PLANIFICADOR: Ejecutando lógica C-SCAN (siempre subiendo)...");
+
+        ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
+        NodoLista<SolicitudIO> nodoActual = lista.getInicio();
+        
+        SolicitudIO solicitudOptima = null; // La que está más cerca "hacia adelante"
+        int distanciaMinima = Integer.MAX_VALUE;
+        
+        SolicitudIO solicitudMasBaja = null; // La que está más cerca del "inicio" (para el salto)
+        int posMasBaja = Integer.MAX_VALUE;
+
+        // --- 1. Recorremos TODA la cola ---
+        while (nodoActual != null) {
+            SolicitudIO solActual = nodoActual.getDato();
+            int posActual = getPosicionSolicitud(solActual);
+
+            // A. Buscamos solicitudes que estén "hacia adelante"
+            if (posActual >= this.posicionCabezal) {
+                int distancia = posActual - this.posicionCabezal; // Distancia simple
+                if (distancia < distanciaMinima) {
+                    distanciaMinima = distancia;
+                    solicitudOptima = solActual;
+                }
+            }
+
+            // B. Al mismo tiempo, encontramos la solicitud más cercana al "inicio" (bloque 0)
+            //    Esto es para cuando tengamos que "saltar"
+            if (posActual < posMasBaja) {
+                posMasBaja = posActual;
+                solicitudMasBaja = solActual;
+            }
+            
+            nodoActual = nodoActual.getSiguiente();
+        }
+
+        // --- 2. Decidimos qué hacer ---
+        
+        // Si no encontramos nada "hacia adelante" (solicitudOptima sigue null),
+        // significa que llegamos al final y debemos "saltar" al inicio.
+        if (solicitudOptima == null) {
+            System.out.println("PLANIFICADOR: C-SCAN llegó al final, volviendo al inicio.");
+            
+            // La solicitud óptima ahora es la que esté más cerca del inicio
+            solicitudOptima = solicitudMasBaja;
+        }
+        
+        if (solicitudOptima == null) {
+             // Esto no debería pasar si la cola no estaba vacía.
+             return null;
+        }
+
+        // --- 3. Procesar la solicitud elegida ---
+        lista.eliminar(solicitudOptima);
+        int bloqueProcesado = ejecutarSolicitud(solicitudOptima);
+        
+        if (bloqueProcesado != -1) {
+            this.posicionCabezal = bloqueProcesado;
+            System.out.println("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
+        }
+
+        return solicitudOptima;
     }
     
     /**
