@@ -178,6 +178,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
 
         btnEliminarArchivo.setText("Eliminar Archivo");
+        btnEliminarArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarArchivoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
@@ -323,6 +328,35 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     
     System.out.println("GUI: Solicitud para CREAR '" + nombre + "' fue encolada.");
     }//GEN-LAST:event_btnCrearArchivoActionPerformed
+
+    private void btnEliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarArchivoActionPerformed
+        // 1. Obtener el nombre del archivo del JTree
+    // (Forma simple: usar el mismo campo de texto de "Nombre")
+    String nombre = txtNombreArchivo.getText();
+
+    // (Forma avanzada: obtener el nodo seleccionado del 'arbolArchivos')
+    // DefaultMutableTreeNode nodoSeleccionado = (DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
+    // if (nodoSeleccionado != null && nodoSeleccionado.getUserObject() instanceof Archivo) {
+    //    nombre = ((Archivo)nodoSeleccionado.getUserObject()).getNombre();
+    // }
+    
+    if (nombre == null || nombre.trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para eliminar.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    // 2. ¡LA CLAVE! Pedir al simulador que ENCOLE la solicitud de borrado
+    simulador.nuevaSolicitudUsuario(
+        TipoOperacion.ELIMINAR_ARCHIVO, 
+        nombre, 
+        0 // El tamaño no importa para eliminar
+    );
+
+    // 3. Limpiar el campo
+    txtNombreArchivo.setText("");
+    
+    System.out.println("GUI: Solicitud para ELIMINAR '" + nombre + "' fue encolada.");
+    }//GEN-LAST:event_btnEliminarArchivoActionPerformed
 
     /**
      * @param args the command line arguments

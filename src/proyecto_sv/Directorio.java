@@ -18,6 +18,34 @@ public class Directorio extends NodoArbol {
         super(nombre);
         this.hijos = new ListaEnlazada<>();
     }
+    
+    /**
+     * NUEVO MÉTODO: Busca un hijo (Archivo o Directorio) por su nombre.
+     * Devuelve el NodoArbol si lo encuentra, o null si no.
+     */
+    public NodoArbol buscarHijo(String nombre) {
+        if (hijos.estaVacia()) {
+            return null;
+        }
+
+        NodoLista<NodoArbol> actual = hijos.getInicio();
+        while (actual != null) {
+            if (actual.getDato().getNombre().equals(nombre)) {
+                return actual.getDato(); // ¡Encontrado!
+            }
+            actual = actual.getSiguiente();
+        }
+        return null; // No encontrado
+    }
+
+    /**
+     * NUEVO MÉTODO: Elimina un hijo de la lista de hijos.
+     * Usa el método 'eliminar(dato)' que creamos en ListaEnlazada.
+     */
+    public boolean eliminarHijo(NodoArbol hijo) {
+        if (hijo == null) return false;
+        return hijos.eliminar(hijo);
+    }
 
     // Métodos para manejar hijos
     public void agregarHijo(NodoArbol hijo) {

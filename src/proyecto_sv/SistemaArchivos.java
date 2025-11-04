@@ -81,27 +81,36 @@ public class SistemaArchivos {
     /**
      * Elimina un archivo del directorio actual.
      */
+    /**
+     * Elimina un archivo del directorio actual.
+     * ¡VERSIÓN ACTUALIZADA!
+     */
     public boolean eliminarArchivo(String nombre) {
+        
         // 1. Buscar el archivo en el directorio actual
-        // (Necesitaremos mejorar la ListaEnlazada para buscar/eliminar por nombre)
+        NodoArbol nodo = this.directorioActual.buscarHijo(nombre);
         
-        // ... Lógica para buscar 'archivoAEliminar' ...
-        Archivo archivoAEliminar = null; // (Temporal, esto debe buscarse)
-        
-        if (archivoAEliminar == null) {
-            System.err.println("Archivo no encontrado.");
+        // 2. Validar que exista y que sea un Archivo
+        if (nodo == null) {
+            System.err.println("Error: Archivo '" + nombre + "' no encontrado.");
             return false;
         }
+        
+        if (!(nodo instanceof Archivo)) {
+            System.err.println("Error: '" + nombre + "' es un directorio, no un archivo.");
+            return false;
+        }
+        
+        Archivo archivoAEliminar = (Archivo) nodo;
 
-        // 2. Obtener su primer bloque
+        // 3. Obtener su primer bloque
         int idPrimerBloque = archivoAEliminar.getIdPrimerBloque();
         
-        // 3. Liberar los bloques en el disco [cite: 33, 46]
+        // 4. Liberar los bloques en el disco
         disco.liberarBloques(idPrimerBloque);
         
-        // 4. Eliminar el archivo del árbol de directorios
-        // (Necesitaremos un método en Directorio para 'eliminarHijo')
-        // this.directorioActual.eliminarHijo(archivoAEliminar);
+        // 5. Eliminar el archivo del árbol de directorios
+        this.directorioActual.eliminarHijo(archivoAEliminar);
         
         System.out.println("Archivo eliminado: " + nombre);
         return true;
