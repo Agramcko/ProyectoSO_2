@@ -46,37 +46,36 @@ public class SistemaArchivos {
      * Crea un archivo en el directorio actual.
      * Esta es la operación que debe ser gestionada por un PROCESO [cite: 15, 16]
      */
-    public boolean crearArchivo(String nombre, int tamanoEnBloques) {
-        // 1. Verificar si hay espacio en el disco
-        if (tamanoEnBloques > disco.getNumBloquesLibres()) {
-            System.err.println("No hay espacio suficiente.");
-            return false;
-        }
-        
-        // (Opcional: verificar si el nombre ya existe en directorioActual)
-
-        // 2. Crear el objeto Archivo
-        Archivo nuevoArchivo = new Archivo(nombre, tamanoEnBloques);
-        
-        // 3. Solicitar los bloques al disco
-        int primerBloque = disco.asignarBloques(nuevoArchivo, tamanoEnBloques);
-        
-        if (primerBloque == -1) {
-            // Falló la asignación (quizás por fragmentación, aunque
-            // nuestro 'encontrarBloqueLibre' simple no sufre de eso)
-            System.err.println("No se pudieron asignar los bloques.");
-            return false;
-        }
-        
-        // 4. Conectar el archivo con el disco
-        nuevoArchivo.setIdPrimerBloque(primerBloque);
-        
-        // 5. Añadir el archivo al árbol de directorios
-        this.directorioActual.agregarHijo(nuevoArchivo);
-        
-        System.out.println("Archivo creado: " + nombre + ", inicia en bloque " + primerBloque);
-        return true;
+    /**
+ * MODIFICADO: Crea un archivo en el directorio especificado.
+ * ¡Ahora devuelve el idPrimerBloque!
+ */
+public int crearArchivo(String nombre, int tamanoEnBloques, Directorio directorioPadre) {
+    if (tamanoEnBloques > disco.getNumBloquesLibres()) {
+        System.err.println("No hay espacio suficiente.");
+        return -1; // Falla
     }
+
+    // (Opcional: verificar si el nombre ya existe en directorioPadre)
+    if (directorioPadre.buscarHijo(nombre) != null) {
+        System.err.println("Error: El nombre de archivo ya existe.");
+        return -1; // Falla
+    }
+
+    Archivo nuevoArchivo = new Archivo(nombre, tamanoEnBloques);
+    int primerBloque = disco.asignarBloques(nuevoArchivo, tamanoEnBloques);
+
+    if (primerBloque == -1) {
+        System.err.println("No se pudieron asignar los bloques.");
+        return -1; // Falla
+    }
+
+    nuevoArchivo.setIdPrimerBloque(primerBloque);
+    directorioPadre.agregarHijo(nuevoArchivo); // ¡Usamos el padre!
+
+    System.out.println("Archivo creado: " + nombre + ", inicia en bloque " + primerBloque);
+    return primerBloque; // ¡Éxito!
+}
 
     /**
      * Elimina un archivo del directorio actual.
@@ -85,36 +84,32 @@ public class SistemaArchivos {
      * Elimina un archivo del directorio actual.
      * ¡VERSIÓN ACTUALIZADA!
      */
-    public boolean eliminarArchivo(String nombre) {
-        
-        // 1. Buscar el archivo en el directorio actual
-        NodoArbol nodo = this.directorioActual.buscarHijo(nombre);
-        
-        // 2. Validar que exista y que sea un Archivo
-        if (nodo == null) {
-            System.err.println("Error: Archivo '" + nombre + "' no encontrado.");
-            return false;
-        }
-        
-        if (!(nodo instanceof Archivo)) {
-            System.err.println("Error: '" + nombre + "' es un directorio, no un archivo.");
-            return false;
-        }
-        
-        Archivo archivoAEliminar = (Archivo) nodo;
+    /**
+ * MODIFICADO: Elimina un archivo del directorio especificado.
+ * ¡Ahora devuelve el idPrimerBloque!
+ */
+public int eliminarArchivo(String nombre, Directorio directorioPadre) {
+    NodoArbol nodo = directorioPadre.buscarHijo(nombre);
 
-        // 3. Obtener su primer bloque
-        int idPrimerBloque = archivoAEliminar.getIdPrimerBloque();
-        
-        // 4. Liberar los bloques en el disco
-        disco.liberarBloques(idPrimerBloque);
-        
-        // 5. Eliminar el archivo del árbol de directorios
-        this.directorioActual.eliminarHijo(archivoAEliminar);
-        
-        System.out.println("Archivo eliminado: " + nombre);
-        return true;
+    if (nodo == null) {
+        System.err.println("Error: Archivo '" + nombre + "' no encontrado.");
+        return -1; // Falla
     }
+
+    if (!(nodo instanceof Archivo)) {
+        System.err.println("Error: '" + nombre + "' es un directorio, no un archivo.");
+        return -1; // Falla
+    }
+
+    Archivo archivoAEliminar = (Archivo) nodo;
+    int idPrimerBloque = archivoAEliminar.getIdPrimerBloque();
+
+    disco.liberarBloques(idPrimerBloque);
+    directorioPadre.eliminarHijo(archivoAEliminar); // ¡Usamos el padre!
+
+    System.out.println("Archivo eliminado: " + nombre);
+    return idPrimerBloque; // ¡Éxito!
+}
     
     // (Implementar crearDirectorio, eliminarDirectorio[cite: 47], etc.)
 }

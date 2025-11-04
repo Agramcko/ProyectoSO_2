@@ -23,38 +23,52 @@ public class PlanificadorDisco {
     /**
      * Método privado que ejecuta la solicitud LLAMANDO al backend
      */
-    private void ejecutarSolicitud(SolicitudIO solicitud) {
-        boolean exito = false;
-        
-        // ¡¡AQUÍ OCURRE LA MAGIA!!
-        // El planificador llama al backend (tu SistemaArchivos)
-        
-        if (solicitud.getTipo() == TipoOperacion.CREAR_ARCHIVO) {
-            
-            System.out.println("PLANIFICADOR: Ejecutando CREAR " + solicitud.getNombreArchivo());
-            
-            // Llama a tu método de Fase 2
-            exito = sistemaArchivos.crearArchivo(
-                solicitud.getNombreArchivo(), 
-                solicitud.getTamanoEnBloques()
-                // Falta pasarle el directorio padre... 
-                // Necesitaríamos modificar crearArchivo para que acepte un Directorio
-            );
-        }
-        else if (solicitud.getTipo() == TipoOperacion.ELIMINAR_ARCHIVO) {
-            
-            System.out.println("PLANIFICADOR: Ejecutando ELIMINAR " + solicitud.getNombreArchivo());
-            
-            // Llama a tu método de Fase 2
-            exito = sistemaArchivos.eliminarArchivo(solicitud.getNombreArchivo());
-        }
-        
-        if (exito) {
-            System.out.println("PLANIFICADOR: Operación completada con éxito.");
-        } else {
-            System.out.println("PLANIFICADOR: Operación falló.");
-        }
+    /**
+ * MODIFICADO: Método privado que ejecuta la solicitud LLAMANDO al backend.
+ * ¡Ahora devuelve el ID del primer bloque que procesó!
+ */
+private int ejecutarSolicitud(SolicitudIO solicitud) {
+    boolean exito = false;
+    int bloqueProcesado = -1; // Para guardar el bloque
+
+    if (solicitud.getTipo() == TipoOperacion.CREAR_ARCHIVO) {
+        System.out.println("PLANIFICADOR: Ejecutando CREAR " + solicitud.getNombreArchivo());
+
+        // MODIFICADO: necesitamos obtener el directorio padre de la solicitud
+        Directorio padre = solicitud.getDirectorioPadre();
+        // (Necesitamos modificar SistemaArchivos para que acepte esto)
+
+        // ¡¡MODIFICACIÓN IMPORTANTE EN 'SistemaArchivos' NECESARIA!!
+        // Debemos cambiar 'crearArchivo' para que acepte el directorio
+        // y devuelva el idPrimerBloque
+        bloqueProcesado = sistemaArchivos.crearArchivo(
+            solicitud.getNombreArchivo(), 
+            solicitud.getTamanoEnBloques(),
+            padre // ¡Pasamos el directorio!
+        );
+        exito = (bloqueProcesado != -1);
+
+    } else if (solicitud.getTipo() == TipoOperacion.ELIMINAR_ARCHIVO) {
+        System.out.println("PLANIFICADOR: Ejecutando ELIMINAR " + solicitud.getNombreArchivo());
+
+        // ¡¡MODIFICACIÓN IMPORTANTE EN 'SistemaArchivos' NECESARIA!!
+        // Debemos cambiar 'eliminarArchivo' para que acepte el directorio
+        // y devuelva el idPrimerBloque
+        bloqueProcesado = sistemaArchivos.eliminarArchivo(
+            solicitud.getNombreArchivo(),
+            solicitud.getDirectorioPadre() // ¡Pasamos el directorio!
+        );
+        exito = (bloqueProcesado != -1);
     }
+
+    if (exito) {
+        System.out.println("PLANIFICADOR: Operación completada con éxito.");
+    } else {
+        System.out.println("PLANIFICADOR: Operación falló.");
+    }
+
+    return bloqueProcesado; // <-- ¡DEVOLVEMOS EL BLOQUE!
+}
 
     // --- Políticas de Planificación ---
 
@@ -83,16 +97,68 @@ public class PlanificadorDisco {
      * ¡NUEVO ESQUELETO!
      * 2. Política SSTF (Shortest Seek Time First)
      */
+    // En PlanificadorDisco.java
+
+    /**
+     * ¡VERSIÓN REAL!
+     * 2. Política SSTF (Shortest Seek Time First)
+     */
     public SolicitudIO ejecutarSSTF(Cola<SolicitudIO> colaIO) {
         if (colaIO.estaVacia()) {
             return null; // No hay trabajo
         }
         
-        // ¡¡PENDIENTE!!
-        // Aquí iría la lógica para buscar la solicitud más cercana
-        // Por ahora, solo usamos FIFO para probar que funciona
-        System.out.println("PLANIFICADOR: (SSTF aún no implementado, usando FIFO)");
-        return ejecutarFIFO(colaIO); 
+        System.out.println("PLANIFICADOR: Ejecutando lógica SSTF...");
+        
+        // --- 1. Encontrar la solicitud más cercana ---
+        
+        // Obtenemos la lista interna para poder recorrerla
+        ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
+        NodoLista<SolicitudIO> nodoActual = lista.getInicio();
+        
+        SolicitudIO solicitudOptima = null;
+        int distanciaMinima = Integer.MAX_VALUE;
+
+        // Recorremos TODA la cola
+        while (nodoActual != null) {
+            SolicitudIO solActual = nodoActual.getDato();
+            
+            // Usamos el ayudante para estimar la posición
+            int posActual = getPosicionSolicitud(solActual);
+            
+            // Calculamos la distancia
+            int distancia = Math.abs(posActual - this.posicionCabezal);
+
+            // Si esta es más cercana que la mínima encontrada...
+            if (distancia < distanciaMinima) {
+                distanciaMinima = distancia;
+                solicitudOptima = solActual;
+            }
+            
+            nodoActual = nodoActual.getSiguiente();
+        }
+        
+        // --- 2. Procesar la solicitud óptima ---
+        
+        if (solicitudOptima == null) {
+            // Esto no debería pasar si la cola no está vacía, pero por si acaso
+            return null; 
+        }
+
+        // 3. Eliminarla de la cola (¡usando el método de Fase 1!)
+        lista.eliminar(solicitudOptima);
+        
+        // 4. Ejecutarla (esto devuelve el bloque que procesó)
+        int bloqueProcesado = ejecutarSolicitud(solicitudOptima);
+        
+        // 5. ¡IMPORTANTE! Actualizar la posición del cabezal
+        if (bloqueProcesado != -1) {
+            this.posicionCabezal = bloqueProcesado;
+            System.out.println("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
+        }
+
+        // 6. Devolver la solicitud para que el Simulador termine el proceso
+        return solicitudOptima;
     }
 
     /**
@@ -123,5 +189,32 @@ public class PlanificadorDisco {
         // Aquí iría la lógica de C-SCAN
         System.out.println("PLANIFICADOR: (C-SCAN aún no implementado, usando FIFO)");
         return ejecutarFIFO(colaIO); 
+    }
+    
+    /**
+     * MÉTODO AYUDANTE PARA SSTF/SCAN/C-SCAN
+     * Estima en qué bloque del disco operará una solicitud.
+     */
+    private int getPosicionSolicitud(SolicitudIO solicitud) {
+        
+        // Si es CREAR, la posición es el primer bloque libre que encuentre
+        if (solicitud.getTipo() == TipoOperacion.CREAR_ARCHIVO) {
+            // Usamos el método que creamos en DiscoSD
+            return this.sistemaArchivos.getDisco().getPrimerBloqueLibre();
+        }
+        
+        // Si es ELIMINAR (o LEER/ACTUALIZAR)
+        if (solicitud.getTipo() == TipoOperacion.ELIMINAR_ARCHIVO) {
+            
+            // Buscamos el archivo para ver su bloque inicial
+            NodoArbol nodo = solicitud.getDirectorioPadre().buscarHijo(solicitud.getNombreArchivo());
+            
+            if (nodo != null && nodo instanceof Archivo) {
+                return ((Archivo) nodo).getIdPrimerBloque();
+            }
+        }
+        
+        // Si no se pudo determinar, devolvemos la posición actual (costo 0)
+        return this.posicionCabezal;
     }
 }

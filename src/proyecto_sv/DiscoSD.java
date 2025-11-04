@@ -126,4 +126,19 @@ public class DiscoSD {
         }
         return null;
     }
+    
+    /**
+     * NUEVO MÉTODO PÚBLICO:
+     * Encuentra el ID del primer bloque libre.
+     * El planificador (SSTF) usa esto para "estimar" dónde
+     * ocurrirá una operación de CREAR.
+     */
+    public int getPrimerBloqueLibre() {
+        for (int i = 0; i < this.numBloquesTotal; i++) {
+            if (!this.bloques[i].estaOcupado()) {
+                return i; // Retorna el ID del bloque libre
+            }
+        }
+        return -1; // No hay espacio
+    }
 }
