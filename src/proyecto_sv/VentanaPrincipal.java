@@ -201,7 +201,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(75, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
@@ -226,7 +226,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         panelSistema.setBorder(javax.swing.BorderFactory.createTitledBorder("Sistema"));
 
-        comboPolitica.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboPolitica.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FIFO", "SSTF", "SCAN", "C-SCAN" }));
+        comboPolitica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboPoliticaActionPerformed(evt);
+            }
+        });
 
         jLabel1.setText("Política:");
 
@@ -259,7 +264,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(116, Short.MAX_VALUE))
+                .addContainerGap(118, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -383,6 +388,29 @@ public class VentanaPrincipal extends javax.swing.JFrame {
       simulador.setModo(ModoUsuario.USUARIO);
     actualizarPermisosGUI(); // Llamamos al método que actualiza los botones
     }//GEN-LAST:event_radioUsuarioActionPerformed
+
+    private void comboPoliticaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboPoliticaActionPerformed
+        // 1. Obtener el texto seleccionado (ej. "FIFO", "SSTF")
+    String seleccion = (String) comboPolitica.getSelectedItem();
+
+    // 2. Convertir el texto a nuestro enum
+    switch (seleccion) {
+        case "FIFO":
+            simulador.setPolitica(PoliticaPlanificacion.FIFO);
+            break;
+        case "SSTF":
+            simulador.setPolitica(PoliticaPlanificacion.SSTF);
+            break;
+        case "SCAN":
+            simulador.setPolitica(PoliticaPlanificacion.SCAN);
+            break;
+        case "C-SCAN":
+            simulador.setPolitica(PoliticaPlanificacion.C_SCAN);
+            break;
+    }
+
+    System.out.println("GUI: Política cambiada a " + simulador.getPolitica());
+    }//GEN-LAST:event_comboPoliticaActionPerformed
 
     /**
      * @param args the command line arguments

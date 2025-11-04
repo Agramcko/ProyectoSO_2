@@ -21,6 +21,7 @@ public class Simulador {
     private Cola<Proceso> colaDeProcesos; // Para la GUI
     private Cola<SolicitudIO> colaDeIO;  // Para el Planificador
     private ModoUsuario modoActual;
+    private PoliticaPlanificacion politicaActual;
     
     public Simulador() {
         // Inicializa todos los componentes
@@ -32,6 +33,7 @@ public class Simulador {
         this.colaDeProcesos = new Cola<>();
         this.colaDeIO = new Cola<>();
         this.modoActual = ModoUsuario.ADMINISTRADOR;
+        this.politicaActual = PoliticaPlanificacion.FIFO;
     }
 
     
@@ -97,15 +99,37 @@ public class Simulador {
      /**
      * MODIFICADO: Este método simula un "tick" del reloj del SO.
      */
+    /**
+     * MODIFICADO: Este método simula un "tick" del reloj del SO.
+     * ¡Ahora obedece a la política de planificación seleccionada!
+     */
     public void ejecutarTickPlanificador() {
         
-        // (Aquí seleccionas la política, por ahora usamos FIFO)
         System.out.println("Planificador va a ejecutar una operación...");
         
-        // 1. Llama al planificador y RECIBE la solicitud procesada
-        SolicitudIO solicitudProcesada = planificador.ejecutarFIFO(this.colaDeIO);
+        SolicitudIO solicitudProcesada = null;
         
-        // 2. Llama al nuevo método para "terminar" el proceso
+        // 1. ¡NUEVO! Leemos la política actual
+        switch (politicaActual) {
+            
+            case FIFO:
+                solicitudProcesada = planificador.ejecutarFIFO(this.colaDeIO);
+                break;
+                
+            case SSTF:
+                solicitudProcesada = planificador.ejecutarSSTF(this.colaDeIO);
+                break;
+                
+            case SCAN:
+                solicitudProcesada = planificador.ejecutarSCAN(this.colaDeIO);
+                break;
+                
+            case C_SCAN:
+                solicitudProcesada = planificador.ejecutarCSCAN(this.colaDeIO);
+                break;
+        }
+        
+        // 2. Llama al método para "terminar" el proceso (esto es de antes)
         terminarProceso(solicitudProcesada);
     }
     
@@ -121,5 +145,12 @@ public class Simulador {
 
 public ModoUsuario getModo() {
     return this.modoActual;
+}
+public void setPolitica(PoliticaPlanificacion politica) {
+    this.politicaActual = politica;
+}
+
+public PoliticaPlanificacion getPolitica() {
+    return this.politicaActual;
 }
 }

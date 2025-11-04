@@ -75,12 +75,53 @@ public class PlanificadorDisco {
         return solicitud; // <-- NUEVO: Devuelve la solicitud que procesó
     }
 
-    // 2. Política SSTF (Shortest Seek Time First)
-    // ... (Implementación más compleja, la dejamos para después) ...
+    // En PlanificadorDisco.java
+
+    // ... (después de tu método ejecutarFIFO(...) ) ...
+
+    /**
+     * ¡NUEVO ESQUELETO!
+     * 2. Política SSTF (Shortest Seek Time First)
+     */
+    public SolicitudIO ejecutarSSTF(Cola<SolicitudIO> colaIO) {
+        if (colaIO.estaVacia()) {
+            return null; // No hay trabajo
+        }
+        
+        // ¡¡PENDIENTE!!
+        // Aquí iría la lógica para buscar la solicitud más cercana
+        // Por ahora, solo usamos FIFO para probar que funciona
+        System.out.println("PLANIFICADOR: (SSTF aún no implementado, usando FIFO)");
+        return ejecutarFIFO(colaIO); 
+    }
+
+    /**
+     * ¡NUEVO ESQUELETO!
+     * 3. Política SCAN (Elevador)
+     */
+    public SolicitudIO ejecutarSCAN(Cola<SolicitudIO> colaIO) {
+        if (colaIO.estaVacia()) {
+            return null; // No hay trabajo
+        }
+
+        // ¡¡PENDIENTE!!
+        // Aquí iría la lógica de SCAN
+        System.out.println("PLANIFICADOR: (SCAN aún no implementado, usando FIFO)");
+        return ejecutarFIFO(colaIO); 
+    }
     
-    // 3. Política SCAN
-    // ...
-    
-    // 4. Política C-SCAN
-    // ...
+    /**
+     * ¡NUEVO ESQUELETO!
+     * 4. Política C-SCAN (Circular SCAN)
+     */
+    public SolicitudIO ejecutarCSCAN(Cola<SolicitudIO> colaIO) {
+        if (colaIO.estaVacia()) {
+            return null; // No hay trabajo
+        }
+
+        // ¡¡PENDIENTE!!
+        // Aquí iría la lógica de C-SCAN
+        System.out.println("PLANIFICADOR: (C-SCAN aún no implementado, usando FIFO)");
+        return ejecutarFIFO(colaIO); 
+    }
 }
