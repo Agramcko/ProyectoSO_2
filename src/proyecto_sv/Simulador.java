@@ -20,6 +20,7 @@ public class Simulador {
     // 3. ¡Contiene las Colas de Fase 1!
     private Cola<Proceso> colaDeProcesos; // Para la GUI
     private Cola<SolicitudIO> colaDeIO;  // Para el Planificador
+    private ModoUsuario modoActual;
     
     public Simulador() {
         // Inicializa todos los componentes
@@ -30,8 +31,10 @@ public class Simulador {
         
         this.colaDeProcesos = new Cola<>();
         this.colaDeIO = new Cola<>();
+        this.modoActual = ModoUsuario.ADMINISTRADOR;
     }
 
+    
     /**
      * Este es el método que la GUI llamará.
      * NO ejecuta la operación, solo la encola.
@@ -111,4 +114,12 @@ public class Simulador {
     public SistemaArchivos getSistemaArchivos() { return sistemaArchivos; }
     public Cola<Proceso> getColaDeProcesos() { return colaDeProcesos; }
     public Cola<SolicitudIO> getColaDeIO() { return colaDeIO; }
+    
+    public void setModo(ModoUsuario modo) {
+    this.modoActual = modo;
+}
+
+public ModoUsuario getModo() {
+    return this.modoActual;
+}
 }

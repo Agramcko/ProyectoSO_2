@@ -46,6 +46,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             
             // 2. Actualizamos TODA la GUI para reflejar los cambios
             actualizarGUICompleta();
+            actualizarPermisosGUI();
         }
     });
     
@@ -231,9 +232,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         buttonGroup1.add(radioAdmin);
         radioAdmin.setText("Modo Administrador");
+        radioAdmin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioAdminActionPerformed(evt);
+            }
+        });
 
         buttonGroup1.add(radioUsuario);
         radioUsuario.setText("Modo Usuario");
+        radioUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                radioUsuarioActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout panelSistemaLayout = new javax.swing.GroupLayout(panelSistema);
         panelSistema.setLayout(panelSistemaLayout);
@@ -362,6 +373,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     // Actualizamos la GUI INMEDIATAMENTE para ver la cola "en espera"
     actualizarGUICompleta();
     }//GEN-LAST:event_btnEliminarArchivoActionPerformed
+
+    private void radioAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioAdminActionPerformed
+      simulador.setModo(ModoUsuario.ADMINISTRADOR);
+    actualizarPermisosGUI(); // Llamamos al método que actualiza los botones
+    }//GEN-LAST:event_radioAdminActionPerformed
+
+    private void radioUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioUsuarioActionPerformed
+      simulador.setModo(ModoUsuario.USUARIO);
+    actualizarPermisosGUI(); // Llamamos al método que actualiza los botones
+    }//GEN-LAST:event_radioUsuarioActionPerformed
 
     /**
      * @param args the command line arguments
@@ -683,5 +704,22 @@ private void construirNodosArbol(Directorio dirPadre, DefaultMutableTreeNode nod
         // 6. Avanzar al siguiente hijo
         nodoActual = nodoActual.getSiguiente();
     }
+}
+/**
+ * Revisa el modo actual del simulador y habilita o deshabilita
+ * los controles de la GUI (botones) según los permisos.
+ */
+private void actualizarPermisosGUI() {
+    // Obtenemos el modo actual
+    ModoUsuario modo = simulador.getModo();
+
+    // Comprobamos si es Administrador
+    boolean esAdmin = (modo == ModoUsuario.ADMINISTRADOR);
+
+    // Habilitamos o deshabilitamos los botones
+    btnCrearArchivo.setEnabled(esAdmin);
+    btnEliminarArchivo.setEnabled(esAdmin);
+
+    // (Puedes añadir otros controles aquí, como modificar, etc.)
 }
 }
