@@ -27,7 +27,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="splitPanePrincipal" alignment="1" max="32767" attributes="0"/>
+          <Component id="splitPanePrincipal" alignment="1" pref="939" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -172,27 +172,7 @@
                 </Constraint>
               </Constraints>
 
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Group type="102" alignment="0" attributes="0">
-                          <Component id="panelAcciones" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="panelSistema" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace max="-2" attributes="0"/>
-                          <Component id="scrollColas" min="-2" pref="182" max="-2" attributes="0"/>
-                          <EmptySpace max="32767" attributes="0"/>
-                      </Group>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="panelAcciones" max="32767" attributes="0"/>
-                      <Component id="panelSistema" max="32767" attributes="0"/>
-                      <Component id="scrollColas" alignment="0" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
+              <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
               <SubComponents>
                 <Container class="javax.swing.JPanel" name="panelAcciones">
                   <Properties>
@@ -221,7 +201,7 @@
                                       <Component id="txtNombreArchivo" min="-2" pref="103" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="21" max="32767" attributes="0"/>
+                              <EmptySpace pref="59" max="32767" attributes="0"/>
                           </Group>
                           <Component id="btnEliminarArchivo" alignment="0" max="32767" attributes="0"/>
                       </Group>
@@ -275,6 +255,9 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Crear Archivo"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCrearArchivoActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="btnEliminarArchivo">
                       <Properties>
@@ -306,7 +289,7 @@
                                       <Component id="comboPolitica" min="-2" pref="95" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="62" max="32767" attributes="0"/>
+                              <EmptySpace pref="100" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

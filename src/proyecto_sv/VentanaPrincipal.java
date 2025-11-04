@@ -10,31 +10,41 @@ package proyecto_sv;
  */
 public class VentanaPrincipal extends javax.swing.JFrame {
 
-    /**
-     * Creates new form VentanaPrincipal
-     */
-    public VentanaPrincipal() {
-        initComponents();
+    // Esta es la variable que controlará todo el backend
+    private Simulador simulador;
+    
+   public VentanaPrincipal() {
+    
+    initComponents();
+    
+    // Creamos la instancia del "cerebro"
+    this.simulador = new Simulador();
+
+    // Establecemos el layout del disco
+    int totalBloquesDisco = 100; 
+    int filas = (int) Math.ceil(Math.sqrt(totalBloquesDisco));
+    int columnas = filas;
+    panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
+    
+    // --- INICIA EL RELOJ DEL SIMULADOR (TIMER) ---
+    javax.swing.Timer timer = new javax.swing.Timer(2000, new java.awt.event.ActionListener() {
         
-        // --- INICIO CÓDIGO A AÑADIR ---
-
-// Define el tamaño total de tu disco (debe coincidir con tu Simulador)
-int totalBloquesDisco = 100; // Ejemplo: 100 bloques
-
-// Calcula el tamaño de la cuadrícula (ej: 10x10 para 100 bloques)
-// Usamos raíz cuadrada para hacerlo lo más cuadrado posible
-int filas = (int) Math.ceil(Math.sqrt(totalBloquesDisco));
-int columnas = filas; // O puedes ajustar filas y columnas como prefieras
-
-// ¡Aplica el GridLayout a tu panelDisco!
-panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
-
-// (Opcional, pero recomendado) Añadir espacios pequeños entre los bloques
-((java.awt.GridLayout)panelDisco.getLayout()).setHgap(2); // Espacio horizontal
-((java.awt.GridLayout)panelDisco.getLayout()).setVgap(2); // Espacio vertical
-
-// --- FIN CÓDIGO A AÑADIR ---
-    }
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            // CADA "TICK" DEL RELOJ, hacemos dos cosas:
+            
+            // 1. Le decimos al simulador que ejecute UNA operación
+            simulador.ejecutarTickPlanificador();
+            
+            // 2. Actualizamos TODA la GUI para reflejar los cambios
+            actualizarGUICompleta();
+        }
+    });
+    
+    timer.start(); // ¡Inicia el reloj!
+    
+    // --- FIN DEL RELOJ ---
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -124,6 +134,8 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
 
         splitPaneDerecho.setTopComponent(splitPaneVisuals);
 
+        panelControlesGeneral.setLayout(new javax.swing.BoxLayout(panelControlesGeneral, javax.swing.BoxLayout.LINE_AXIS));
+
         panelAcciones.setBorder(javax.swing.BorderFactory.createTitledBorder("Acciones"));
 
         lblNombre.setText("Nombre:");
@@ -139,6 +151,11 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
         spinnerTamano.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
 
         btnCrearArchivo.setText("Crear Archivo");
+        btnCrearArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCrearArchivoActionPerformed(evt);
+            }
+        });
 
         btnEliminarArchivo.setText("Eliminar Archivo");
 
@@ -158,7 +175,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
                         .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(21, Short.MAX_VALUE))
+                .addContainerGap(59, Short.MAX_VALUE))
             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
@@ -178,6 +195,8 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
                 .addComponent(btnEliminarArchivo)
                 .addGap(28, 28, 28))
         );
+
+        panelControlesGeneral.add(panelAcciones);
 
         panelSistema.setBorder(javax.swing.BorderFactory.createTitledBorder("Sistema"));
 
@@ -204,7 +223,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(62, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -220,30 +239,15 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        panelControlesGeneral.add(panelSistema);
+
         scrollColas.setBorder(javax.swing.BorderFactory.createTitledBorder("Colas"));
 
         areaColasProcesos.setColumns(20);
         areaColasProcesos.setRows(5);
         scrollColas.setViewportView(areaColasProcesos);
 
-        javax.swing.GroupLayout panelControlesGeneralLayout = new javax.swing.GroupLayout(panelControlesGeneral);
-        panelControlesGeneral.setLayout(panelControlesGeneralLayout);
-        panelControlesGeneralLayout.setHorizontalGroup(
-            panelControlesGeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelControlesGeneralLayout.createSequentialGroup()
-                .addComponent(panelAcciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(panelSistema, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(scrollColas, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        panelControlesGeneralLayout.setVerticalGroup(
-            panelControlesGeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(panelAcciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(panelSistema, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(scrollColas)
-        );
+        panelControlesGeneral.add(scrollColas);
 
         splitPaneDerecho.setRightComponent(panelControlesGeneral);
 
@@ -253,7 +257,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 939, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -269,15 +273,44 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreArchivoActionPerformed
 
+    private void btnCrearArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearArchivoActionPerformed
+       // 1. Obtenemos los datos de la GUI
+    // (Usa los nombres de variable que definiste)
+    String nombre = txtNombreArchivo.getText(); 
+    int tamano = (Integer) spinnerTamano.getValue(); 
+
+    // 2. Validamos la entrada
+    if (nombre == null || nombre.trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+    
+    // (El JSpinner ya valida que el tamaño sea >= 1, si lo configuraste bien)
+    
+    // 3. ¡¡LA PARTE CLAVE!!
+    // NO creamos el archivo aquí.
+    // Le pedimos al SIMULADOR que "encole" la solicitud.
+    
+    simulador.nuevaSolicitudUsuario(
+        TipoOperacion.CREAR_ARCHIVO, 
+        nombre, 
+        tamano
+    );
+    
+    // 4. (Opcional) Limpiamos los campos
+    txtNombreArchivo.setText("");
+    spinnerTamano.setValue(1);
+    
+    System.out.println("GUI: Solicitud para CREAR '" + nombre + "' fue encolada.");
+    }//GEN-LAST:event_btnCrearArchivoActionPerformed
+
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        /* ... (todo el código 'try-catch' de look and feel) ... */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -299,6 +332,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                // ¡Así de simple!
                 new VentanaPrincipal().setVisible(true);
             }
         });
@@ -333,4 +367,73 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas));
     private javax.swing.JTable tablaAsignacion;
     private javax.swing.JTextField txtNombreArchivo;
     // End of variables declaration//GEN-END:variables
+
+// --- INICIO MÉTODOS DE ACTUALIZACIÓN DE GUI ---
+
+/**
+ * Método "mágico" que lee todo el estado del Simulador
+ * y lo dibuja en los componentes de la GUI.
+ */
+private void actualizarGUICompleta() {
+    System.out.println("GUI: Actualizando vistas...");
+    
+    // 1. Actualizar el Árbol (JTree)
+    actualizarArbol();
+    
+    // 2. Actualizar la Tabla de Asignación (JTable)
+    actualizarTablaAsignacion();
+    
+    // 3. Actualizar la Vista del Disco (JPanel)
+    actualizarVistaDisco();
+    
+    // 4. Actualizar la Vista de Colas (JTextArea)
+    actualizarVistaColas();
+}
+
+/**
+ * Tarea: Leer el Árbol del Simulador y dibujarlo en el JTree
+ */
+private void actualizarArbol() {
+    // (¡¡PENDIENTE!! Lo implementaremos después)
+    // Directorio raiz = simulador.getSistemaArchivos().getRaiz();
+    // ... lógica para construir el DefaultTreeModel ...
+    // arbolArchivos.setModel(modelo);
+}
+
+/**
+ * Tarea: Recorrer el árbol, encontrar Archivos y listarlos en la JTable
+ */
+private void actualizarTablaAsignacion() {
+    // (¡¡PENDIENTE!! Lo implementaremos después)
+    // DefaultTableModel modeloTabla = (DefaultTableModel) tablaAsignacion.getModel();
+    // modeloTabla.setRowCount(0); // Limpiar tabla
+    // ... lógica para recorrer el árbol y hacer modeloTabla.addRow(...) ...
+}
+
+/**
+ * Tarea: Recorrer el DiscoSD y pintar los bloques en el panelDisco
+ */
+private void actualizarVistaDisco() {
+    // (¡¡PENDIENTE!! Lo implementaremos después)
+    // panelDisco.removeAll(); // Limpiar el panel
+    // DiscoSD disco = simulador.getSistemaArchivos().getDisco();
+    // for (int i = 0; i < disco.getNumBloquesTotal(); i++) {
+    //    ... lógica para crear un JPanel, pintarlo y añadirlo a panelDisco ...
+    // }
+    // panelDisco.revalidate();
+    // panelDisco.repaint();
+}
+
+/**
+ * Tarea: Leer las colas del Simulador y mostrarlas en el JTextArea
+ */
+private void actualizarVistaColas() {
+    // (¡¡PENDIENTE!! Lo implementaremos después)
+    // areaColasProcesos.setText(""); // Limpiar
+    // ... lógica para recorrer colaDeProcesos y colaDeIO y añadir texto ...
+}
+
+// --- FIN MÉTODOS DE ACTUALIZACIÓN DE GUI ---
+
+
 }
