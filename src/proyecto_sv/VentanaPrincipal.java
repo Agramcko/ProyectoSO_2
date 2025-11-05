@@ -166,6 +166,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         btnEliminarDirectorio = new javax.swing.JButton();
         btnGenerarReporte = new javax.swing.JButton();
         btnGenerarAleatorios = new javax.swing.JButton();
+        btnReiniciar = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -313,6 +314,13 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnReiniciar.setText("Reiniciar Todo");
+        btnReiniciar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnReiniciarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
@@ -324,6 +332,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelAccionesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -340,8 +349,8 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(118, Short.MAX_VALUE))
-            .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(120, Short.MAX_VALUE))
+            .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -372,7 +381,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(btnEliminarDirectorio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGenerarReporte)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnReiniciar)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addComponent(btnGenerarAleatorios)
                 .addContainerGap())
         );
@@ -426,7 +437,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addContainerGap(73, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -747,6 +758,42 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     actualizarGUICompleta();
     }//GEN-LAST:event_btnGenerarAleatoriosActionPerformed
 
+    private void btnReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReiniciarActionPerformed
+        // 1. Advertencia al usuario (¡esto es destructivo!)
+    int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+        "¿Está seguro de que desea reiniciar la simulación?\n" +
+        "Se borrará todo el estado guardado (estado_disco.ser) y el programa se cerrará.\n" +
+        "Deberá volver a ejecutarlo.",
+        "Confirmar Reinicio Completo",
+        javax.swing.JOptionPane.YES_NO_OPTION,
+        javax.swing.JOptionPane.WARNING_MESSAGE);
+
+    if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+        return; // El usuario canceló
+    }
+
+    // 2. Llamamos al backend para borrar el archivo
+    boolean exito = simulador.reiniciarEstado();
+
+    if (exito) {
+        // 3. Notificamos y cerramos
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "¡Reinicio completado!\nEl estado guardado fue eliminado. El programa se cerrará.", 
+            "Reinicio Exitoso", 
+            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+        // 4. Salir del programa
+        System.exit(0); 
+
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Error: No se pudo eliminar el archivo 'estado_disco.ser'.\n" +
+            "Revise los permisos de la carpeta.", 
+            "Error de Reinicio", 
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnReiniciarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -841,6 +888,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JButton btnGenerarAleatorios;
     private javax.swing.JButton btnGenerarReporte;
     private javax.swing.JButton btnLeerArchivo;
+    private javax.swing.JButton btnReiniciar;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboPolitica;
@@ -1193,6 +1241,7 @@ private void actualizarPermisosGUI() {
     btnEliminarDirectorio.setEnabled(esAdmin);
     btnGenerarReporte.setEnabled(esAdmin);
     btnGenerarAleatorios.setEnabled(esAdmin);
+    btnReiniciar.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)

@@ -14,7 +14,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.File;
+
+
 public class Simulador {
+    
     
     // 1. Contiene el "Backend"
     private SistemaArchivos sistemaArchivos;
@@ -205,5 +209,35 @@ public void setPolitica(PoliticaPlanificacion politica) {
 
 public PoliticaPlanificacion getPolitica() {
     return this.politicaActual;
+}
+
+/**
+ * ¡NUEVO MÉTODO!
+ * Elimina el archivo de estado guardado (.ser) del disco.
+ * Esto fuerza un reinicio limpio la próxima vez que se ejecute.
+ */
+public boolean reiniciarEstado() {
+    try {
+        // (Asegúrate de que 'NOMBRE_ARCHIVO_ESTADO' sea el nombre
+        // que definiste en tu método guardar/cargar)
+        File archivoGuardado = new File(NOMBRE_ARCHIVO_ESTADO);
+
+        if (archivoGuardado.exists()) {
+            if (archivoGuardado.delete()) {
+                System.out.println("REINICIO: Archivo 'estado_disco.ser' eliminado.");
+                return true;
+            } else {
+                System.err.println("REINICIO: No se pudo eliminar 'estado_disco.ser'.");
+                return false;
+            }
+        }
+        // Si no existía, también es un éxito (ya estaba reiniciado)
+        return true; 
+
+    } catch (SecurityException e) {
+        System.err.println("REINICIO: Error de seguridad al eliminar el archivo.");
+        e.printStackTrace();
+        return false;
+    }
 }
 }
