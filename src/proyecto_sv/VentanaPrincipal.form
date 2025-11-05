@@ -217,7 +217,7 @@
                                               <Component id="lblTamano" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="spinnerTamano" min="-2" pref="72" max="-2" attributes="0"/>
-                                              <EmptySpace min="0" pref="120" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="42" max="32767" attributes="0"/>
                                           </Group>
                                           <Component id="btnEliminarArchivo" alignment="0" max="32767" attributes="0"/>
                                           <Component id="btnRenombrar" alignment="0" max="32767" attributes="0"/>
@@ -502,7 +502,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="scrollBuffer" pref="325" max="32767" attributes="0"/>
+                                  <Component id="scrollBuffer" pref="364" max="32767" attributes="0"/>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" attributes="0">
                                           <Component id="radioUsuario" min="-2" max="-2" attributes="0"/>
