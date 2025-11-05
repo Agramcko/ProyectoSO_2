@@ -27,14 +27,14 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="splitPanePrincipal" alignment="1" pref="939" max="32767" attributes="0"/>
+          <Component id="splitPanePrincipal" alignment="1" pref="990" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <Component id="splitPanePrincipal" min="-2" pref="642" max="-2" attributes="0"/>
-              <EmptySpace min="0" pref="165" max="32767" attributes="0"/>
+              <Component id="splitPanePrincipal" min="-2" pref="584" max="-2" attributes="0"/>
+              <EmptySpace min="0" pref="223" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -188,6 +188,7 @@
                           <Component id="btnCrearArchivo" alignment="0" max="32767" attributes="0"/>
                           <Component id="btnEliminarArchivo" alignment="0" max="32767" attributes="0"/>
                           <Component id="btnLeerArchivo" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnRenombrar" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -209,9 +210,9 @@
                                       <Component id="txtNuevoNombre" min="-2" pref="109" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="66" max="32767" attributes="0"/>
+                              <EmptySpace pref="86" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="btnRenombrar" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnCrearDirectorio" alignment="0" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
@@ -240,7 +241,9 @@
                               <Component id="btnEliminarArchivo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="btnLeerArchivo" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="96" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnCrearDirectorio" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="34" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -307,6 +310,14 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnRenombrarActionPerformed"/>
                       </Events>
                     </Component>
+                    <Component class="javax.swing.JButton" name="btnCrearDirectorio">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Crear Directorio"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCrearDirectorioActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="panelSistema">
@@ -333,7 +344,7 @@
                                   </Group>
                                   <Component id="scrollBuffer" alignment="0" min="-2" pref="264" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="23" max="32767" attributes="0"/>
+                              <EmptySpace pref="43" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -349,7 +360,7 @@
                               <Component id="radioAdmin" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="radioUsuario" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="26" max="32767" attributes="0"/>
+                              <EmptySpace pref="82" max="32767" attributes="0"/>
                               <Component id="scrollBuffer" min="-2" pref="167" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>

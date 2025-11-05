@@ -229,4 +229,33 @@ public boolean renombrarNodo(String nombreViejo, String nombreNuevo) {
     System.out.println("Renombrar: '" + nombreViejo + "' ahora es '" + nombreNuevo + "'.");
     return true;
 }
+/**
+ * ¡NUEVO MÉTODO!
+ * Crea un nuevo directorio dentro del directorio actual.
+ * Es una operación instantánea (metadatos).
+ * Devuelve 'true' si fue exitoso.
+ */
+public boolean crearDirectorio(String nombre) {
+
+    // 1. Validar que el nombre no esté vacío
+    if (nombre == null || nombre.trim().isEmpty()) {
+        System.err.println("Crear Dir: El nombre no puede estar vacío.");
+        return false;
+    }
+
+    // 2. Validar que el nombre NO exista ya
+    if (directorioActual.buscarHijo(nombre) != null) {
+        System.err.println("Crear Dir: El nombre '" + nombre + "' ya existe.");
+        return false;
+    }
+
+    // 3. Crear el objeto Directorio
+    Directorio nuevoDir = new Directorio(nombre);
+
+    // 4. Añadirlo al árbol (al directorio actual)
+    directorioActual.agregarHijo(nuevoDir);
+
+    System.out.println("Directorio creado: " + nombre);
+    return true;
+}
 }

@@ -109,6 +109,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         jLabel2 = new javax.swing.JLabel();
         txtNuevoNombre = new javax.swing.JTextField();
         btnRenombrar = new javax.swing.JButton();
+        btnCrearDirectorio = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -228,6 +229,13 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnCrearDirectorio.setText("Crear Directorio");
+        btnCrearDirectorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCrearDirectorioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
@@ -235,6 +243,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             .addComponent(btnCrearArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelAccionesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -251,8 +260,8 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(66, Short.MAX_VALUE))
-            .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(86, Short.MAX_VALUE))
+            .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -277,7 +286,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(btnEliminarArchivo)
                 .addGap(18, 18, 18)
                 .addComponent(btnLeerArchivo)
-                .addContainerGap(96, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnCrearDirectorio)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         panelControlesGeneral.add(panelAcciones);
@@ -329,7 +340,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(43, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -342,7 +353,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(radioAdmin)
                 .addGap(18, 18, 18)
                 .addComponent(radioUsuario)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -365,13 +376,13 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 939, Short.MAX_VALUE)
+            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 990, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(splitPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 642, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 165, Short.MAX_VALUE))
+                .addComponent(splitPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 223, Short.MAX_VALUE))
         );
 
         pack();
@@ -528,6 +539,36 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     }
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
+    private void btnCrearDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearDirectorioActionPerformed
+       // Esta operación es instantánea y NO usa el planificador.
+
+    // 1. Obtenemos el nombre del campo 'txtNombreArchivo'
+    String nombre = txtNombreArchivo.getText();
+
+    if (nombre.trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Debe ingresar un nombre en el campo 'Nombre' para el directorio.", 
+            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // 2. Llamamos al backend directamente
+    boolean exito = simulador.getSistemaArchivos().crearDirectorio(nombre);
+
+    if (exito) {
+        // 3. Limpiamos campos y actualizamos la GUI
+        txtNombreArchivo.setText("");
+
+        // ¡Forzamos la actualización INMEDIATA de la GUI!
+        actualizarGUICompleta(); // Esto hará que aparezca en el JTree
+    } else {
+        // (El SistemaArchivos ya imprimió el error en consola)
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "No se pudo crear el directorio (quizás el nombre ya existe).", 
+            "Error al Crear Directorio", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnCrearDirectorioActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -601,6 +642,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JTextArea areaBuffer;
     private javax.swing.JTextArea areaColasProcesos;
     private javax.swing.JButton btnCrearArchivo;
+    private javax.swing.JButton btnCrearDirectorio;
     private javax.swing.JButton btnEliminarArchivo;
     private javax.swing.JButton btnLeerArchivo;
     private javax.swing.JButton btnRenombrar;
@@ -904,7 +946,8 @@ private void actualizarPermisosGUI() {
     
     // --- ¡NUEVAS LÍNEAS! ---
     btnRenombrar.setEnabled(esAdmin);
-    txtNuevoNombre.setEnabled(esAdmin); 
+    txtNuevoNombre.setEnabled(esAdmin);
+    btnCrearDirectorio.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)
