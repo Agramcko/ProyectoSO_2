@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.Enumeration;
 
-public class VentanaPrincipal extends javax.swing.JFrame {
+public class VentanaPrincipal extends javax.swing.JFrame implements ILogger {
 
     // Esta es la variable que controlará todo el backend
     private Simulador simulador;
@@ -51,6 +51,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     
     // 1. Creamos la instancia del "cerebro"
     this.simulador = new Simulador();
+    simulador.setLogger(this);
 
     // --- ¡NUEVO! INICIALIZAR EL MODELO DEL ÁRBOL UNA SOLA VEZ (Paso 3) ---
     Directorio raizBackend = simulador.getSistemaArchivos().getRaiz();
@@ -174,6 +175,8 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         radioUsuario = new javax.swing.JRadioButton();
         scrollBuffer = new javax.swing.JScrollPane();
         areaBuffer = new javax.swing.JTextArea();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        areaLogConsola = new javax.swing.JTextArea();
         scrollColas = new javax.swing.JScrollPane();
         areaColasProcesos = new javax.swing.JTextArea();
 
@@ -380,7 +383,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                                 .addComponent(lblTamano)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 42, Short.MAX_VALUE))
+                                .addGap(0, 57, Short.MAX_VALUE))
                             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(panelAccionesLayout.createSequentialGroup()
@@ -477,23 +480,33 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         areaBuffer.setRows(5);
         scrollBuffer.setViewportView(areaBuffer);
 
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Consola de Eventos Buffer", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
+
+        areaLogConsola.setEditable(false);
+        areaLogConsola.setColumns(20);
+        areaLogConsola.setRows(5);
+        jScrollPane3.setViewportView(areaLogConsola);
+
         javax.swing.GroupLayout panelSistemaLayout = new javax.swing.GroupLayout(panelSistema);
         panelSistema.setLayout(panelSistemaLayout);
         panelSistemaLayout.setHorizontalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelSistemaLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelSistemaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(scrollBuffer, javax.swing.GroupLayout.DEFAULT_SIZE, 364, Short.MAX_VALUE)
+                .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(panelSistemaLayout.createSequentialGroup()
+                        .addComponent(jScrollPane3)
+                        .addGap(2, 2, 2))
+                    .addComponent(scrollBuffer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelSistemaLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(comboPolitica, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelSistemaLayout.createSequentialGroup()
                         .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(radioUsuario)
                             .addComponent(radioAdmin))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(panelSistemaLayout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(comboPolitica, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelSistemaLayout.setVerticalGroup(
@@ -509,7 +522,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(radioUsuario)
                 .addGap(18, 18, 18)
                 .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(122, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         panelControlesGeneral.add(panelSistema);
@@ -942,6 +957,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JTree arbolArchivos;
     private javax.swing.JTextArea areaBuffer;
     private javax.swing.JTextArea areaColasProcesos;
+    private javax.swing.JTextArea areaLogConsola;
     private javax.swing.JButton btnCrearArchivo;
     private javax.swing.JButton btnCrearDirectorio;
     private javax.swing.JButton btnEliminarArchivo;
@@ -957,6 +973,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblTamano;
     private javax.swing.JPanel panelAcciones;
@@ -1340,6 +1357,20 @@ private void actualizarVistaBuffer() {
 }
 // --- INICIO DE CLASE INTERNA PARA RENDERER ---
 // Pega esto dentro de VentanaPrincipal.java, pero al final
+
+    /**
+ * ¡Implementación de la interfaz ILogger!
+ * Recibe un mensaje del backend y lo escribe en
+ * nuestra JTextArea 'areaLogConsola'.
+ */
+@Override
+public void log(String mensaje) {
+    // Escribe el mensaje
+    areaLogConsola.append(mensaje + "\n");
+
+    // Auto-scroll: Mueve la vista al final para ver siempre lo último
+    areaLogConsola.setCaretPosition(areaLogConsola.getDocument().getLength());
+}
 
 class MyTreeCellRenderer extends DefaultTreeCellRenderer {
 

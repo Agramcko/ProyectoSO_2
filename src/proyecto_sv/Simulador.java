@@ -32,6 +32,7 @@ public class Simulador {
     private ModoUsuario modoActual;
     private PoliticaPlanificacion politicaActual;
     private static final String NOMBRE_ARCHIVO_ESTADO = "estado_disco.ser";
+    private ILogger logger = null;
     
     public Simulador() {
         // Inicializa todos los componentes
@@ -238,6 +239,17 @@ public boolean reiniciarEstado() {
         System.err.println("REINICIO: Error de seguridad al eliminar el archivo.");
         e.printStackTrace();
         return false;
+    }
+}
+/**
+ * Recibe el logger desde la GUI (VentanaPrincipal)
+ * y lo pasa al sistema de archivos.
+ */
+public void setLogger(ILogger logger) {
+    this.logger = logger;
+
+    if (this.sistemaArchivos != null) {
+        this.sistemaArchivos.setLogger(logger);
     }
 }
 }

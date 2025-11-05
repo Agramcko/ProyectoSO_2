@@ -1,21 +1,53 @@
 --- REPORTE DEL SISTEMA DE ARCHIVOS ---
-Generado: 2025/11/05 14:23:46
+Generado: 2025/11/05 17:32:21
 ---------------------------------------
 
 ESTRUCTURA DEL DIRECTORIO:
 📁 root/
-  📁 Documentos/
-    📄 Musica (Tamaño: 3 bloques)
-         └ (Bloques: [0] -> [1] -> [2] -> FIN)
-  📁 Pasaporte/
-    📄 Massimo.pdf (Tamaño: 5 bloques)
-         └ (Bloques: [3] -> [4] -> [5] -> [6] -> [7] -> FIN)
-    📄 Alessandro.pdf (Tamaño: 5 bloques)
-         └ (Bloques: [8] -> [9] -> [10] -> [11] -> [12] -> FIN)
+  📄 archivo_aleatorio_0.txt (Tamaño: 1 bloques)
+       └ (Bloques: [0] -> FIN)
+  📄 archivo_aleatorio_1.txt (Tamaño: 2 bloques)
+       └ (Bloques: [1] -> [2] -> FIN)
+  📄 archivo_aleatorio_2.txt (Tamaño: 3 bloques)
+       └ (Bloques: [3] -> [4] -> [5] -> FIN)
+  📄 archivo_aleatorio_3.txt (Tamaño: 1 bloques)
+       └ (Bloques: [6] -> FIN)
+  📄 archivo_aleatorio_4.txt (Tamaño: 3 bloques)
+       └ (Bloques: [7] -> [8] -> [9] -> FIN)
+  📄 archivo_aleatorio_5.txt (Tamaño: 1 bloques)
+       └ (Bloques: [10] -> FIN)
+  📄 archivo_aleatorio_6.txt (Tamaño: 4 bloques)
+       └ (Bloques: [11] -> [12] -> [13] -> [14] -> FIN)
+  📄 archivo_aleatorio_7.txt (Tamaño: 4 bloques)
+       └ (Bloques: [15] -> [16] -> [17] -> [18] -> FIN)
+  📄 archivo_aleatorio_8.txt (Tamaño: 4 bloques)
+       └ (Bloques: [19] -> [20] -> [21] -> [22] -> FIN)
+  📄 archivo_aleatorio_9.txt (Tamaño: 1 bloques)
+       └ (Bloques: [23] -> FIN)
+  📄 archivo_aleatorio_10.txt (Tamaño: 4 bloques)
+       └ (Bloques: [24] -> [25] -> [26] -> [27] -> FIN)
+  📄 archivo_aleatorio_11.txt (Tamaño: 3 bloques)
+       └ (Bloques: [28] -> [29] -> [30] -> FIN)
+  📄 archivo_aleatorio_12.txt (Tamaño: 3 bloques)
+       └ (Bloques: [31] -> [32] -> [33] -> FIN)
+  📄 archivo_aleatorio_13.txt (Tamaño: 4 bloques)
+       └ (Bloques: [34] -> [35] -> [36] -> [37] -> FIN)
+  📄 archivo_aleatorio_14.txt (Tamaño: 1 bloques)
+       └ (Bloques: [38] -> FIN)
+  📄 archivo_aleatorio_15.txt (Tamaño: 2 bloques)
+       └ (Bloques: [39] -> [40] -> FIN)
+  📄 archivo_aleatorio_16.txt (Tamaño: 2 bloques)
+       └ (Bloques: [41] -> [42] -> FIN)
+  📄 archivo_aleatorio_17.txt (Tamaño: 5 bloques)
+       └ (Bloques: [43] -> [44] -> [45] -> [46] -> [47] -> FIN)
+  📄 archivo_aleatorio_18.txt (Tamaño: 5 bloques)
+       └ (Bloques: [48] -> [49] -> [50] -> [51] -> [52] -> FIN)
+  📄 archivo_aleatorio_19.txt (Tamaño: 2 bloques)
+       └ (Bloques: [53] -> [54] -> FIN)
 
 
 ---------------------------------------
 ESTADO DEL DISCO (SD):
 Total de Bloques: 100
-Bloques Libres: 87
-Bloques Ocupados: 13
+Bloques Libres: 45
+Bloques Ocupados: 55

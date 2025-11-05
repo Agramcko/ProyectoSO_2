@@ -21,6 +21,7 @@ public class SistemaArchivos implements Serializable {
     // (Opcional) Guardar el directorio actual en el que está el usuario
     private Directorio directorioActual;
     private BufferCache buffer;
+    private transient ILogger logger = null;
 
     public SistemaArchivos(int tamanoDisco) {
         this.disco = new DiscoSD(tamanoDisco);
@@ -407,6 +408,17 @@ private void generarReporteRecursivo(NodoArbol nodo, StringBuilder sb, String in
             idBloqueActual = bloque.getPunteroSiguiente();
         }
         sb.append("FIN)\n");
+    }
+}
+/**
+ * Recibe el logger desde el Simulador
+ * y lo pasa al BufferCache.
+ */
+public void setLogger(ILogger logger) {
+    this.logger = logger;
+
+    if (this.buffer != null) {
+        this.buffer.setLogger(logger);
     }
 }
 }

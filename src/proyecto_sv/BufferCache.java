@@ -21,6 +21,9 @@ public class BufferCache implements Serializable {
     private ListaEnlazada<Bloque> cache;
     private int tamanoMaximo;
     
+    // Usamos 'transient' para que no intente guardarse en el archivo .ser
+    private transient ILogger logger = null;
+    
     /**
      * Constructor
      * @param tamano La cantidad de bloques que el buffer puede retener.
@@ -28,7 +31,9 @@ public class BufferCache implements Serializable {
     public BufferCache(int tamano) {
         this.tamanoMaximo = tamano;
         this.cache = new ListaEnlazada<>();
-        System.out.println("Buffer de " + tamano + " bloques inicializado.");
+        
+        // --- REEMPLAZADO ---
+        log("Buffer de " + tamano + " bloques inicializado.");
     }
     
     /**
@@ -42,14 +47,20 @@ public class BufferCache implements Serializable {
         while (actual != null) {
             if (actual.getDato().getId() == idBloque) {
                 // ¡¡Cache HIT!! Lo encontramos.
-                System.out.println("BUFFER: Cache HIT para bloque " + idBloque);
+                
+                // --- REEMPLAZADO ---
+                log("BUFFER: Cache HIT para bloque " + idBloque);
+                
                 return actual.getDato();
             }
             actual = actual.getSiguiente();
         }
         
         // ¡¡Cache MISS!! No estaba.
-        System.out.println("BUFFER: Cache MISS para bloque " + idBloque);
+        
+        // --- REEMPLAZADO ---
+        log("BUFFER: Cache MISS para bloque " + idBloque);
+        
         return null;
     }
     
@@ -61,14 +72,17 @@ public class BufferCache implements Serializable {
     public void escribir(Bloque bloque) {
         if (bloque == null) return;
         
-        System.out.println("BUFFER: Escribiendo bloque " + bloque.getId() + " en cache.");
+        // --- REEMPLAZADO ---
+        log("BUFFER: Escribiendo bloque " + bloque.getId() + " en cache.");
         
         // Política de reemplazo FIFO:
         // Si la lista está llena (o supera el tamaño)...
         if (cache.getTamano() >= this.tamanoMaximo) {
             // ...sacamos el primero que entró (el del inicio).
             Bloque antiguo = cache.eliminarDelInicio();
-            System.out.println("BUFFER: Cache lleno. Eliminado bloque " + antiguo.getId() + " (FIFO).");
+            
+            // --- REEMPLAZADO ---
+            log("BUFFER: Cache lleno. Eliminado bloque " + antiguo.getId() + " (FIFO).");
         }
         
         // Añadimos el nuevo bloque al final.
@@ -98,12 +112,33 @@ public class BufferCache implements Serializable {
         if (bloqueAInvalidar != null) {
             boolean exito = cache.eliminar(bloqueAInvalidar);
             if (exito) {
-                System.out.println("BUFFER: Invalidado bloque " + idBloque + " del cache.");
+                
+                // --- REEMPLAZADO ---
+                log("BUFFER: Invalidado bloque " + idBloque + " del cache.");
             }
         }
     }
     
     public ListaEnlazada<Bloque> getCacheInterno() {
-    return this.cache;
-}
+        return this.cache;
+    }
+
+    /**
+     * Recibe el logger desde el SistemaArchivos.
+     */
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+    }
+
+    /**
+     * Ayudante de log. Si tenemos un logger GUI, lo usa.
+     * Si no, usa el System.out por defecto.
+     */
+    private void log(String mensaje) {
+        if (this.logger != null) {
+            this.logger.log(mensaje); // ¡Lo envía a la GUI!
+        } else {
+            System.out.println(mensaje); // Fallback
+        }
+    }
 }
