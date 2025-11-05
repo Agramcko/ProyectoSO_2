@@ -177,6 +177,8 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         areaBuffer = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
         areaLogConsola = new javax.swing.JTextArea();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        areaLogPlanificador = new javax.swing.JTextArea();
         scrollColas = new javax.swing.JScrollPane();
         areaColasProcesos = new javax.swing.JTextArea();
 
@@ -419,7 +421,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(btnCrearArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarArchivo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -487,22 +489,30 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         areaLogConsola.setRows(5);
         jScrollPane3.setViewportView(areaLogConsola);
 
+        jScrollPane4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Log del Planificador", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
+
+        areaLogPlanificador.setEditable(false);
+        areaLogPlanificador.setColumns(20);
+        areaLogPlanificador.setRows(5);
+        jScrollPane4.setViewportView(areaLogPlanificador);
+
         javax.swing.GroupLayout panelSistemaLayout = new javax.swing.GroupLayout(panelSistema);
         panelSistema.setLayout(panelSistemaLayout);
         panelSistemaLayout.setHorizontalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelSistemaLayout.createSequentialGroup()
+            .addGroup(panelSistemaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(panelSistemaLayout.createSequentialGroup()
+                .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelSistemaLayout.createSequentialGroup()
                         .addComponent(jScrollPane3)
                         .addGap(2, 2, 2))
-                    .addComponent(scrollBuffer, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelSistemaLayout.createSequentialGroup()
+                    .addComponent(scrollBuffer, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addGroup(panelSistemaLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelSistemaLayout.createSequentialGroup()
+                    .addGroup(panelSistemaLayout.createSequentialGroup()
                         .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(radioUsuario)
                             .addComponent(radioAdmin))
@@ -520,10 +530,12 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(radioAdmin)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(radioUsuario)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 159, Short.MAX_VALUE)
+                .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
 
@@ -549,9 +561,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(splitPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 758, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(77, Short.MAX_VALUE))
+            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 835, Short.MAX_VALUE)
         );
 
         pack();
@@ -958,6 +968,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JTextArea areaBuffer;
     private javax.swing.JTextArea areaColasProcesos;
     private javax.swing.JTextArea areaLogConsola;
+    private javax.swing.JTextArea areaLogPlanificador;
     private javax.swing.JButton btnCrearArchivo;
     private javax.swing.JButton btnCrearDirectorio;
     private javax.swing.JButton btnEliminarArchivo;
@@ -974,6 +985,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel lblNombre;
     private javax.swing.JLabel lblTamano;
     private javax.swing.JPanel panelAcciones;
@@ -1358,18 +1370,36 @@ private void actualizarVistaBuffer() {
 // --- INICIO DE CLASE INTERNA PARA RENDERER ---
 // Pega esto dentro de VentanaPrincipal.java, pero al final
 
-    /**
+ /**
  * ¡Implementación de la interfaz ILogger!
- * Recibe un mensaje del backend y lo escribe en
- * nuestra JTextArea 'areaLogConsola'.
+ * Recibe un mensaje del backend y actúa como un "router":
+ * - Si el mensaje es del BUFFER, va a la consola de eventos.
+ * - Si es del PLANIFICADOR, va a la consola del planificador.
  */
 @Override
 public void log(String mensaje) {
-    // Escribe el mensaje
-    areaLogConsola.append(mensaje + "\n");
 
-    // Auto-scroll: Mueve la vista al final para ver siempre lo último
-    areaLogConsola.setCaretPosition(areaLogConsola.getDocument().getLength());
+    if (mensaje == null) return;
+
+    // ¡EL ROUTER!
+    if (mensaje.startsWith("BUFFER:")) {
+
+        // --- Lo envía a la consola 1 ---
+        areaLogConsola.append(mensaje + "\n");
+        areaLogConsola.setCaretPosition(areaLogConsola.getDocument().getLength());
+
+    } else if (mensaje.startsWith("PLANIFICADOR:")) {
+
+        // --- Lo envía a la consola 2 ---
+        areaLogPlanificador.append(mensaje + "\n");
+        areaLogPlanificador.setCaretPosition(areaLogPlanificador.getDocument().getLength());
+
+    } else {
+
+        // --- Fallback (para mensajes desconocidos) ---
+        areaLogConsola.append(mensaje + "\n");
+        areaLogConsola.setCaretPosition(areaLogConsola.getDocument().getLength());
+    }
 }
 
 class MyTreeCellRenderer extends DefaultTreeCellRenderer {
