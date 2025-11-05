@@ -142,4 +142,13 @@ public class DiscoSD implements Serializable {
         }
         return -1; // No hay espacio
     }
+    /**
+     * Permite al SistemaArchivos notificar al disco que un bloque
+     * fue liberado manualmente (usado por la lógica del buffer).
+     */
+    public void notificarBloqueLiberado() {
+        if (this.numBloquesLibres < this.numBloquesTotal) {
+            this.numBloquesLibres++;
+        }
+    }
 }
