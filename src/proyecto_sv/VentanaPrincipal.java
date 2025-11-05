@@ -110,6 +110,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         txtNuevoNombre = new javax.swing.JTextField();
         btnRenombrar = new javax.swing.JButton();
         btnCrearDirectorio = new javax.swing.JButton();
+        btnEliminarDirectorio = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -236,6 +237,13 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnEliminarDirectorio.setText("Eliminar Directorio");
+        btnEliminarDirectorio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarDirectorioActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
@@ -244,6 +252,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelAccionesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -261,7 +270,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(86, Short.MAX_VALUE))
-            .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,7 +289,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                     .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(21, 21, 21)
                 .addComponent(btnRenombrar)
-                .addGap(51, 51, 51)
+                .addGap(18, 18, 18)
                 .addComponent(btnCrearArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarArchivo)
@@ -288,7 +297,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(btnLeerArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnCrearDirectorio)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnEliminarDirectorio)
+                .addContainerGap(35, Short.MAX_VALUE))
         );
 
         panelControlesGeneral.add(panelAcciones);
@@ -569,6 +580,45 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     }
     }//GEN-LAST:event_btnCrearDirectorioActionPerformed
 
+    private void btnEliminarDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarDirectorioActionPerformed
+       // Esta operación es instantánea (pero compleja) y NO usa el planificador.
+
+    // 1. Obtenemos el nombre del campo 'txtNombreArchivo'
+    String nombre = txtNombreArchivo.getText();
+
+    if (nombre.trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Debe ingresar un nombre de directorio en el campo 'Nombre'.", 
+            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // 2. Advertencia al usuario (¡esto es destructivo!)
+    int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+        "¿Está seguro de que desea eliminar el directorio '" + nombre + "'?\n" +
+        "¡TODOS los archivos y subdirectorios dentro de él se borrarán permanentemente!",
+        "Confirmar Eliminación Recursiva",
+        javax.swing.JOptionPane.YES_NO_OPTION,
+        javax.swing.JOptionPane.WARNING_MESSAGE);
+
+    if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+        return; // El usuario canceló
+    }
+
+    // 3. Llamamos al backend directamente
+    boolean exito = simulador.getSistemaArchivos().eliminarDirectorio(nombre);
+
+    if (exito) {
+        // 4. Limpiamos campos y actualizamos la GUI
+        txtNombreArchivo.setText("");
+        actualizarGUICompleta(); // Para que desaparezca del JTree
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "No se pudo eliminar el directorio.", 
+            "Error al Eliminar Directorio", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnEliminarDirectorioActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -644,6 +694,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JButton btnCrearArchivo;
     private javax.swing.JButton btnCrearDirectorio;
     private javax.swing.JButton btnEliminarArchivo;
+    private javax.swing.JButton btnEliminarDirectorio;
     private javax.swing.JButton btnLeerArchivo;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -948,6 +999,7 @@ private void actualizarPermisosGUI() {
     btnRenombrar.setEnabled(esAdmin);
     txtNuevoNombre.setEnabled(esAdmin);
     btnCrearDirectorio.setEnabled(esAdmin);
+    btnEliminarDirectorio.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)

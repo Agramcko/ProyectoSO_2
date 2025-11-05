@@ -189,6 +189,7 @@
                           <Component id="btnEliminarArchivo" alignment="0" max="32767" attributes="0"/>
                           <Component id="btnLeerArchivo" alignment="0" max="32767" attributes="0"/>
                           <Component id="btnRenombrar" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnCrearDirectorio" alignment="0" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
@@ -212,7 +213,7 @@
                               </Group>
                               <EmptySpace pref="86" max="32767" attributes="0"/>
                           </Group>
-                          <Component id="btnCrearDirectorio" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnEliminarDirectorio" alignment="0" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
@@ -235,7 +236,7 @@
                               </Group>
                               <EmptySpace min="-2" pref="21" max="-2" attributes="0"/>
                               <Component id="btnRenombrar" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="btnCrearArchivo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnEliminarArchivo" min="-2" max="-2" attributes="0"/>
@@ -243,7 +244,9 @@
                               <Component id="btnLeerArchivo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnCrearDirectorio" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="34" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnEliminarDirectorio" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="35" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -316,6 +319,14 @@
                       </Properties>
                       <Events>
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCrearDirectorioActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="btnEliminarDirectorio">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Eliminar Directorio"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEliminarDirectorioActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>

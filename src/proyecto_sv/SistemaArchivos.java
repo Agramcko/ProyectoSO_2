@@ -258,4 +258,68 @@ public boolean crearDirectorio(String nombre) {
     System.out.println("Directorio creado: " + nombre);
     return true;
 }
+/**
+ * ¡NUEVO MÉTODO PÚBLICO!
+ * Punto de entrada para eliminar un directorio desde la GUI.
+ * Llama al ayudante recursivo y luego elimina el directorio en sí.
+ */
+public boolean eliminarDirectorio(String nombre) {
+    // 1. Buscar el directorio en el directorio actual
+    NodoArbol nodo = directorioActual.buscarHijo(nombre);
+
+    if (nodo == null) {
+        System.err.println("Eliminar Dir: No se encontró '" + nombre + "'.");
+        return false;
+    }
+
+    if (!(nodo instanceof Directorio)) {
+        System.err.println("Eliminar Dir: '" + nombre + "' no es un directorio.");
+        return false;
+    }
+
+    Directorio dirAEliminar = (Directorio) nodo;
+
+    // 2. Llamar al ayudante recursivo para vaciarlo
+    System.out.println("Eliminación recursiva iniciada para: " + nombre);
+    eliminarDirectorioRecursivo(dirAEliminar);
+
+    // 3. Una vez vacío, eliminar el directorio del árbol
+    directorioActual.eliminarHijo(dirAEliminar);
+
+    System.out.println("Directorio eliminado exitosamente: " + nombre);
+    return true;
+}
+
+/**
+ * ¡NUEVO MÉTODO PRIVADO (AYUDANTE RECURSIVO)!
+ * Vacía un directorio de todo su contenido.
+ */
+private void eliminarDirectorioRecursivo(Directorio dir) {
+
+    // Usamos un 'while' porque la lista de hijos se modificará en cada iteración
+    while (!dir.getHijos().estaVacia()) {
+
+        // Obtenemos el primer hijo
+        NodoArbol hijo = dir.getHijos().getInicio().getDato();
+
+        if (hijo instanceof Archivo) {
+            // Si es un archivo, usamos nuestro método 'eliminarArchivo'
+            // (que ya maneja la liberación de bloques y el buffer)
+            System.out.println("Borrando archivo: " + hijo.getNombre());
+            // ¡Importante! Usamos la versión de 'eliminarArchivo' que
+            // recibe el directorio padre donde buscar.
+            eliminarArchivo(hijo.getNombre(), dir);
+
+        } else if (hijo instanceof Directorio) {
+            // Si es un sub-directorio, llamamos a esta misma función
+            System.out.println("Entrando a subdirectorio: " + hijo.getNombre());
+            eliminarDirectorioRecursivo((Directorio) hijo);
+
+            // Cuando la recursión termina, el sub-directorio está vacío
+            // y ahora podemos eliminarlo de la lista de 'dir'
+            dir.eliminarHijo(hijo);
+        }
+    }
+    // Cuando el 'while' termina, 'dir' está vacío.
+}
 }
