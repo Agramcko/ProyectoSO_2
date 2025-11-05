@@ -340,7 +340,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(94, Short.MAX_VALUE))
+                .addContainerGap(118, Short.MAX_VALUE))
             .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
@@ -426,7 +426,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -439,7 +439,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(radioAdmin)
                 .addGap(18, 18, 18)
                 .addComponent(radioUsuario)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 195, Short.MAX_VALUE)
                 .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -462,13 +462,13 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 990, Short.MAX_VALUE)
+            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1063, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(splitPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 584, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 223, Short.MAX_VALUE))
+                .addComponent(splitPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 758, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 49, Short.MAX_VALUE))
         );
 
         pack();
@@ -774,43 +774,58 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            
+            // ¡¡EL CONTENIDO DE RUN() ES EL QUE CAMBIA!!
             public void run() {
                 
                 // --- ¡¡INICIO DE LA LÓGICA DE SELECCIÓN!! ---
                 
-                // 1. Definimos los botones del diálogo
                 Object[] options = {"Modo Administrador", "Modo Usuario"};
                 
-                // 2. Mostramos el diálogo modal
                 int n = JOptionPane.showOptionDialog(
-                    null, // Sin ventana padre (porque aún no existe)
+                    null,
                     "Bienvenido. Por favor, seleccione el modo de operación para iniciar:",
                     "Selección de Modo",
                     JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE,
                     null,
                     options,
-                    options[0]); // Opción por defecto
+                    options[0]);
                 
                 ModoUsuario modoElegido;
 
-                // 3. Interpretamos la respuesta
-                if (n == JOptionPane.NO_OPTION) { // El botón 2 ("Modo Usuario")
+                if (n == JOptionPane.NO_OPTION) {
                     modoElegido = ModoUsuario.USUARIO;
-                } else if (n == JOptionPane.YES_OPTION) { // El botón 1 ("Admin")
+                } else if (n == JOptionPane.YES_OPTION) {
                     modoElegido = ModoUsuario.ADMINISTRADOR;
                 } else {
-                    // El usuario cerró la ventana (n == -1)
                     System.out.println("Selección cancelada. Saliendo.");
-                    System.exit(0); // Salimos del programa
-                    return; // No continuamos
+                    System.exit(0);
+                    return;
                 }
                 
                 // --- FIN DE LA LÓGICA DE SELECCIÓN ---
                 
-                // 4. Creamos la VentanaPrincipal, pasándole el modo elegido
-                // ¡Esta línea ahora llama al nuevo constructor (Paso 2)!
-                new VentanaPrincipal(modoElegido).setVisible(true);
+                
+                // --- ¡¡INICIO DEL CÓDIGO ACTUALIZADO (PARA EL TAMAÑO)!! ---
+                
+                // 1. Creamos la VentanaPrincipal (sin hacerla visible)
+                VentanaPrincipal ventana = new VentanaPrincipal(modoElegido);
+                
+                // 2. ¡LA MAGIA! Le decimos que se ajuste al tamaño
+                //    de todos los componentes que tiene dentro.
+                ventana.pack();
+                
+                // 3. (Recomendado) Para evitar que se vuelva a encoger
+                ventana.setMinimumSize(ventana.getPreferredSize());
+                
+                // 4. La centramos en la pantalla
+                ventana.setLocationRelativeTo(null);
+                
+                // 5. Ahora sí, la hacemos visible
+                ventana.setVisible(true);
+                
+                // --- FIN DEL CÓDIGO ACTUALIZADO ---
             }
         });
     }
