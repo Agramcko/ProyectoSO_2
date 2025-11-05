@@ -65,33 +65,41 @@ public class SistemaArchivos implements Serializable {
  * MODIFICADO: Crea un archivo en el directorio especificado.
  * ¡Ahora devuelve el idPrimerBloque!
  */
+/**
+ * MODIFICADO: Crea un archivo en el directorio especificado.
+ * ¡Ahora devuelve el idPrimerBloque!
+ * ¡Y AHORA USA EL LOGGER!
+ */
 public int crearArchivo(String nombre, int tamanoEnBloques, Directorio directorioPadre) {
+    
+    // --- CAMBIO 1 (Log de Error) ---
     if (tamanoEnBloques > disco.getNumBloquesLibres()) {
-        System.err.println("No hay espacio suficiente.");
+        log("PLANIFICADOR: ¡DISCO LLENO! No hay " + tamanoEnBloques + " bloques libres para '" + nombre + "'.");
         return -1; // Falla
     }
 
-    // (Opcional: verificar si el nombre ya existe en directorioPadre)
+    // --- CAMBIO 2 (Log de Error) ---
     if (directorioPadre.buscarHijo(nombre) != null) {
-        System.err.println("Error: El nombre de archivo ya existe.");
+        log("PLANIFICADOR: Error. El nombre '" + nombre + "' ya existe.");
         return -1; // Falla
     }
 
     Archivo nuevoArchivo = new Archivo(nombre, tamanoEnBloques);
     int primerBloque = disco.asignarBloques(nuevoArchivo, tamanoEnBloques);
 
+    // --- CAMBIO 3 (Log de Error - ¡EL MÁS IMPORTANTE!) ---
     if (primerBloque == -1) {
-        System.err.println("No se pudieron asignar los bloques.");
+        log("PLANIFICADOR: ¡DISCO LLENO! No se pudieron asignar los " + tamanoEnBloques + " bloques (fragmentación o error).");
         return -1; // Falla
     }
 
     nuevoArchivo.setIdPrimerBloque(primerBloque);
     directorioPadre.agregarHijo(nuevoArchivo); // ¡Usamos el padre!
 
-    System.out.println("Archivo creado: " + nombre + ", inicia en bloque " + primerBloque);
+    // --- CAMBIO 4 (Log de Éxito) ---
+    log("PLANIFICADOR: Archivo creado: " + nombre + ", inicia en bloque " + primerBloque);
     return primerBloque; // ¡Éxito!
 }
-
     /**
      * Elimina un archivo del directorio actual.
      */
@@ -419,6 +427,18 @@ public void setLogger(ILogger logger) {
 
     if (this.buffer != null) {
         this.buffer.setLogger(logger);
+    }
+}
+/**
+ * ¡NUEVO MÉTODO AYUDANTE!
+ * Ayudante de log. Si tenemos un logger GUI, lo usa.
+ * Si no, usa el System.out por defecto.
+ */
+private void log(String mensaje) {
+    if (this.logger != null) {
+        this.logger.log(mensaje); // ¡Lo envía a la GUI!
+    } else {
+        System.out.println(mensaje); // Fallback
     }
 }
 }
