@@ -26,6 +26,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     // Esta es la variable que controlará todo el backend
     private Simulador simulador;
+    private DefaultTreeModel modeloArbol;
+    private DefaultMutableTreeNode raizArbol;
     
    /**
  * Constructor de la Ventana Principal.
@@ -34,7 +36,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 public VentanaPrincipal(ModoUsuario modoInicial) {
     
     initComponents();
-   
+    
     // --- ¡NUEVO! APLICAR EL RENDERER DE ICONOS (Paso 2.3) ---
     // (Asegúrate de haber añadido la clase 'MyTreeCellRenderer' al final de tu archivo)
     arbolArchivos.setCellRenderer(new MyTreeCellRenderer());
@@ -42,6 +44,13 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     
     // 1. Creamos la instancia del "cerebro"
     this.simulador = new Simulador();
+
+    // --- ¡NUEVO! INICIALIZAR EL MODELO DEL ÁRBOL UNA SOLA VEZ (Paso 3) ---
+    Directorio raizBackend = simulador.getSistemaArchivos().getRaiz();
+    this.raizArbol = new DefaultMutableTreeNode(raizBackend); // Guardamos la raíz
+    this.modeloArbol = new DefaultTreeModel(this.raizArbol); // Guardamos el modelo
+    arbolArchivos.setModel(this.modeloArbol); // ¡Lo asignamos!
+    // --- FIN ---
 
     // --- ¡NUEVA LÓGICA DE INICIO! ---
     
@@ -782,31 +791,43 @@ private void actualizarGUICompleta() {
 /**
  * Tarea: Leer el Árbol del Simulador y dibujarlo en el JTree
  */
+/**
+ * Tarea: Leer el Árbol del Simulador y dibujarlo en el JTree
+ * ¡VERSIÓN MODIFICADA!
+ * Ya no reemplaza el modelo, solo lo actualiza para
+ * no perder las expansiones de los nodos.
+ */
+/**
+ * Tarea: Leer el Árbol del Simulador y dibujarlo en el JTree
+ * ¡VERSIÓN MODIFICADA!
+ * Ya no reemplaza el modelo, solo lo actualiza para
+ * no perder las expansiones de los nodos.
+ */
 private void actualizarArbol() {
     
+    // (Tu línea de System.out.println... está bien, puedes dejarla o quitarla)
+    System.out.println("--- ¡NUEVO ACTUALIZAR ARBOL (RELOAD) EJECUTADO! ---");
+    
     try {
-        // 1. Obtener el directorio raíz de NUESTRO backend
+        // 1. Obtenemos el backend
         Directorio raizBackend = simulador.getSistemaArchivos().getRaiz();
         if (raizBackend == null) return;
 
-        // 2. Crear el nodo RAÍZ del árbol de SWING
-        // El texto que muestra es el nombre de nuestro directorio raíz (ej. "root")
-        DefaultMutableTreeNode raizSwing = new DefaultMutableTreeNode(raizBackend);
+        // --- ¡¡LÍNEA NUEVA!! ---
+        // Forzamos la actualización del objeto de la raíz, por si acaso.
+        this.raizArbol.setUserObject(raizBackend); 
+        // --- FIN LÍNEA NUEVA ---
 
-        // 3. Llamar al método recursivo para construir el resto del árbol
-        construirNodosArbol(raizBackend, raizSwing);
+        // 2. Limpiamos los hijos del nodo Swing
+        this.raizArbol.removeAllChildren();
 
-        // 4. Crear un nuevo "Modelo de Árbol" de SWING con nuestra raíz
-        DefaultTreeModel modeloArbol = new DefaultTreeModel(raizSwing);
+        // 3. Volvemos a construir los hijos desde el backend
+        construirNodosArbol(raizBackend, this.raizArbol);
 
-        // 5. ¡LA MAGIA! Asignar el nuevo modelo a nuestro JTree
-        arbolArchivos.setModel(modeloArbol);
+        // 4. Le decimos al modelo que se recargue
+        this.modeloArbol.reload(this.raizArbol);
 
-        // (Opcional pero recomendado) Expandir la raíz para que se vean los archivos
-        arbolArchivos.expandRow(0); 
-        
     } catch (Exception e) {
-        // (Manejo de errores por si algo falla durante la actualización)
         e.printStackTrace();
     }
 }
