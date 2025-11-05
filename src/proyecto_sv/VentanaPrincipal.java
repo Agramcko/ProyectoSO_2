@@ -15,60 +15,65 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
 
     // Esta es la variable que controlará todo el backend
     private Simulador simulador;
     
-   public VentanaPrincipal() {
+   /**
+ * Constructor de la Ventana Principal.
+ * AHORA ACEPTA el modo de inicio como parámetro.
+ */
+public VentanaPrincipal(ModoUsuario modoInicial) {
     
     initComponents();
     
-    // Creamos la instancia del "cerebro"
+    // 1. Creamos la instancia del "cerebro"
     this.simulador = new Simulador();
 
-    // Establecemos el layout del disco
+    // --- ¡NUEVA LÓGICA DE INICIO! ---
+    
+    // 2. Establecemos el modo inicial en el backend (el que vino del diálogo)
+    simulador.setModo(modoInicial);
+    
+    // 3. Sincronizamos los botones de radio visualmente
+    if (modoInicial == ModoUsuario.ADMINISTRADOR) {
+        radioAdmin.setSelected(true);
+    } else {
+        radioUsuario.setSelected(true);
+    }
+    // --- FIN DE LA NUEVA LÓGICA ---
+
+    // 4. Establecemos el layout del disco (tu código existente)
     int totalBloquesDisco = 100; 
     int filas = (int) Math.ceil(Math.sqrt(totalBloquesDisco));
     int columnas = filas;
     panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     
-    // --- INICIA EL RELOJ DEL SIMULADOR (TIMER) ---
+    // 5. Iniciamos el Timer (tu código existente)
     javax.swing.Timer timer = new javax.swing.Timer(2000, new java.awt.event.ActionListener() {
-        
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
-            // CADA "TICK" DEL RELOJ, hacemos dos cosas:
-            
-            // 1. Le decimos al simulador que ejecute UNA operación
             simulador.ejecutarTickPlanificador();
-            
-            // 2. Actualizamos TODA la GUI para reflejar los cambios
             actualizarGUICompleta();
-            actualizarPermisosGUI();
-            
-            
         }
     });
-    
     timer.start(); // ¡Inicia el reloj!
     
+    // 6. Añadimos el oyente para guardar al cerrar (tu código existente)
     this.addWindowListener(new java.awt.event.WindowAdapter() {
         @Override
         public void windowClosing(java.awt.event.WindowEvent e) {
-            
-            // Justo antes de que la ventana se cierre...
             System.out.println("GUI: Guardando estado antes de salir...");
-            
-            // ¡Llamamos al método de guardar!
             simulador.guardarEstado();
-            
-            // (Después de esto, el programa se cerrará normalmente
-            //  gracias a la propiedad 'defaultCloseOperation')
         }
     });
-    // --- FIN DEL RELOJ ---
+
+    // 7. ¡IMPORTANTE! Establecemos los permisos y actualizamos la GUI una vez al inicio
+    actualizarPermisosGUI(); // <-- Lee el modo y deshabilita botones si es Usuario
+    actualizarGUICompleta(); // <-- Dibuja el estado cargado (disco, árbol, etc.)
 }
 
     /**
@@ -473,7 +478,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* ... (todo el código 'try-catch' de look and feel) ... */
+        /* (El código 'try-catch' de look and feel se queda igual) */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -495,8 +500,42 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                // ¡Así de simple!
-                new VentanaPrincipal().setVisible(true);
+                
+                // --- ¡¡INICIO DE LA LÓGICA DE SELECCIÓN!! ---
+                
+                // 1. Definimos los botones del diálogo
+                Object[] options = {"Modo Administrador", "Modo Usuario"};
+                
+                // 2. Mostramos el diálogo modal
+                int n = JOptionPane.showOptionDialog(
+                    null, // Sin ventana padre (porque aún no existe)
+                    "Bienvenido. Por favor, seleccione el modo de operación para iniciar:",
+                    "Selección de Modo",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    options,
+                    options[0]); // Opción por defecto
+                
+                ModoUsuario modoElegido;
+
+                // 3. Interpretamos la respuesta
+                if (n == JOptionPane.NO_OPTION) { // El botón 2 ("Modo Usuario")
+                    modoElegido = ModoUsuario.USUARIO;
+                } else if (n == JOptionPane.YES_OPTION) { // El botón 1 ("Admin")
+                    modoElegido = ModoUsuario.ADMINISTRADOR;
+                } else {
+                    // El usuario cerró la ventana (n == -1)
+                    System.out.println("Selección cancelada. Saliendo.");
+                    System.exit(0); // Salimos del programa
+                    return; // No continuamos
+                }
+                
+                // --- FIN DE LA LÓGICA DE SELECCIÓN ---
+                
+                // 4. Creamos la VentanaPrincipal, pasándole el modo elegido
+                // ¡Esta línea ahora llama al nuevo constructor (Paso 2)!
+                new VentanaPrincipal(modoElegido).setVisible(true);
             }
         });
     }
