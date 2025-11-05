@@ -9,6 +9,7 @@ package proyecto_sv;
  * @author massimo Gramcko
  */
 
+import java.util.Random;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.table.DefaultTableModel;
@@ -164,6 +165,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         btnCrearDirectorio = new javax.swing.JButton();
         btnEliminarDirectorio = new javax.swing.JButton();
         btnGenerarReporte = new javax.swing.JButton();
+        btnGenerarAleatorios = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -304,6 +306,13 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnGenerarAleatorios.setText("Generar Aleatorios (20)");
+        btnGenerarAleatorios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarAleatoriosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
@@ -313,6 +322,8 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelAccionesLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -330,8 +341,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(94, Short.MAX_VALUE))
-            .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -362,7 +372,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(btnEliminarDirectorio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGenerarReporte)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnGenerarAleatorios)
+                .addContainerGap())
         );
 
         panelControlesGeneral.add(panelAcciones);
@@ -701,6 +713,40 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     }
     }//GEN-LAST:event_btnGenerarReporteActionPerformed
 
+    private void btnGenerarAleatoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAleatoriosActionPerformed
+        // 1. Creamos un generador de números aleatorios
+    Random rand = new Random();
+
+    System.out.println("GUI: Encolando 20 solicitudes aleatorias...");
+
+    // 2. Hacemos un bucle de 20
+    for (int i = 0; i < 20; i++) {
+
+        // 3. Creamos un nombre de archivo y un tamaño aleatorio
+        String nombre = "archivo_aleatorio_" + i + ".txt";
+
+        // Tamaño aleatorio (entre 1 y 5 bloques)
+        int tamano = rand.nextInt(5) + 1; 
+
+        // 4. ¡IMPORTANTE! Encolamos la solicitud USANDO EL SIMULADOR
+        // (Esto asegura que pasen por el Planificador de Disco)
+        simulador.nuevaSolicitudUsuario(
+            TipoOperacion.CREAR_ARCHIVO, 
+            nombre, 
+            tamano
+        );
+    }
+
+    // 5. Notificamos al usuario y actualizamos la GUI
+    javax.swing.JOptionPane.showMessageDialog(this, 
+        "¡20 solicitudes de archivos aleatorios fueron añadidas a la cola!", 
+        "Generación Aleatoria", 
+        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+    // Actualizamos la GUI para ver las colas llenas
+    actualizarGUICompleta();
+    }//GEN-LAST:event_btnGenerarAleatoriosActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -777,6 +823,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JButton btnCrearDirectorio;
     private javax.swing.JButton btnEliminarArchivo;
     private javax.swing.JButton btnEliminarDirectorio;
+    private javax.swing.JButton btnGenerarAleatorios;
     private javax.swing.JButton btnGenerarReporte;
     private javax.swing.JButton btnLeerArchivo;
     private javax.swing.JButton btnRenombrar;
@@ -1130,6 +1177,7 @@ private void actualizarPermisosGUI() {
     btnCrearDirectorio.setEnabled(esAdmin);
     btnEliminarDirectorio.setEnabled(esAdmin);
     btnGenerarReporte.setEnabled(esAdmin);
+    btnGenerarAleatorios.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)
