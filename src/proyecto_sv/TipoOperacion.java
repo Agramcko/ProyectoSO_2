@@ -14,5 +14,5 @@ public enum TipoOperacion {
     CREAR_ARCHIVO,
     ELIMINAR_ARCHIVO,
     LEER_ARCHIVO, // (Si lo implementan)
-    ACTUALIZAR_ARCHIVO // (Si lo implementan)
+    ACTUALIZAR_ARCHIVO, // (Si lo implementan)
 }

@@ -195,4 +195,38 @@ public int leerArchivo(String nombre, Directorio directorioPadre) {
     
     return archivo.getIdPrimerBloque(); // Éxito
 }
+/**
+ * ¡NUEVO MÉTODO!
+ * Renombra un archivo o directorio en el directorio actual.
+ * Es una operación instantánea (metadatos).
+ * Devuelve 'true' si fue exitoso.
+ */
+public boolean renombrarNodo(String nombreViejo, String nombreNuevo) {
+
+    // 1. Validar que el nombre nuevo no esté vacío
+    if (nombreNuevo == null || nombreNuevo.trim().isEmpty()) {
+        System.err.println("Renombrar: El nombre nuevo no puede estar vacío.");
+        return false;
+    }
+
+    // 2. Validar que el nombre nuevo NO exista ya
+    if (directorioActual.buscarHijo(nombreNuevo) != null) {
+        System.err.println("Renombrar: El nombre '" + nombreNuevo + "' ya existe.");
+        return false;
+    }
+
+    // 3. Buscar el nodo (archivo/directorio) viejo
+    NodoArbol nodoARenombrar = directorioActual.buscarHijo(nombreViejo);
+
+    if (nodoARenombrar == null) {
+        System.err.println("Renombrar: No se encontró '" + nombreViejo + "'.");
+        return false;
+    }
+
+    // 4. ¡El cambio! (Usando el método del Paso 3)
+    nodoARenombrar.setNombre(nombreNuevo);
+
+    System.out.println("Renombrar: '" + nombreViejo + "' ahora es '" + nombreNuevo + "'.");
+    return true;
+}
 }

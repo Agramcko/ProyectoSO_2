@@ -106,6 +106,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         btnCrearArchivo = new javax.swing.JButton();
         btnEliminarArchivo = new javax.swing.JButton();
         btnLeerArchivo = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        txtNuevoNombre = new javax.swing.JTextField();
+        btnRenombrar = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -216,25 +219,40 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        jLabel2.setText("Nuevo Nombre:");
+
+        btnRenombrar.setText("Renombrar");
+        btnRenombrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRenombrarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(btnCrearArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(panelAccionesLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addComponent(lblTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spinnerTamano))
-                    .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(101, Short.MAX_VALUE))
             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(panelAccionesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(panelAccionesLayout.createSequentialGroup()
+                            .addComponent(lblTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(spinnerTamano))
+                        .addGroup(panelAccionesLayout.createSequentialGroup()
+                            .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(66, Short.MAX_VALUE))
+            .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,13 +265,19 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTamano)
                     .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(91, 91, 91)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(21, 21, 21)
+                .addComponent(btnRenombrar)
+                .addGap(51, 51, 51)
                 .addComponent(btnCrearArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarArchivo)
                 .addGap(18, 18, 18)
                 .addComponent(btnLeerArchivo)
-                .addContainerGap(57, Short.MAX_VALUE))
+                .addContainerGap(96, Short.MAX_VALUE))
         );
 
         panelControlesGeneral.add(panelAcciones);
@@ -305,7 +329,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(23, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -472,6 +496,38 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     actualizarGUICompleta();
     }//GEN-LAST:event_btnLeerArchivoActionPerformed
 
+    private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRenombrarActionPerformed
+        // Esta operación es instantánea y NO usa el planificador.
+
+    // 1. Obtenemos los nombres
+    String nombreViejo = txtNombreArchivo.getText(); // El nombre actual
+    String nombreNuevo = txtNuevoNombre.getText();   // El nombre deseado
+
+    if (nombreViejo.trim().isEmpty() || nombreNuevo.trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Debe ingresar el nombre actual Y el nombre nuevo.", 
+            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    // 2. Llamamos al backend directamente
+    boolean exito = simulador.getSistemaArchivos().renombrarNodo(nombreViejo, nombreNuevo);
+
+    if (exito) {
+        // 3. Limpiamos campos y actualizamos la GUI
+        txtNombreArchivo.setText("");
+        txtNuevoNombre.setText("");
+
+        // ¡Forzamos la actualización INMEDIATA de la GUI!
+        actualizarGUICompleta(); 
+    } else {
+        // (El SistemaArchivos ya imprimió el error en consola)
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "No se pudo renombrar. Verifique los nombres (quizás ya existe).", 
+            "Error al Renombrar", javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnRenombrarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -547,9 +603,11 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JButton btnCrearArchivo;
     private javax.swing.JButton btnEliminarArchivo;
     private javax.swing.JButton btnLeerArchivo;
+    private javax.swing.JButton btnRenombrar;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboPolitica;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JLabel lblNombre;
@@ -571,6 +629,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JSplitPane splitPaneVisuals;
     private javax.swing.JTable tablaAsignacion;
     private javax.swing.JTextField txtNombreArchivo;
+    private javax.swing.JTextField txtNuevoNombre;
     // End of variables declaration//GEN-END:variables
 
 // --- INICIO MÉTODOS DE ACTUALIZACIÓN DE GUI ---
@@ -836,17 +895,20 @@ private void construirNodosArbol(Directorio dirPadre, DefaultMutableTreeNode nod
  * los controles de la GUI (botones) según los permisos.
  */
 private void actualizarPermisosGUI() {
-    // Obtenemos el modo actual
     ModoUsuario modo = simulador.getModo();
-
-    // Comprobamos si es Administrador
     boolean esAdmin = (modo == ModoUsuario.ADMINISTRADOR);
-
-    // Habilitamos o deshabilitamos los botones
+    
+    // Permisos de ESCRITURA (Solo Admin)
     btnCrearArchivo.setEnabled(esAdmin);
     btnEliminarArchivo.setEnabled(esAdmin);
-
-    // (Puedes añadir otros controles aquí, como modificar, etc.)
+    
+    // --- ¡NUEVAS LÍNEAS! ---
+    btnRenombrar.setEnabled(esAdmin);
+    txtNuevoNombre.setEnabled(esAdmin); 
+    // --- FIN LÍNEAS NUEVAS ---
+    
+    // Permisos de LECTURA (Todos)
+    btnLeerArchivo.setEnabled(true);
 }
 /**
  * Tarea: Leer el BufferCache y mostrar su estado en el JTextArea.

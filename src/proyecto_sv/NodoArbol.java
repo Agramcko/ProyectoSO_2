@@ -38,4 +38,6 @@ public abstract class NodoArbol implements Serializable {
     
     // Método abstracto para que las subclases definan su tamaño
     public abstract int getTamanoEnBloques();
+    
+    
 }
