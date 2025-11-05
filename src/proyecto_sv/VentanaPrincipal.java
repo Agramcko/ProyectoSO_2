@@ -21,6 +21,11 @@ import javax.swing.ImageIcon;
 import javax.swing.UIManager;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import java.awt.Component;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.Enumeration;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
 
@@ -28,6 +33,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private Simulador simulador;
     private DefaultTreeModel modeloArbol;
     private DefaultMutableTreeNode raizArbol;
+    private boolean estaActualizandoArbol = false; // Nuestro "semáforo"
     
    /**
  * Constructor de la Ventana Principal.
@@ -97,6 +103,12 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     // --- ¡NUEVO! OYENTE DE SELECCIÓN DEL ÁRBOL (Paso 1.4) ---
     arbolArchivos.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
         public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
+            
+            // --- ¡AÑADE ESTA LÍNEA DE GUARDIA! ---
+            if (estaActualizandoArbol) {
+                return; // ¡No hagas nada! El Timer está trabajando.
+            }
+            // --- FIN LÍNEA NUEVA ---
             
             // 1. Obtener el nodo de la GUI que fue seleccionado
             javax.swing.tree.DefaultMutableTreeNode nodoSwing;
@@ -789,46 +801,108 @@ private void actualizarGUICompleta() {
 }
 
 /**
- * Tarea: Leer el Árbol del Simulador y dibujarlo en el JTree
+ * ¡NUEVO MÉTODO AYUDANTE RECURSIVO!
+ * Sincroniza los nodos del JTree (Swing) para que coincidan
+ * con el estado del backend, sin destruir los nodos existentes.
  */
 /**
- * Tarea: Leer el Árbol del Simulador y dibujarlo en el JTree
- * ¡VERSIÓN MODIFICADA!
- * Ya no reemplaza el modelo, solo lo actualiza para
- * no perder las expansiones de los nodos.
+ * ¡NUEVO MÉTODO AYUDANTE RECURSIVO!
+ * (Versión con parche anti-NPE)
  */
+private void sincronizarNodos(Directorio dirBackend, DefaultMutableTreeNode nodoSwingPadre) {
+
+    if (dirBackend == null) {
+        return; 
+    }
+
+    // ... (El código de los pasos 1, 2 y 3 no cambia) ...
+    ListaEnlazada<NodoArbol> hijosBackend = dirBackend.getHijos();
+    Map<String, DefaultMutableTreeNode> hijosSwingMap = new HashMap<>();
+    Enumeration hijosEnum = nodoSwingPadre.children();
+    while (hijosEnum.hasMoreElements()) {
+        DefaultMutableTreeNode nodoHijo = (DefaultMutableTreeNode) hijosEnum.nextElement();
+        Object objetoBackend = nodoHijo.getUserObject();
+        if (objetoBackend instanceof NodoArbol) {
+            hijosSwingMap.put(((NodoArbol) objetoBackend).getNombre(), nodoHijo);
+        }
+    }
+    NodoLista<NodoArbol> nodoActual = (hijosBackend != null) ? hijosBackend.getInicio() : null;
+    
+    while (nodoActual != null) {
+        NodoArbol hijoBackend = nodoActual.getDato();
+        if (hijoBackend == null) {
+            nodoActual = nodoActual.getSiguiente();
+            continue;
+        }
+        String nombreHijo = hijoBackend.getNombre();
+        DefaultMutableTreeNode nodoHijoSwing = hijosSwingMap.get(nombreHijo);
+
+        if (nodoHijoSwing == null) {
+            // -- CASO 1: No existe (Crear) --
+            DefaultMutableTreeNode nuevoNodoSwing = new DefaultMutableTreeNode(hijoBackend);
+            if (hijoBackend instanceof Directorio) {
+                sincronizarNodos((Directorio) hijoBackend, nuevoNodoSwing);
+            }
+            // ¡Esta línea es una notificación! Es perfecta.
+            modeloArbol.insertNodeInto(nuevoNodoSwing, nodoSwingPadre, nodoSwingPadre.getChildCount());
+            
+        } else {
+            // -- CASO 2: Sí existe (Actualizar) --
+            nodoHijoSwing.setUserObject(hijoBackend); 
+            
+            // --- ¡¡LÍNEA AÑADIDA!! ---
+            // Le decimos al modelo que ESTE nodo cambió (ej. su nombre)
+            modeloArbol.nodeChanged(nodoHijoSwing); 
+            // --- FIN LÍNEA AÑADIDA ---
+            
+            if (hijoBackend instanceof Directorio) {
+                sincronizarNodos((Directorio) hijoBackend, nodoHijoSwing);
+            }
+            hijosSwingMap.remove(nombreHijo);
+        }
+        nodoActual = nodoActual.getSiguiente();
+    }
+
+    // -- CASO 3: Eliminar --
+    for (DefaultMutableTreeNode nodoAFlushing : hijosSwingMap.values()) {
+        // ¡Esta línea es una notificación! Es perfecta.
+        modeloArbol.removeNodeFromParent(nodoAFlushing);
+    }
+}
 /**
  * Tarea: Leer el Árbol del Simulador y dibujarlo en el JTree
- * ¡VERSIÓN MODIFICADA!
- * Ya no reemplaza el modelo, solo lo actualiza para
- * no perder las expansiones de los nodos.
+ * ¡VERSIÓN FINAL!
+ * Sincroniza el árbol en lugar de recrearlo, para
+ * mantener el estado de expansión.
  */
 private void actualizarArbol() {
     
-    // (Tu línea de System.out.println... está bien, puedes dejarla o quitarla)
-    System.out.println("--- ¡NUEVO ACTUALIZAR ARBOL (RELOAD) EJECUTADO! ---");
+    // Si ya estamos actualizando, no hagas nada
+    if (this.estaActualizandoArbol) return;
+
+    // --- ¡LEVANTAMOS EL SEMÁFORO! ---
+    this.estaActualizandoArbol = true;
+    
+    // System.out.println("--- ¡NUEVO ACTUALIZAR ARBOL (SYNC) EJECUTADO! ---");
     
     try {
-        // 1. Obtenemos el backend
         Directorio raizBackend = simulador.getSistemaArchivos().getRaiz();
         if (raizBackend == null) return;
-
-        // --- ¡¡LÍNEA NUEVA!! ---
-        // Forzamos la actualización del objeto de la raíz, por si acaso.
-        this.raizArbol.setUserObject(raizBackend); 
-        // --- FIN LÍNEA NUEVA ---
-
-        // 2. Limpiamos los hijos del nodo Swing
-        this.raizArbol.removeAllChildren();
-
-        // 3. Volvemos a construir los hijos desde el backend
-        construirNodosArbol(raizBackend, this.raizArbol);
-
-        // 4. Le decimos al modelo que se recargue
-        this.modeloArbol.reload(this.raizArbol);
+        
+        this.raizArbol.setUserObject(raizBackend);
+        
+        // Llamamos al ayudante recursivo.
+        // Este método AHORA se encarga de TODAS las notificaciones.
+        sincronizarNodos(raizBackend, this.raizArbol);
+        
+        // --- ¡¡LÍNEA ELIMINADA!! ---
+        // this.modeloArbol.nodeStructureChanged(this.raizArbol); // <-- ¡BORRADA!
 
     } catch (Exception e) {
         e.printStackTrace();
+    } finally {
+        // --- ¡BAJAMOS EL SEMÁFORO! ---
+        this.estaActualizandoArbol = false;
     }
 }
 
@@ -1006,35 +1080,7 @@ private void llenarTablaRecursivo(Directorio directorioActual, DefaultTableModel
  * Método auxiliar RECURSIVO para construir el árbol visual (JTree)
  * a partir de nuestro árbol de directorios (backend).
  */
-private void construirNodosArbol(Directorio dirPadre, DefaultMutableTreeNode nodoSwingPadre) {
-    
-    // 1. Obtener la lista de hijos del directorio (backend)
-    ListaEnlazada<NodoArbol> hijos = dirPadre.getHijos();
-    if (hijos == null || hijos.estaVacia()) {
-        return; // No hay hijos, termina la recursión
-    }
 
-    // 2. Recorrer la lista enlazada de hijos
-    NodoLista<NodoArbol> nodoActual = hijos.getInicio();
-    while (nodoActual != null) {
-        
-        NodoArbol hijoBackend = nodoActual.getDato();
-
-        // 3. Crear un nuevo nodo de SWING para este hijo
-        DefaultMutableTreeNode nodoSwingHijo = new DefaultMutableTreeNode(hijoBackend);
-        
-        // 4. Añadir el nuevo nodo de SWING al padre de SWING
-        nodoSwingPadre.add(nodoSwingHijo);
-        
-        // 5. Si este hijo es un Directorio, llamamos recursivamente
-        if (hijoBackend instanceof Directorio) {
-            construirNodosArbol((Directorio) hijoBackend, nodoSwingHijo);
-        }
-        
-        // 6. Avanzar al siguiente hijo
-        nodoActual = nodoActual.getSiguiente();
-    }
-}
 /**
  * Revisa el modo actual del simulador y habilita o deshabilita
  * los controles de la GUI (botones) según los permisos.
