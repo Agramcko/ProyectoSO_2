@@ -181,6 +181,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
 
         splitPanePrincipal.setResizeWeight(0.3);
 
+        arbolArchivos.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jScrollPane1.setViewportView(arbolArchivos);
 
         scrollArbol.setViewportView(jScrollPane1);
@@ -190,7 +191,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         splitPaneDerecho.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
         splitPaneDerecho.setResizeWeight(0.6);
 
-        scrollDisco.setBorder(javax.swing.BorderFactory.createTitledBorder("Disco SD"));
+        scrollDisco.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Disco SD", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
 
         javax.swing.GroupLayout panelDiscoLayout = new javax.swing.GroupLayout(panelDisco);
         panelDisco.setLayout(panelDiscoLayout);
@@ -207,7 +208,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
 
         splitPaneVisuals.setLeftComponent(scrollDisco);
 
-        scrollTabla.setBorder(javax.swing.BorderFactory.createTitledBorder("Tabla de Asignación"));
+        scrollTabla.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tabla de Asignación", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
 
         tablaAsignacion.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -242,8 +243,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
 
         panelControlesGeneral.setLayout(new javax.swing.BoxLayout(panelControlesGeneral, javax.swing.BoxLayout.LINE_AXIS));
 
-        panelAcciones.setBorder(javax.swing.BorderFactory.createTitledBorder("Acciones"));
+        panelAcciones.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Acciones", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
 
+        lblNombre.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
         lblNombre.setText("Nombre:");
 
         txtNombreArchivo.addActionListener(new java.awt.event.ActionListener() {
@@ -252,10 +254,14 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        lblTamano.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
         lblTamano.setText("Tamaño (Bloques):");
 
         spinnerTamano.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
 
+        btnCrearArchivo.setBackground(new java.awt.Color(51, 153, 255));
+        btnCrearArchivo.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnCrearArchivo.setForeground(new java.awt.Color(255, 255, 255));
         btnCrearArchivo.setText("Crear Archivo");
         btnCrearArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -263,6 +269,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnEliminarArchivo.setBackground(new java.awt.Color(255, 51, 51));
+        btnEliminarArchivo.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnEliminarArchivo.setForeground(new java.awt.Color(255, 255, 255));
         btnEliminarArchivo.setText("Eliminar Archivo");
         btnEliminarArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -270,6 +279,8 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnLeerArchivo.setBackground(new java.awt.Color(255, 255, 0));
+        btnLeerArchivo.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         btnLeerArchivo.setText("Leer Archivo");
         btnLeerArchivo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -277,8 +288,18 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        jLabel2.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
         jLabel2.setText("Nuevo Nombre:");
 
+        txtNuevoNombre.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNuevoNombreActionPerformed(evt);
+            }
+        });
+
+        btnRenombrar.setBackground(new java.awt.Color(51, 153, 255));
+        btnRenombrar.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnRenombrar.setForeground(new java.awt.Color(255, 255, 255));
         btnRenombrar.setText("Renombrar");
         btnRenombrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -286,6 +307,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnCrearDirectorio.setBackground(new java.awt.Color(51, 153, 255));
+        btnCrearDirectorio.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnCrearDirectorio.setForeground(new java.awt.Color(255, 255, 255));
         btnCrearDirectorio.setText("Crear Directorio");
         btnCrearDirectorio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -293,6 +317,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnEliminarDirectorio.setBackground(new java.awt.Color(255, 51, 51));
+        btnEliminarDirectorio.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnEliminarDirectorio.setForeground(new java.awt.Color(255, 255, 255));
         btnEliminarDirectorio.setText("Eliminar Directorio");
         btnEliminarDirectorio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -300,6 +327,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnGenerarReporte.setBackground(new java.awt.Color(51, 204, 0));
+        btnGenerarReporte.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnGenerarReporte.setForeground(new java.awt.Color(255, 255, 255));
         btnGenerarReporte.setText("Generar Reporte");
         btnGenerarReporte.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -307,6 +337,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnGenerarAleatorios.setBackground(new java.awt.Color(51, 204, 0));
+        btnGenerarAleatorios.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnGenerarAleatorios.setForeground(new java.awt.Color(255, 255, 255));
         btnGenerarAleatorios.setText("Generar Aleatorios (20)");
         btnGenerarAleatorios.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -314,6 +347,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnReiniciar.setBackground(new java.awt.Color(255, 0, 51));
+        btnReiniciar.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnReiniciar.setForeground(new java.awt.Color(255, 255, 255));
         btnReiniciar.setText("Reiniciar Todo");
         btnReiniciar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -325,32 +361,45 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(btnCrearArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(panelAccionesLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addGroup(panelAccionesLayout.createSequentialGroup()
-                            .addComponent(lblTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(spinnerTamano))
-                        .addGroup(panelAccionesLayout.createSequentialGroup()
-                            .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(120, Short.MAX_VALUE))
-            .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(txtNuevoNombre))
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnCrearArchivo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addGroup(panelAccionesLayout.createSequentialGroup()
+                                .addComponent(lblNombre)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtNombreArchivo))
+                            .addGroup(panelAccionesLayout.createSequentialGroup()
+                                .addComponent(lblTamano)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 120, Short.MAX_VALUE))
+                            .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAccionesLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAccionesLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -363,34 +412,34 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTamano)
                     .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21)
-                .addComponent(btnRenombrar)
                 .addGap(18, 18, 18)
                 .addComponent(btnCrearArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarArchivo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
+                .addComponent(btnRenombrar)
+                .addGap(27, 27, 27)
                 .addComponent(btnLeerArchivo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(18, 18, 18)
                 .addComponent(btnCrearDirectorio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEliminarDirectorio)
+                .addGap(18, 18, 18)
+                .addComponent(btnReiniciar)
+                .addGap(5, 5, 5)
+                .addComponent(btnGenerarAleatorios)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnGenerarReporte)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnReiniciar)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
-                .addComponent(btnGenerarAleatorios)
                 .addContainerGap())
         );
 
         panelControlesGeneral.add(panelAcciones);
 
-        panelSistema.setBorder(javax.swing.BorderFactory.createTitledBorder("Sistema"));
+        panelSistema.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Sistema", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
 
         comboPolitica.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "FIFO", "SSTF", "SCAN", "C-SCAN" }));
         comboPolitica.addActionListener(new java.awt.event.ActionListener() {
@@ -399,9 +448,12 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
         jLabel1.setText("Política:");
 
         buttonGroup1.add(radioAdmin);
+        radioAdmin.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        radioAdmin.setForeground(new java.awt.Color(51, 204, 0));
         radioAdmin.setText("Modo Administrador");
         radioAdmin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -410,6 +462,8 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         });
 
         buttonGroup1.add(radioUsuario);
+        radioUsuario.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        radioUsuario.setForeground(new java.awt.Color(51, 153, 255));
         radioUsuario.setText("Modo Usuario");
         radioUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -417,7 +471,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
-        scrollBuffer.setBorder(javax.swing.BorderFactory.createTitledBorder("Buffer de Bloques"));
+        scrollBuffer.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Buffer de Bloques", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
 
         areaBuffer.setColumns(20);
         areaBuffer.setRows(5);
@@ -430,14 +484,17 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             .addGroup(panelSistemaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(radioUsuario)
-                    .addComponent(radioAdmin)
+                    .addComponent(scrollBuffer, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
                     .addGroup(panelSistemaLayout.createSequentialGroup()
-                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(radioUsuario)
+                            .addComponent(radioAdmin))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(panelSistemaLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(73, Short.MAX_VALUE))
+                        .addComponent(comboPolitica, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -448,16 +505,16 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
                 .addComponent(radioAdmin)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(radioUsuario)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 195, Short.MAX_VALUE)
-                .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(122, Short.MAX_VALUE))
         );
 
         panelControlesGeneral.add(panelSistema);
 
-        scrollColas.setBorder(javax.swing.BorderFactory.createTitledBorder("Colas"));
+        scrollColas.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Colas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
 
         areaColasProcesos.setColumns(20);
         areaColasProcesos.setRows(5);
@@ -479,80 +536,11 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(splitPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 758, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 49, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void txtNombreArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreArchivoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNombreArchivoActionPerformed
-
-    private void btnCrearArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearArchivoActionPerformed
-       // 1. Obtenemos los datos de la GUI
-    // (Usa los nombres de variable que definiste)
-    String nombre = txtNombreArchivo.getText(); 
-    int tamano = (Integer) spinnerTamano.getValue(); 
-
-    // 2. Validamos la entrada
-    if (nombre == null || nombre.trim().isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    
-    // (El JSpinner ya valida que el tamaño sea >= 1, si lo configuraste bien)
-    
-    // 3. ¡¡LA PARTE CLAVE!!
-    // NO creamos el archivo aquí.
-    // Le pedimos al SIMULADOR que "encole" la solicitud.
-    
-    simulador.nuevaSolicitudUsuario(
-        TipoOperacion.CREAR_ARCHIVO, 
-        nombre, 
-        tamano
-    );
-    
-    // 4. (Opcional) Limpiamos los campos
-    txtNombreArchivo.setText("");
-    spinnerTamano.setValue(1);
-    
-    System.out.println("GUI: Solicitud para CREAR '" + nombre + "' fue encolada.");
-    
-    // --- ¡¡LÍNEA AÑADIDA!! ---
-    // Actualizamos la GUI INMEDIATAMENTE para ver la cola "en espera"
-    actualizarGUICompleta();
-    }//GEN-LAST:event_btnCrearArchivoActionPerformed
-
-    private void btnEliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarArchivoActionPerformed
-       // 1. Obtener el nombre del archivo del JTree
-    // (Forma simple: usar el mismo campo de texto de "Nombre")
-    String nombre = txtNombreArchivo.getText();
-
-    // (Forma avanzada: ...)
-    // ...
-    
-    if (nombre == null || nombre.trim().isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para eliminar.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-    
-    // 2. ¡LA CLAVE! Pedir al simulador que ENCOLE la solicitud de borrado
-    simulador.nuevaSolicitudUsuario(
-        TipoOperacion.ELIMINAR_ARCHIVO, 
-        nombre, 
-        0 // El tamaño no importa para eliminar
-    );
-
-    // 3. Limpiar el campo
-    txtNombreArchivo.setText("");
-    
-    System.out.println("GUI: Solicitud para ELIMINAR '" + nombre + "' fue encolada.");
-    
-    // --- ¡¡LÍNEA AÑADIDA!! ---
-    // Actualizamos la GUI INMEDIATAMENTE para ver la cola "en espera"
-    actualizarGUICompleta();
-    }//GEN-LAST:event_btnEliminarArchivoActionPerformed
 
     private void radioAdminActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_radioAdminActionPerformed
       simulador.setModo(ModoUsuario.ADMINISTRADOR);
@@ -586,177 +574,6 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
 
     System.out.println("GUI: Política cambiada a " + simulador.getPolitica());
     }//GEN-LAST:event_comboPoliticaActionPerformed
-
-    private void btnLeerArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLeerArchivoActionPerformed
-        String nombre = txtNombreArchivo.getText();
-    if (nombre == null || nombre.trim().isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para leer.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    simulador.nuevaSolicitudUsuario(
-        TipoOperacion.LEER_ARCHIVO, 
-        nombre, 
-        0 // Tamaño no aplica
-    );
-
-    System.out.println("GUI: Solicitud para LEER '" + nombre + "' fue encolada.");
-    actualizarGUICompleta();
-    }//GEN-LAST:event_btnLeerArchivoActionPerformed
-
-    private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRenombrarActionPerformed
-        // Esta operación es instantánea y NO usa el planificador.
-
-    // 1. Obtenemos los nombres
-    String nombreViejo = txtNombreArchivo.getText(); // El nombre actual
-    String nombreNuevo = txtNuevoNombre.getText();   // El nombre deseado
-
-    if (nombreViejo.trim().isEmpty() || nombreNuevo.trim().isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Debe ingresar el nombre actual Y el nombre nuevo.", 
-            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    // 2. Llamamos al backend directamente
-    boolean exito = simulador.getSistemaArchivos().renombrarNodo(nombreViejo, nombreNuevo);
-
-    if (exito) {
-        // 3. Limpiamos campos y actualizamos la GUI
-        txtNombreArchivo.setText("");
-        txtNuevoNombre.setText("");
-
-        // ¡Forzamos la actualización INMEDIATA de la GUI!
-        actualizarGUICompleta(); 
-    } else {
-        // (El SistemaArchivos ya imprimió el error en consola)
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "No se pudo renombrar. Verifique los nombres (quizás ya existe).", 
-            "Error al Renombrar", javax.swing.JOptionPane.ERROR_MESSAGE);
-    }
-    }//GEN-LAST:event_btnRenombrarActionPerformed
-
-    private void btnCrearDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearDirectorioActionPerformed
-       // Esta operación es instantánea y NO usa el planificador.
-
-    // 1. Obtenemos el nombre del campo 'txtNombreArchivo'
-    String nombre = txtNombreArchivo.getText();
-
-    if (nombre.trim().isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Debe ingresar un nombre en el campo 'Nombre' para el directorio.", 
-            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    // 2. Llamamos al backend directamente
-    boolean exito = simulador.getSistemaArchivos().crearDirectorio(nombre);
-
-    if (exito) {
-        // 3. Limpiamos campos y actualizamos la GUI
-        txtNombreArchivo.setText("");
-
-        // ¡Forzamos la actualización INMEDIATA de la GUI!
-        actualizarGUICompleta(); // Esto hará que aparezca en el JTree
-    } else {
-        // (El SistemaArchivos ya imprimió el error en consola)
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "No se pudo crear el directorio (quizás el nombre ya existe).", 
-            "Error al Crear Directorio", javax.swing.JOptionPane.ERROR_MESSAGE);
-    }
-    }//GEN-LAST:event_btnCrearDirectorioActionPerformed
-
-    private void btnEliminarDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarDirectorioActionPerformed
-       // Esta operación es instantánea (pero compleja) y NO usa el planificador.
-
-    // 1. Obtenemos el nombre del campo 'txtNombreArchivo'
-    String nombre = txtNombreArchivo.getText();
-
-    if (nombre.trim().isEmpty()) {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Debe ingresar un nombre de directorio en el campo 'Nombre'.", 
-            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-        return;
-    }
-
-    // 2. Advertencia al usuario (¡esto es destructivo!)
-    int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
-        "¿Está seguro de que desea eliminar el directorio '" + nombre + "'?\n" +
-        "¡TODOS los archivos y subdirectorios dentro de él se borrarán permanentemente!",
-        "Confirmar Eliminación Recursiva",
-        javax.swing.JOptionPane.YES_NO_OPTION,
-        javax.swing.JOptionPane.WARNING_MESSAGE);
-
-    if (confirm != javax.swing.JOptionPane.YES_OPTION) {
-        return; // El usuario canceló
-    }
-
-    // 3. Llamamos al backend directamente
-    boolean exito = simulador.getSistemaArchivos().eliminarDirectorio(nombre);
-
-    if (exito) {
-        // 4. Limpiamos campos y actualizamos la GUI
-        txtNombreArchivo.setText("");
-        actualizarGUICompleta(); // Para que desaparezca del JTree
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "No se pudo eliminar el directorio.", 
-            "Error al Eliminar Directorio", javax.swing.JOptionPane.ERROR_MESSAGE);
-    }
-    }//GEN-LAST:event_btnEliminarDirectorioActionPerformed
-
-    private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
-        // 1. Llamamos al backend directamente
-    boolean exito = simulador.getSistemaArchivos().generarReporteDeEstado();
-
-    if (exito) {
-        // 2. Notificamos al usuario
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "¡Reporte 'reporte_disco.txt' generado exitosamente!\n" +
-            "Busca el archivo en la carpeta de tu proyecto.", 
-            "Reporte Generado", 
-            javax.swing.JOptionPane.INFORMATION_MESSAGE);
-    } else {
-        javax.swing.JOptionPane.showMessageDialog(this, 
-            "Error al generar el reporte. Revisa la consola.", 
-            "Error de Reporte", 
-            javax.swing.JOptionPane.ERROR_MESSAGE);
-    }
-    }//GEN-LAST:event_btnGenerarReporteActionPerformed
-
-    private void btnGenerarAleatoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAleatoriosActionPerformed
-        // 1. Creamos un generador de números aleatorios
-    Random rand = new Random();
-
-    System.out.println("GUI: Encolando 20 solicitudes aleatorias...");
-
-    // 2. Hacemos un bucle de 20
-    for (int i = 0; i < 20; i++) {
-
-        // 3. Creamos un nombre de archivo y un tamaño aleatorio
-        String nombre = "archivo_aleatorio_" + i + ".txt";
-
-        // Tamaño aleatorio (entre 1 y 5 bloques)
-        int tamano = rand.nextInt(5) + 1; 
-
-        // 4. ¡IMPORTANTE! Encolamos la solicitud USANDO EL SIMULADOR
-        // (Esto asegura que pasen por el Planificador de Disco)
-        simulador.nuevaSolicitudUsuario(
-            TipoOperacion.CREAR_ARCHIVO, 
-            nombre, 
-            tamano
-        );
-    }
-
-    // 5. Notificamos al usuario y actualizamos la GUI
-    javax.swing.JOptionPane.showMessageDialog(this, 
-        "¡20 solicitudes de archivos aleatorios fueron añadidas a la cola!", 
-        "Generación Aleatoria", 
-        javax.swing.JOptionPane.INFORMATION_MESSAGE);
-
-    // Actualizamos la GUI para ver las colas llenas
-    actualizarGUICompleta();
-    }//GEN-LAST:event_btnGenerarAleatoriosActionPerformed
 
     private void btnReiniciarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReiniciarActionPerformed
         // 1. Advertencia al usuario (¡esto es destructivo!)
@@ -793,6 +610,250 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             javax.swing.JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_btnReiniciarActionPerformed
+
+    private void btnGenerarAleatoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAleatoriosActionPerformed
+        // 1. Creamos un generador de números aleatorios
+        Random rand = new Random();
+
+        System.out.println("GUI: Encolando 20 solicitudes aleatorias...");
+
+        // 2. Hacemos un bucle de 20
+        for (int i = 0; i < 20; i++) {
+
+            // 3. Creamos un nombre de archivo y un tamaño aleatorio
+            String nombre = "archivo_aleatorio_" + i + ".txt";
+
+            // Tamaño aleatorio (entre 1 y 5 bloques)
+            int tamano = rand.nextInt(5) + 1;
+
+            // 4. ¡IMPORTANTE! Encolamos la solicitud USANDO EL SIMULADOR
+            // (Esto asegura que pasen por el Planificador de Disco)
+            simulador.nuevaSolicitudUsuario(
+                TipoOperacion.CREAR_ARCHIVO,
+                nombre,
+                tamano
+            );
+        }
+
+        // 5. Notificamos al usuario y actualizamos la GUI
+        javax.swing.JOptionPane.showMessageDialog(this,
+            "¡20 solicitudes de archivos aleatorios fueron añadidas a la cola!",
+            "Generación Aleatoria",
+            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+        // Actualizamos la GUI para ver las colas llenas
+        actualizarGUICompleta();
+    }//GEN-LAST:event_btnGenerarAleatoriosActionPerformed
+
+    private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
+        // 1. Llamamos al backend directamente
+        boolean exito = simulador.getSistemaArchivos().generarReporteDeEstado();
+
+        if (exito) {
+            // 2. Notificamos al usuario
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "¡Reporte 'reporte_disco.txt' generado exitosamente!\n" +
+                "Busca el archivo en la carpeta de tu proyecto.",
+                "Reporte Generado",
+                javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Error al generar el reporte. Revisa la consola.",
+                "Error de Reporte",
+                javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnGenerarReporteActionPerformed
+
+    private void btnEliminarDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarDirectorioActionPerformed
+        // Esta operación es instantánea (pero compleja) y NO usa el planificador.
+
+        // 1. Obtenemos el nombre del campo 'txtNombreArchivo'
+        String nombre = txtNombreArchivo.getText();
+
+        if (nombre.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Debe ingresar un nombre de directorio en el campo 'Nombre'.",
+                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 2. Advertencia al usuario (¡esto es destructivo!)
+        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
+            "¿Está seguro de que desea eliminar el directorio '" + nombre + "'?\n" +
+            "¡TODOS los archivos y subdirectorios dentro de él se borrarán permanentemente!",
+            "Confirmar Eliminación Recursiva",
+            javax.swing.JOptionPane.YES_NO_OPTION,
+            javax.swing.JOptionPane.WARNING_MESSAGE);
+
+        if (confirm != javax.swing.JOptionPane.YES_OPTION) {
+            return; // El usuario canceló
+        }
+
+        // 3. Llamamos al backend directamente
+        boolean exito = simulador.getSistemaArchivos().eliminarDirectorio(nombre);
+
+        if (exito) {
+            // 4. Limpiamos campos y actualizamos la GUI
+            txtNombreArchivo.setText("");
+            actualizarGUICompleta(); // Para que desaparezca del JTree
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "No se pudo eliminar el directorio.",
+                "Error al Eliminar Directorio", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnEliminarDirectorioActionPerformed
+
+    private void btnCrearDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearDirectorioActionPerformed
+        // Esta operación es instantánea y NO usa el planificador.
+
+        // 1. Obtenemos el nombre del campo 'txtNombreArchivo'
+        String nombre = txtNombreArchivo.getText();
+
+        if (nombre.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Debe ingresar un nombre en el campo 'Nombre' para el directorio.",
+                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 2. Llamamos al backend directamente
+        boolean exito = simulador.getSistemaArchivos().crearDirectorio(nombre);
+
+        if (exito) {
+            // 3. Limpiamos campos y actualizamos la GUI
+            txtNombreArchivo.setText("");
+
+            // ¡Forzamos la actualización INMEDIATA de la GUI!
+            actualizarGUICompleta(); // Esto hará que aparezca en el JTree
+        } else {
+            // (El SistemaArchivos ya imprimió el error en consola)
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "No se pudo crear el directorio (quizás el nombre ya existe).",
+                "Error al Crear Directorio", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnCrearDirectorioActionPerformed
+
+    private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRenombrarActionPerformed
+        // Esta operación es instantánea y NO usa el planificador.
+
+        // 1. Obtenemos los nombres
+        String nombreViejo = txtNombreArchivo.getText(); // El nombre actual
+        String nombreNuevo = txtNuevoNombre.getText();   // El nombre deseado
+
+        if (nombreViejo.trim().isEmpty() || nombreNuevo.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Debe ingresar el nombre actual Y el nombre nuevo.",
+                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 2. Llamamos al backend directamente
+        boolean exito = simulador.getSistemaArchivos().renombrarNodo(nombreViejo, nombreNuevo);
+
+        if (exito) {
+            // 3. Limpiamos campos y actualizamos la GUI
+            txtNombreArchivo.setText("");
+            txtNuevoNombre.setText("");
+
+            // ¡Forzamos la actualización INMEDIATA de la GUI!
+            actualizarGUICompleta();
+        } else {
+            // (El SistemaArchivos ya imprimió el error en consola)
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "No se pudo renombrar. Verifique los nombres (quizás ya existe).",
+                "Error al Renombrar", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_btnRenombrarActionPerformed
+
+    private void txtNuevoNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNuevoNombreActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNuevoNombreActionPerformed
+
+    private void btnLeerArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLeerArchivoActionPerformed
+        String nombre = txtNombreArchivo.getText();
+        if (nombre == null || nombre.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para leer.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        simulador.nuevaSolicitudUsuario(
+            TipoOperacion.LEER_ARCHIVO,
+            nombre,
+            0 // Tamaño no aplica
+        );
+
+        System.out.println("GUI: Solicitud para LEER '" + nombre + "' fue encolada.");
+        actualizarGUICompleta();
+    }//GEN-LAST:event_btnLeerArchivoActionPerformed
+
+    private void btnEliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarArchivoActionPerformed
+        // 1. Obtener el nombre del archivo del JTree
+        // (Forma simple: usar el mismo campo de texto de "Nombre")
+        String nombre = txtNombreArchivo.getText();
+
+        // (Forma avanzada: ...)
+        // ...
+
+        if (nombre == null || nombre.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para eliminar.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // 2. ¡LA CLAVE! Pedir al simulador que ENCOLE la solicitud de borrado
+        simulador.nuevaSolicitudUsuario(
+            TipoOperacion.ELIMINAR_ARCHIVO,
+            nombre,
+            0 // El tamaño no importa para eliminar
+        );
+
+        // 3. Limpiar el campo
+        txtNombreArchivo.setText("");
+
+        System.out.println("GUI: Solicitud para ELIMINAR '" + nombre + "' fue encolada.");
+
+        // --- ¡¡LÍNEA AÑADIDA!! ---
+        // Actualizamos la GUI INMEDIATAMENTE para ver la cola "en espera"
+        actualizarGUICompleta();
+    }//GEN-LAST:event_btnEliminarArchivoActionPerformed
+
+    private void btnCrearArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearArchivoActionPerformed
+        // 1. Obtenemos los datos de la GUI
+        // (Usa los nombres de variable que definiste)
+        String nombre = txtNombreArchivo.getText();
+        int tamano = (Integer) spinnerTamano.getValue();
+
+        // 2. Validamos la entrada
+        if (nombre == null || nombre.trim().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // (El JSpinner ya valida que el tamaño sea >= 1, si lo configuraste bien)
+
+        // 3. ¡¡LA PARTE CLAVE!!
+        // NO creamos el archivo aquí.
+        // Le pedimos al SIMULADOR que "encole" la solicitud.
+
+        simulador.nuevaSolicitudUsuario(
+            TipoOperacion.CREAR_ARCHIVO,
+            nombre,
+            tamano
+        );
+
+        // 4. (Opcional) Limpiamos los campos
+        txtNombreArchivo.setText("");
+        spinnerTamano.setValue(1);
+
+        System.out.println("GUI: Solicitud para CREAR '" + nombre + "' fue encolada.");
+
+        // --- ¡¡LÍNEA AÑADIDA!! ---
+        // Actualizamos la GUI INMEDIATAMENTE para ver la cola "en espera"
+        actualizarGUICompleta();
+    }//GEN-LAST:event_btnCrearArchivoActionPerformed
+
+    private void txtNombreArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreArchivoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtNombreArchivoActionPerformed
 
     /**
      * @param args the command line arguments
