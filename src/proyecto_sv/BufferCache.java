@@ -102,4 +102,8 @@ public class BufferCache implements Serializable {
             }
         }
     }
+    
+    public ListaEnlazada<Bloque> getCacheInterno() {
+    return this.cache;
+}
 }

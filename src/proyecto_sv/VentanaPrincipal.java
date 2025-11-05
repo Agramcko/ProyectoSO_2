@@ -106,6 +106,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         radioAdmin = new javax.swing.JRadioButton();
         radioUsuario = new javax.swing.JRadioButton();
+        scrollBuffer = new javax.swing.JScrollPane();
+        areaBuffer = new javax.swing.JTextArea();
         scrollColas = new javax.swing.JScrollPane();
         areaColasProcesos = new javax.swing.JTextArea();
 
@@ -278,6 +280,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        scrollBuffer.setBorder(javax.swing.BorderFactory.createTitledBorder("Buffer de Bloques"));
+
+        areaBuffer.setColumns(20);
+        areaBuffer.setRows(5);
+        scrollBuffer.setViewportView(areaBuffer);
+
         javax.swing.GroupLayout panelSistemaLayout = new javax.swing.GroupLayout(panelSistema);
         panelSistema.setLayout(panelSistemaLayout);
         panelSistemaLayout.setHorizontalGroup(
@@ -290,8 +298,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     .addGroup(panelSistemaLayout.createSequentialGroup()
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(130, Short.MAX_VALUE))
+                        .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -304,7 +313,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addComponent(radioAdmin)
                 .addGap(18, 18, 18)
                 .addComponent(radioUsuario)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
+                .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         panelControlesGeneral.add(panelSistema);
@@ -331,7 +342,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(splitPanePrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, 642, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 132, Short.MAX_VALUE))
+                .addGap(0, 165, Short.MAX_VALUE))
         );
 
         pack();
@@ -492,6 +503,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTree arbolArchivos;
+    private javax.swing.JTextArea areaBuffer;
     private javax.swing.JTextArea areaColasProcesos;
     private javax.swing.JButton btnCrearArchivo;
     private javax.swing.JButton btnEliminarArchivo;
@@ -510,6 +522,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JRadioButton radioAdmin;
     private javax.swing.JRadioButton radioUsuario;
     private javax.swing.JScrollPane scrollArbol;
+    private javax.swing.JScrollPane scrollBuffer;
     private javax.swing.JScrollPane scrollColas;
     private javax.swing.JScrollPane scrollDisco;
     private javax.swing.JScrollPane scrollTabla;
@@ -541,6 +554,7 @@ private void actualizarGUICompleta() {
     
     // 4. Actualizar la Vista de Colas (JTextArea)
     actualizarVistaColas();
+    actualizarVistaBuffer();
 }
 
 /**
@@ -794,5 +808,35 @@ private void actualizarPermisosGUI() {
     btnEliminarArchivo.setEnabled(esAdmin);
 
     // (Puedes añadir otros controles aquí, como modificar, etc.)
+}
+/**
+ * Tarea: Leer el BufferCache y mostrar su estado en el JTextArea.
+ */
+private void actualizarVistaBuffer() {
+    areaBuffer.setText(""); // Limpiar el área
+
+    try {
+        // (Necesitamos una forma de acceder al buffer desde el Simulador)
+        // (Iremos a Simulador y SistemaArchivos para añadir este getter)
+
+        ListaEnlazada<Bloque> cache = simulador.getSistemaArchivos().getBufferCache().getCacheInterno();
+
+        areaBuffer.append("--- Buffer (FIFO) ---\n");
+        areaBuffer.append("(Inicio)\n");
+
+        if (cache.estaVacia()) {
+            areaBuffer.append("(Vacío)\n");
+        } else {
+            NodoLista<Bloque> actual = cache.getInicio();
+            while (actual != null) {
+                areaBuffer.append("Bloque " + actual.getDato().getId() + "\n");
+                actual = actual.getSiguiente();
+            }
+        }
+        areaBuffer.append("(Fin)\n");
+
+    } catch (Exception e) {
+        areaBuffer.setText("Error al leer buffer.");
+    }
 }
 }

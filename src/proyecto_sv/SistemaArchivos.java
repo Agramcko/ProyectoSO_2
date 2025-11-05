@@ -41,6 +41,9 @@ public class SistemaArchivos implements Serializable {
     public void setDirectorioActual(Directorio dir) {
         this.directorioActual = dir;
     }
+    public BufferCache getBufferCache() {
+    return this.buffer;
+}
 
     // --- Lógica CRUD (Backend) ---
     // [cite: 36]
