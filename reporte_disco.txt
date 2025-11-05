@@ -1,0 +1,21 @@
+--- REPORTE DEL SISTEMA DE ARCHIVOS ---
+Generado: 2025/11/05 14:23:46
+---------------------------------------
+
+ESTRUCTURA DEL DIRECTORIO:
+📁 root/
+  📁 Documentos/
+    📄 Musica (Tamaño: 3 bloques)
+         └ (Bloques: [0] -> [1] -> [2] -> FIN)
+  📁 Pasaporte/
+    📄 Massimo.pdf (Tamaño: 5 bloques)
+         └ (Bloques: [3] -> [4] -> [5] -> [6] -> [7] -> FIN)
+    📄 Alessandro.pdf (Tamaño: 5 bloques)
+         └ (Bloques: [8] -> [9] -> [10] -> [11] -> [12] -> FIN)
+
+
+---------------------------------------
+ESTADO DEL DISCO (SD):
+Total de Bloques: 100
+Bloques Libres: 87
+Bloques Ocupados: 13

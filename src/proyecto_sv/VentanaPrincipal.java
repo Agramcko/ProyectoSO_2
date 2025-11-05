@@ -163,6 +163,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         btnRenombrar = new javax.swing.JButton();
         btnCrearDirectorio = new javax.swing.JButton();
         btnEliminarDirectorio = new javax.swing.JButton();
+        btnGenerarReporte = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -296,6 +297,13 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnGenerarReporte.setText("Generar Reporte");
+        btnGenerarReporte.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarReporteActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
@@ -321,8 +329,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(94, Short.MAX_VALUE))
             .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -351,7 +360,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(btnCrearDirectorio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEliminarDirectorio)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnGenerarReporte)
+                .addContainerGap(38, Short.MAX_VALUE))
         );
 
         panelControlesGeneral.add(panelAcciones);
@@ -403,7 +414,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 264, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -671,6 +682,25 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     }
     }//GEN-LAST:event_btnEliminarDirectorioActionPerformed
 
+    private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
+        // 1. Llamamos al backend directamente
+    boolean exito = simulador.getSistemaArchivos().generarReporteDeEstado();
+
+    if (exito) {
+        // 2. Notificamos al usuario
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "¡Reporte 'reporte_disco.txt' generado exitosamente!\n" +
+            "Busca el archivo en la carpeta de tu proyecto.", 
+            "Reporte Generado", 
+            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Error al generar el reporte. Revisa la consola.", 
+            "Error de Reporte", 
+            javax.swing.JOptionPane.ERROR_MESSAGE);
+    }
+    }//GEN-LAST:event_btnGenerarReporteActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -747,6 +777,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JButton btnCrearDirectorio;
     private javax.swing.JButton btnEliminarArchivo;
     private javax.swing.JButton btnEliminarDirectorio;
+    private javax.swing.JButton btnGenerarReporte;
     private javax.swing.JButton btnLeerArchivo;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -1098,6 +1129,7 @@ private void actualizarPermisosGUI() {
     txtNuevoNombre.setEnabled(esAdmin);
     btnCrearDirectorio.setEnabled(esAdmin);
     btnEliminarDirectorio.setEnabled(esAdmin);
+    btnGenerarReporte.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)

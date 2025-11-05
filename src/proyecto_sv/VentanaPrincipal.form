@@ -211,9 +211,10 @@
                                       <Component id="txtNuevoNombre" min="-2" pref="109" max="-2" attributes="0"/>
                                   </Group>
                               </Group>
-                              <EmptySpace pref="86" max="32767" attributes="0"/>
+                              <EmptySpace pref="94" max="32767" attributes="0"/>
                           </Group>
                           <Component id="btnEliminarDirectorio" alignment="0" max="32767" attributes="0"/>
+                          <Component id="btnGenerarReporte" alignment="0" max="32767" attributes="0"/>
                       </Group>
                     </DimensionLayout>
                     <DimensionLayout dim="1">
@@ -246,7 +247,9 @@
                               <Component id="btnCrearDirectorio" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="btnEliminarDirectorio" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="35" max="32767" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="btnGenerarReporte" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="38" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -329,6 +332,14 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEliminarDirectorioActionPerformed"/>
                       </Events>
                     </Component>
+                    <Component class="javax.swing.JButton" name="btnGenerarReporte">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Generar Reporte"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGenerarReporteActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="panelSistema">
@@ -355,7 +366,7 @@
                                   </Group>
                                   <Component id="scrollBuffer" alignment="0" min="-2" pref="264" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="43" max="32767" attributes="0"/>
+                              <EmptySpace pref="47" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>

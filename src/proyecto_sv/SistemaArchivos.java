@@ -8,8 +8,13 @@ package proyecto_sv;
  * @author Alessandro Gramcko
  * @author massimo Gramcko
  */
-
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.BufferedWriter;
+import java.time.LocalDateTime; // (Para la fecha del reporte)
+import java.time.format.DateTimeFormatter;
 import java.io.Serializable;
+
 public class SistemaArchivos implements Serializable {
     private Directorio raiz;
     private DiscoSD disco;
@@ -325,5 +330,83 @@ private void eliminarDirectorioRecursivo(Directorio dir) {
     }
     // Cuando el 'while' termina, 'dir' está vacío.
 }
+// Pega esto dentro de la clase SistemaArchivos
 
+/**
+ * ¡NUEVO MÉTODO PÚBLICO!
+ * Punto de entrada para crear el reporte.
+ * Crea un StringBuilder y llama al ayudante recursivo.
+ */
+public boolean generarReporteDeEstado() {
+    // 1. Usamos un StringBuilder para construir el reporte en memoria
+    StringBuilder sb = new StringBuilder();
+
+    // 2. Encabezado del reporte
+    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+    sb.append("--- REPORTE DEL SISTEMA DE ARCHIVOS ---\n");
+    sb.append("Generado: ").append(dtf.format(LocalDateTime.now())).append("\n");
+    sb.append("---------------------------------------\n\n");
+    sb.append("ESTRUCTURA DEL DIRECTORIO:\n");
+
+    // 3. Llamada al ayudante recursivo (empezando desde la raíz)
+    generarReporteRecursivo(this.raiz, sb, "");
+
+    // 4. Información del Disco
+    sb.append("\n\n---------------------------------------\n");
+    sb.append("ESTADO DEL DISCO (SD):\n");
+    sb.append("Total de Bloques: ").append(disco.getNumBloquesTotal()).append("\n");
+    sb.append("Bloques Libres: ").append(disco.getNumBloquesLibres()).append("\n");
+    sb.append("Bloques Ocupados: ").append(disco.getNumBloquesTotal() - disco.getNumBloquesLibres()).append("\n");
+
+    // 5. Escribir el StringBuilder a un archivo .txt
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter("reporte_disco.txt"))) {
+        writer.write(sb.toString());
+        System.out.println("¡Reporte 'reporte_disco.txt' generado exitosamente!");
+        return true;
+    } catch (IOException e) {
+        System.err.println("Error al escribir el reporte: " + e.getMessage());
+        e.printStackTrace();
+        return false;
+    }
+}
+
+/**
+ * ¡NUEVO MÉTODO PRIVADO (AYUDANTE RECURSIVO)!
+ * Recorre el árbol y añade la información al StringBuilder.
+ */
+private void generarReporteRecursivo(NodoArbol nodo, StringBuilder sb, String indentacion) {
+    if (nodo == null) return;
+
+    sb.append(indentacion); // Aplica la sangría
+
+    if (nodo instanceof Directorio) {
+        // Si es un Directorio
+        sb.append("📁 ").append(nodo.getNombre()).append("/\n");
+
+        // Llamada recursiva para cada hijo
+        Directorio dir = (Directorio) nodo;
+        NodoLista<NodoArbol> hijoActual = dir.getHijos().getInicio();
+        while (hijoActual != null) {
+            generarReporteRecursivo(hijoActual.getDato(), sb, indentacion + "  ");
+            hijoActual = hijoActual.getSiguiente();
+        }
+
+    } else if (nodo instanceof Archivo) {
+        // Si es un Archivo
+        Archivo archivo = (Archivo) nodo;
+        sb.append("📄 ").append(archivo.getNombre());
+        sb.append(" (Tamaño: ").append(archivo.getTamanoEnBloques()).append(" bloques)\n");
+
+        // Detalle de la cadena de bloques
+        sb.append(indentacion).append("     └ (Bloques: ");
+        int idBloqueActual = archivo.getIdPrimerBloque();
+        while (idBloqueActual != -1) {
+            sb.append("[").append(idBloqueActual).append("] -> ");
+            Bloque bloque = disco.getBloque(idBloqueActual);
+            if (bloque == null) break;
+            idBloqueActual = bloque.getPunteroSiguiente();
+        }
+        sb.append("FIN)\n");
+    }
+}
 }
