@@ -28,6 +28,11 @@ public class PlanificadorDisco {
  * MODIFICADO: Método privado que ejecuta la solicitud LLAMANDO al backend.
  * ¡Ahora devuelve el ID del primer bloque que procesó!
  */
+/**
+ * MODIFICADO: Método privado que ejecuta la solicitud LLAMANDO al backend.
+ * ¡Ahora devuelve el ID del primer bloque que procesó!
+ * ¡Y AHORA INCLUYE LÓGICA DE LECTURA!
+ */
 private int ejecutarSolicitud(SolicitudIO solicitud) {
     boolean exito = false;
     int bloqueProcesado = -1; // Para guardar el bloque
@@ -35,13 +40,8 @@ private int ejecutarSolicitud(SolicitudIO solicitud) {
     if (solicitud.getTipo() == TipoOperacion.CREAR_ARCHIVO) {
         System.out.println("PLANIFICADOR: Ejecutando CREAR " + solicitud.getNombreArchivo());
 
-        // MODIFICADO: necesitamos obtener el directorio padre de la solicitud
         Directorio padre = solicitud.getDirectorioPadre();
-        // (Necesitamos modificar SistemaArchivos para que acepte esto)
-
-        // ¡¡MODIFICACIÓN IMPORTANTE EN 'SistemaArchivos' NECESARIA!!
-        // Debemos cambiar 'crearArchivo' para que acepte el directorio
-        // y devuelva el idPrimerBloque
+        
         bloqueProcesado = sistemaArchivos.crearArchivo(
             solicitud.getNombreArchivo(), 
             solicitud.getTamanoEnBloques(),
@@ -52,14 +52,24 @@ private int ejecutarSolicitud(SolicitudIO solicitud) {
     } else if (solicitud.getTipo() == TipoOperacion.ELIMINAR_ARCHIVO) {
         System.out.println("PLANIFICADOR: Ejecutando ELIMINAR " + solicitud.getNombreArchivo());
 
-        // ¡¡MODIFICACIÓN IMPORTANTE EN 'SistemaArchivos' NECESARIA!!
-        // Debemos cambiar 'eliminarArchivo' para que acepte el directorio
-        // y devuelva el idPrimerBloque
         bloqueProcesado = sistemaArchivos.eliminarArchivo(
             solicitud.getNombreArchivo(),
             solicitud.getDirectorioPadre() // ¡Pasamos el directorio!
         );
         exito = (bloqueProcesado != -1);
+    
+    // --- ¡¡BLOQUE NUEVO AÑADIDO!! ---
+    } else if (solicitud.getTipo() == TipoOperacion.LEER_ARCHIVO) {
+        System.out.println("PLANIFICADOR: Ejecutando LEER " + solicitud.getNombreArchivo());
+        
+        // Llamamos al nuevo método de backend 'leerArchivo'
+        bloqueProcesado = sistemaArchivos.leerArchivo(
+            solicitud.getNombreArchivo(),
+            solicitud.getDirectorioPadre()
+        );
+        exito = (bloqueProcesado != -1);
+    // --- FIN DEL BLOQUE NUEVO ---
+    
     }
 
     if (exito) {

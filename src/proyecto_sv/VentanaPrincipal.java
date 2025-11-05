@@ -100,6 +100,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         spinnerTamano = new javax.swing.JSpinner();
         btnCrearArchivo = new javax.swing.JButton();
         btnEliminarArchivo = new javax.swing.JButton();
+        btnLeerArchivo = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -201,6 +202,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        btnLeerArchivo.setText("Leer Archivo");
+        btnLeerArchivo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLeerArchivoActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
@@ -217,8 +225,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txtNombreArchivo, javax.swing.GroupLayout.PREFERRED_SIZE, 103, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addContainerGap(101, Short.MAX_VALUE))
             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         panelAccionesLayout.setVerticalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -231,11 +240,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTamano)
                     .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 157, Short.MAX_VALUE)
+                .addGap(91, 91, 91)
                 .addComponent(btnCrearArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarArchivo)
-                .addGap(28, 28, 28))
+                .addGap(18, 18, 18)
+                .addComponent(btnLeerArchivo)
+                .addContainerGap(57, Short.MAX_VALUE))
         );
 
         panelControlesGeneral.add(panelAcciones);
@@ -280,7 +291,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                         .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(118, Short.MAX_VALUE))
+                .addContainerGap(130, Short.MAX_VALUE))
         );
         panelSistemaLayout.setVerticalGroup(
             panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -428,6 +439,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     System.out.println("GUI: Política cambiada a " + simulador.getPolitica());
     }//GEN-LAST:event_comboPoliticaActionPerformed
 
+    private void btnLeerArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLeerArchivoActionPerformed
+        String nombre = txtNombreArchivo.getText();
+    if (nombre == null || nombre.trim().isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para leer.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        return;
+    }
+
+    simulador.nuevaSolicitudUsuario(
+        TipoOperacion.LEER_ARCHIVO, 
+        nombre, 
+        0 // Tamaño no aplica
+    );
+
+    System.out.println("GUI: Solicitud para LEER '" + nombre + "' fue encolada.");
+    actualizarGUICompleta();
+    }//GEN-LAST:event_btnLeerArchivoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -467,6 +495,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextArea areaColasProcesos;
     private javax.swing.JButton btnCrearArchivo;
     private javax.swing.JButton btnEliminarArchivo;
+    private javax.swing.JButton btnLeerArchivo;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboPolitica;
     private javax.swing.JLabel jLabel1;

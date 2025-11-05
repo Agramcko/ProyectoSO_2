@@ -113,4 +113,37 @@ public int eliminarArchivo(String nombre, Directorio directorioPadre) {
 }
     
     // (Implementar crearDirectorio, eliminarDirectorio[cite: 47], etc.)
+/**
+ * Simula la lectura de un archivo.
+ * Devuelve el idPrimerBloque.
+ */
+public int leerArchivo(String nombre, Directorio directorioPadre) {
+    NodoArbol nodo = directorioPadre.buscarHijo(nombre);
+
+    if (nodo == null || !(nodo instanceof Archivo)) {
+        System.err.println("Error: Archivo '" + nombre + "' no encontrado para leer.");
+        return -1; // Falla
+    }
+
+    Archivo archivo = (Archivo) nodo;
+    int idBloqueActual = archivo.getIdPrimerBloque();
+
+    System.out.print("Simulación de LECTURA: Leyendo bloques -> ");
+
+    // Recorremos la cadena de bloques
+    while (idBloqueActual != -1) {
+
+        // ¡¡AQUÍ IRÁ EL BUFFER!!
+        // Por ahora, leemos directo del disco:
+        Bloque bloque = disco.getBloque(idBloqueActual);
+
+        if (bloque == null) break; // Seguridad
+
+        System.out.print(bloque.getId() + " -> ");
+        idBloqueActual = bloque.getPunteroSiguiente();
+    }
+    System.out.println("FIN");
+
+    return archivo.getIdPrimerBloque(); // Éxito
+}
 }
