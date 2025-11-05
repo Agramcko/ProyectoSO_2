@@ -16,6 +16,11 @@ import java.awt.Color;
 import javax.swing.JPanel;
 import javax.swing.BorderFactory;
 import javax.swing.JOptionPane;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.UIManager;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import java.awt.Component;
 
 public class VentanaPrincipal extends javax.swing.JFrame {
 
@@ -29,6 +34,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 public VentanaPrincipal(ModoUsuario modoInicial) {
     
     initComponents();
+   
+    // --- ¡NUEVO! APLICAR EL RENDERER DE ICONOS (Paso 2.3) ---
+    // (Asegúrate de haber añadido la clase 'MyTreeCellRenderer' al final de tu archivo)
+    arbolArchivos.setCellRenderer(new MyTreeCellRenderer());
+    // --- FIN ---
     
     // 1. Creamos la instancia del "cerebro"
     this.simulador = new Simulador();
@@ -74,6 +84,27 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     // 7. ¡IMPORTANTE! Establecemos los permisos y actualizamos la GUI una vez al inicio
     actualizarPermisosGUI(); // <-- Lee el modo y deshabilita botones si es Usuario
     actualizarGUICompleta(); // <-- Dibuja el estado cargado (disco, árbol, etc.)
+    
+    // --- ¡NUEVO! OYENTE DE SELECCIÓN DEL ÁRBOL (Paso 1.4) ---
+    arbolArchivos.addTreeSelectionListener(new javax.swing.event.TreeSelectionListener() {
+        public void valueChanged(javax.swing.event.TreeSelectionEvent e) {
+            
+            // 1. Obtener el nodo de la GUI que fue seleccionado
+            javax.swing.tree.DefaultMutableTreeNode nodoSwing;
+            nodoSwing = (javax.swing.tree.DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
+            
+            if (nodoSwing == null) return; // No hay nada seleccionado
+            
+            // 2. Obtener el objeto de BACKEND que guardamos dentro
+            Object objetoBackend = nodoSwing.getUserObject();
+            
+            // 3. Si es un Directorio, lo establecemos como actual
+            if (objetoBackend instanceof Directorio) {
+                simulador.getSistemaArchivos().setDirectorioActual((Directorio) objetoBackend);
+            }
+        }
+    });
+    // --- FIN DEL OYENTE ---
 }
 
     /**
@@ -760,7 +791,7 @@ private void actualizarArbol() {
 
         // 2. Crear el nodo RAÍZ del árbol de SWING
         // El texto que muestra es el nombre de nuestro directorio raíz (ej. "root")
-        DefaultMutableTreeNode raizSwing = new DefaultMutableTreeNode(raizBackend.getNombre());
+        DefaultMutableTreeNode raizSwing = new DefaultMutableTreeNode(raizBackend);
 
         // 3. Llamar al método recursivo para construir el resto del árbol
         construirNodosArbol(raizBackend, raizSwing);
@@ -969,7 +1000,7 @@ private void construirNodosArbol(Directorio dirPadre, DefaultMutableTreeNode nod
         NodoArbol hijoBackend = nodoActual.getDato();
 
         // 3. Crear un nuevo nodo de SWING para este hijo
-        DefaultMutableTreeNode nodoSwingHijo = new DefaultMutableTreeNode(hijoBackend.getNombre());
+        DefaultMutableTreeNode nodoSwingHijo = new DefaultMutableTreeNode(hijoBackend);
         
         // 4. Añadir el nuevo nodo de SWING al padre de SWING
         nodoSwingPadre.add(nodoSwingHijo);
@@ -1035,4 +1066,38 @@ private void actualizarVistaBuffer() {
         areaBuffer.setText("Error al leer buffer.");
     }
 }
+// --- INICIO DE CLASE INTERNA PARA RENDERER ---
+// Pega esto dentro de VentanaPrincipal.java, pero al final
+
+class MyTreeCellRenderer extends DefaultTreeCellRenderer {
+
+    // Cargamos los iconos estándar de Java
+    Icon dirIcono = UIManager.getIcon("Tree.closedIcon");
+    Icon archIcono = UIManager.getIcon("Tree.leafIcon");
+
+    @Override
+    public Component getTreeCellRendererComponent(javax.swing.JTree tree,
+            Object value, boolean sel, boolean expanded, boolean leaf,
+            int row, boolean hasFocus) {
+        
+        // 1. Llama al método original para que haga el trabajo (pintar, etc.)
+        super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+
+        // 2. Obtenemos el nodo de la GUI
+        javax.swing.tree.DefaultMutableTreeNode nodoSwing = (javax.swing.tree.DefaultMutableTreeNode) value;
+        
+        // 3. Obtenemos nuestro objeto de BACKEND
+        Object objetoBackend = nodoSwing.getUserObject();
+
+        // 4. Decidimos el icono
+        if (objetoBackend instanceof Directorio) {
+            setIcon(dirIcono);
+        } else if (objetoBackend instanceof Archivo) {
+            setIcon(archIcono);
+        }
+
+        return this;
+    }
+}
+// --- FIN DE CLASE INTERNA ---
 }

@@ -39,8 +39,11 @@ public class SistemaArchivos implements Serializable {
     
     // (Opcional pero recomendado) Un setter para cambiar de directorio
     public void setDirectorioActual(Directorio dir) {
+    if (dir != null) {
         this.directorioActual = dir;
+        System.out.println("Directorio actual cambiado a: " + dir.getNombre());
     }
+}
     public BufferCache getBufferCache() {
     return this.buffer;
 }
@@ -322,4 +325,5 @@ private void eliminarDirectorioRecursivo(Directorio dir) {
     }
     // Cuando el 'while' termina, 'dir' está vacío.
 }
+
 }
