@@ -36,7 +36,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements ILogger {
     private DefaultMutableTreeNode raizArbol;
     private boolean estaActualizandoArbol = false; // Nuestro "semáforo"
     private boolean estaPausado = false;    // Variable para rastrear el estado
-    private int contadorArchivosAleatorios = 0;
+    
     
    /**
  * Constructor de la Ventana Principal.
@@ -509,7 +509,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         areaBuffer.setRows(5);
         scrollBuffer.setViewportView(areaBuffer);
 
-        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Consola de Eventos Buffer", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
+        jScrollPane3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Consola de Eventos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI Black", 1, 12))); // NOI18N
 
         areaLogConsola.setEditable(false);
         areaLogConsola.setColumns(20);
@@ -664,28 +664,37 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     }//GEN-LAST:event_btnReiniciarActionPerformed
 
     private void btnGenerarAleatoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAleatoriosActionPerformed
-        // 1. Creamos un generador de números aleatorios
+    // 1. Creamos un generador de números aleatorios
     Random rand = new Random();
 
+    // Enviamos el log al "router"
+    // (Asegúrate de que 'areaLogConsola' esté bien nombrada en el Diseñador)
     log("SIMULADOR: Encolando 20 solicitudes aleatorias...");
+
+    // Obtenemos el sistema de archivos (para no llamarlo 20 veces)
+    SistemaArchivos sa = simulador.getSistemaArchivos();
 
     // 2. Hacemos un bucle de 20
     for (int i = 0; i < 20; i++) {
 
-        // --- ¡LÓGICA DE NOMBRE MODIFICADA! ---
+        // --- ¡NUEVA LÓGICA DE NOMBRES (Paso 3)! ---
+        
+        // 3. Pedimos el contador actual AL BACKEND
+        int contadorActual = sa.getContadorArchivosAleatorios();
 
-        // 3. Creamos el nombre usando el CONTADOR DE CLASE
-        String nombre = "archivo_aleatorio_" + this.contadorArchivosAleatorios + ".txt";
-
-        // 4. ¡IMPORTANTE! Incrementamos el contador para el *próximo* archivo
-        this.contadorArchivosAleatorios++;
+        // 4. Creamos el nombre
+        String nombre = "archivo_aleatorio_" + contadorActual + ".txt";
+        
+        // 5. Le decimos AL BACKEND que incremente su contador
+        //    (para que el próximo bucle obtenga el número nuevo)
+        sa.incrementarContadorArchivosAleatorios();
 
         // --- FIN DE LA LÓGICA MODIFICADA ---
 
         // Tamaño aleatorio (entre 1 y 5 bloques)
         int tamano = rand.nextInt(5) + 1; 
 
-        // 5. Encolamos la solicitud
+        // 6. Encolamos la solicitud
         simulador.nuevaSolicitudUsuario(
             TipoOperacion.CREAR_ARCHIVO, 
             nombre, 
@@ -693,7 +702,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         );
     }
 
-    // 6. Notificamos al usuario y actualizamos la GUI
+    // 7. Notificamos al usuario y actualizamos la GUI
     javax.swing.JOptionPane.showMessageDialog(this, 
         "¡20 solicitudes de archivos aleatorios fueron añadidas a la cola!", 
         "Generación Aleatoria", 

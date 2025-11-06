@@ -22,6 +22,7 @@ public class SistemaArchivos implements Serializable {
     private Directorio directorioActual;
     private BufferCache buffer;
     private transient ILogger logger = null;
+    private int contadorArchivosAleatorios = 0;
 
     public SistemaArchivos(int tamanoDisco) {
         this.disco = new DiscoSD(tamanoDisco);
@@ -440,5 +441,18 @@ private void log(String mensaje) {
     } else {
         System.out.println(mensaje); // Fallback
     }
+}
+/**
+ * Devuelve el valor actual del contador de archivos
+ */
+public int getContadorArchivosAleatorios() {
+    return this.contadorArchivosAleatorios;
+}
+
+/**
+ * Incrementa el contador de archivos
+ */
+public void incrementarContadorArchivosAleatorios() {
+    this.contadorArchivosAleatorios++;
 }
 }
