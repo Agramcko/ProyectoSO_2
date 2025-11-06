@@ -36,6 +36,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements ILogger {
     private DefaultMutableTreeNode raizArbol;
     private boolean estaActualizandoArbol = false; // Nuestro "semáforo"
     private boolean estaPausado = false;    // Variable para rastrear el estado
+    private int contadorArchivosAleatorios = 0;
     
    /**
  * Constructor de la Ventana Principal.
@@ -664,36 +665,42 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
 
     private void btnGenerarAleatoriosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAleatoriosActionPerformed
         // 1. Creamos un generador de números aleatorios
-        Random rand = new Random();
+    Random rand = new Random();
 
-        System.out.println("GUI: Encolando 20 solicitudes aleatorias...");
+    log("SIMULADOR: Encolando 20 solicitudes aleatorias...");
 
-        // 2. Hacemos un bucle de 20
-        for (int i = 0; i < 20; i++) {
+    // 2. Hacemos un bucle de 20
+    for (int i = 0; i < 20; i++) {
 
-            // 3. Creamos un nombre de archivo y un tamaño aleatorio
-            String nombre = "archivo_aleatorio_" + i + ".txt";
+        // --- ¡LÓGICA DE NOMBRE MODIFICADA! ---
 
-            // Tamaño aleatorio (entre 1 y 5 bloques)
-            int tamano = rand.nextInt(5) + 1;
+        // 3. Creamos el nombre usando el CONTADOR DE CLASE
+        String nombre = "archivo_aleatorio_" + this.contadorArchivosAleatorios + ".txt";
 
-            // 4. ¡IMPORTANTE! Encolamos la solicitud USANDO EL SIMULADOR
-            // (Esto asegura que pasen por el Planificador de Disco)
-            simulador.nuevaSolicitudUsuario(
-                TipoOperacion.CREAR_ARCHIVO,
-                nombre,
-                tamano
-            );
-        }
+        // 4. ¡IMPORTANTE! Incrementamos el contador para el *próximo* archivo
+        this.contadorArchivosAleatorios++;
 
-        // 5. Notificamos al usuario y actualizamos la GUI
-        javax.swing.JOptionPane.showMessageDialog(this,
-            "¡20 solicitudes de archivos aleatorios fueron añadidas a la cola!",
-            "Generación Aleatoria",
-            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        // --- FIN DE LA LÓGICA MODIFICADA ---
 
-        // Actualizamos la GUI para ver las colas llenas
-        actualizarGUICompleta();
+        // Tamaño aleatorio (entre 1 y 5 bloques)
+        int tamano = rand.nextInt(5) + 1; 
+
+        // 5. Encolamos la solicitud
+        simulador.nuevaSolicitudUsuario(
+            TipoOperacion.CREAR_ARCHIVO, 
+            nombre, 
+            tamano
+        );
+    }
+
+    // 6. Notificamos al usuario y actualizamos la GUI
+    javax.swing.JOptionPane.showMessageDialog(this, 
+        "¡20 solicitudes de archivos aleatorios fueron añadidas a la cola!", 
+        "Generación Aleatoria", 
+        javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+    // Actualizamos la GUI para ver las colas llenas
+    actualizarGUICompleta();
     }//GEN-LAST:event_btnGenerarAleatoriosActionPerformed
 
     private void btnGenerarReporteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarReporteActionPerformed
