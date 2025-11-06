@@ -35,6 +35,7 @@ public class VentanaPrincipal extends javax.swing.JFrame implements ILogger {
     private DefaultTreeModel modeloArbol;
     private DefaultMutableTreeNode raizArbol;
     private boolean estaActualizandoArbol = false; // Nuestro "semáforo"
+    private boolean estaPausado = false;    // Variable para rastrear el estado
     
    /**
  * Constructor de la Ventana Principal.
@@ -45,7 +46,6 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     initComponents();
     
     // --- ¡NUEVO! APLICAR EL RENDERER DE ICONOS (Paso 2.3) ---
-    // (Asegúrate de haber añadido la clase 'MyTreeCellRenderer' al final de tu archivo)
     arbolArchivos.setCellRenderer(new MyTreeCellRenderer());
     // --- FIN ---
     
@@ -79,15 +79,25 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     int columnas = filas;
     panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     
-    // 5. Iniciamos el Timer (tu código existente)
+    // --- INICIO DEL CÓDIGO ACTUALIZADO (Paso 4) ---
+    // 5. Iniciamos el Timer (MODIFICADO)
     javax.swing.Timer timer = new javax.swing.Timer(2000, new java.awt.event.ActionListener() {
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
+            
+            // ¡NUEVA GUARDIA!
+            // Si la variable 'estaPausado' es true, no hacemos nada.
+            if (estaPausado) {
+                return; // Salimos del método
+            }
+            
+            // Si no está pausado, se ejecuta normalmente:
             simulador.ejecutarTickPlanificador();
             actualizarGUICompleta();
         }
     });
     timer.start(); // ¡Inicia el reloj!
+    // --- FIN DEL CÓDIGO ACTUALIZADO ---
     
     // 6. Añadimos el oyente para guardar al cerrar (tu código existente)
     this.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -168,6 +178,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         btnGenerarReporte = new javax.swing.JButton();
         btnGenerarAleatorios = new javax.swing.JButton();
         btnReiniciar = new javax.swing.JButton();
+        btnPausarTimer = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -362,6 +373,16 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             }
         });
 
+        btnPausarTimer.setBackground(new java.awt.Color(51, 204, 0));
+        btnPausarTimer.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnPausarTimer.setForeground(new java.awt.Color(255, 255, 255));
+        btnPausarTimer.setText("Pausar Timer");
+        btnPausarTimer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPausarTimerActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
@@ -385,7 +406,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                                 .addComponent(lblTamano)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 57, Short.MAX_VALUE))
+                                .addGap(0, 65, Short.MAX_VALUE))
                             .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(panelAccionesLayout.createSequentialGroup()
@@ -403,7 +424,10 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                             .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(panelAccionesLayout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnPausarTimer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         panelAccionesLayout.setVerticalGroup(
@@ -421,7 +445,9 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addComponent(btnCrearArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarArchivo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnPausarTimer)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -507,7 +533,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelSistemaLayout.createSequentialGroup()
                         .addComponent(jScrollPane3)
                         .addGap(2, 2, 2))
-                    .addComponent(scrollBuffer, javax.swing.GroupLayout.DEFAULT_SIZE, 392, Short.MAX_VALUE)
+                    .addComponent(scrollBuffer, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
                     .addGroup(panelSistemaLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -880,6 +906,20 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreArchivoActionPerformed
 
+    private void btnPausarTimerActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPausarTimerActionPerformed
+        // 1. Invertimos el estado de pausa
+    this.estaPausado = !this.estaPausado; // (Si era true, ahora es false, y viceversa)
+
+    // 2. Actualizamos el texto del botón
+    if (this.estaPausado) {
+        btnPausarTimer.setText("Reanudar Timer");
+        log("SIMULADOR: Timer en PAUSA.");
+    } else {
+        btnPausarTimer.setText("Pausar Timer");
+        log("SIMULADOR: Timer REANUDADO.");
+    }
+    }//GEN-LAST:event_btnPausarTimerActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -976,6 +1016,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     private javax.swing.JButton btnGenerarAleatorios;
     private javax.swing.JButton btnGenerarReporte;
     private javax.swing.JButton btnLeerArchivo;
+    private javax.swing.JButton btnPausarTimer;
     private javax.swing.JButton btnReiniciar;
     private javax.swing.JButton btnRenombrar;
     private javax.swing.ButtonGroup buttonGroup1;

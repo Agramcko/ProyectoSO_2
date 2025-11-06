@@ -214,7 +214,7 @@
                                               <Component id="lblTamano" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="spinnerTamano" min="-2" pref="72" max="-2" attributes="0"/>
-                                              <EmptySpace min="0" pref="57" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="65" max="32767" attributes="0"/>
                                           </Group>
                                           <Component id="btnEliminarArchivo" alignment="0" max="32767" attributes="0"/>
                                           <Component id="btnRenombrar" alignment="0" max="32767" attributes="0"/>
@@ -242,6 +242,10 @@
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Component id="btnReiniciar" max="32767" attributes="0"/>
                                   </Group>
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="btnPausarTimer" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -264,7 +268,9 @@
                               <Component id="btnCrearArchivo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnEliminarArchivo" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="120" max="32767" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnPausarTimer" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="82" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="txtNuevoNombre" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -480,6 +486,23 @@
                         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnReiniciarActionPerformed"/>
                       </Events>
                     </Component>
+                    <Component class="javax.swing.JButton" name="btnPausarTimer">
+                      <Properties>
+                        <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="0" green="cc" red="33" type="rgb"/>
+                        </Property>
+                        <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                          <Font name="Segoe UI Black" size="12" style="1"/>
+                        </Property>
+                        <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                          <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                        </Property>
+                        <Property name="text" type="java.lang.String" value="Pausar Timer"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnPausarTimerActionPerformed"/>
+                      </Events>
+                    </Component>
                   </SubComponents>
                 </Container>
                 <Container class="javax.swing.JPanel" name="panelSistema">
@@ -504,7 +527,7 @@
                                       <Component id="jScrollPane3" max="32767" attributes="0"/>
                                       <EmptySpace min="2" pref="2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="scrollBuffer" alignment="0" pref="392" max="32767" attributes="0"/>
+                                  <Component id="scrollBuffer" alignment="0" pref="396" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
