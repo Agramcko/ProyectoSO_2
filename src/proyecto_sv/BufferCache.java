@@ -141,4 +141,15 @@ public class BufferCache implements Serializable {
             System.out.println(mensaje); // Fallback
         }
     }
+    /**
+ * ¡NUEVO MÉTODO!
+ * Vacía el buffer por completo.
+ * Útil para pruebas de planificador de disco.
+ */
+public void limpiar() {
+    this.cache = new ListaEnlazada<>();
+
+    // (Opcional) Registra el evento en el log
+    log("BUFFER: ¡Caché limpiado manualmente!");
+}
 }

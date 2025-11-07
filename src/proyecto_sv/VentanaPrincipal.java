@@ -194,6 +194,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
         areaLogConsola = new javax.swing.JTextArea();
         jScrollPane4 = new javax.swing.JScrollPane();
         areaLogPlanificador = new javax.swing.JTextArea();
+        btnLimpiarBuffer = new javax.swing.JButton();
         scrollColas = new javax.swing.JScrollPane();
         areaColasProcesos = new javax.swing.JTextArea();
 
@@ -519,6 +520,16 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
         areaLogPlanificador.setRows(5);
         jScrollPane4.setViewportView(areaLogPlanificador);
 
+        btnLimpiarBuffer.setBackground(new java.awt.Color(51, 204, 0));
+        btnLimpiarBuffer.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
+        btnLimpiarBuffer.setForeground(new java.awt.Color(255, 255, 255));
+        btnLimpiarBuffer.setText("Limpiar Buffer");
+        btnLimpiarBuffer.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarBufferActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelSistemaLayout = new javax.swing.GroupLayout(panelSistema);
         panelSistema.setLayout(panelSistemaLayout);
         panelSistemaLayout.setHorizontalGroup(
@@ -538,7 +549,10 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
                     .addGroup(panelSistemaLayout.createSequentialGroup()
                         .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(radioUsuario)
-                            .addComponent(radioAdmin))
+                            .addGroup(panelSistemaLayout.createSequentialGroup()
+                                .addComponent(radioAdmin)
+                                .addGap(45, 45, 45)
+                                .addComponent(btnLimpiarBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -550,11 +564,13 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
                     .addComponent(comboPolitica, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
-                .addComponent(radioAdmin)
+                .addGroup(panelSistemaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(radioAdmin)
+                    .addComponent(btnLimpiarBuffer))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(radioUsuario)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(scrollBuffer, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -935,6 +951,17 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     }
     }//GEN-LAST:event_btnPausarTimerActionPerformed
 
+    private void btnLimpiarBufferActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarBufferActionPerformed
+        // 1. Llamamos al backend para que limpie el buffer
+    simulador.getSistemaArchivos().getBufferCache().limpiar();
+
+    // 2. Actualizamos la GUI para ver el buffer vacío
+    actualizarGUICompleta();
+
+    // 3. (Opcional) Notificamos
+    log("SIMULADOR: Buffer de bloques limpiado por el Admin.");
+    }//GEN-LAST:event_btnLimpiarBufferActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1031,6 +1058,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     private javax.swing.JButton btnGenerarAleatorios;
     private javax.swing.JButton btnGenerarReporte;
     private javax.swing.JButton btnLeerArchivo;
+    private javax.swing.JButton btnLimpiarBuffer;
     private javax.swing.JButton btnPausarTimer;
     private javax.swing.JButton btnReiniciar;
     private javax.swing.JButton btnRenombrar;
@@ -1390,6 +1418,7 @@ private void actualizarPermisosGUI() {
     btnReiniciar.setEnabled(esAdmin);
     btnPausarTimer.setEnabled(esAdmin);
     spinnerTamano.setEnabled(esAdmin);
+    btnLimpiarBuffer.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)
