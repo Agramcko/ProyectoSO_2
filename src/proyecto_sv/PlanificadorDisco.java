@@ -88,22 +88,31 @@ public class PlanificadorDisco {
 
     // --- Políticas de Planificación (¡CON LOGS EXPLÍCITOS!) ---
 
-    // 1. Política FIFO
-    public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
-        if (colaIO.estaVacia()) {
-           // log("PLANIFICADOR: [FIFO] No hay solicitudes en la cola.");
-            return null;
-        }
-        
-        SolicitudIO solicitud = colaIO.desencolar();
-        
-        // --- ¡LOG EXPLÍCITO! ---
-        log("PLANIFICADOR: [FIFO] Decisión: Ejecutando " + solicitud.getNombreArchivo() + " (es el primero en la cola)");
-        
-        ejecutarSolicitud(solicitud);
-        
-        return solicitud;
+   // 1. Política FIFO
+public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
+    if (colaIO.estaVacia()) {
+        // log("PLANIFICADOR: [FIFO] No hay solicitudes en la cola.");
+        return null;
     }
+
+    SolicitudIO solicitud = colaIO.desencolar();
+
+    log("PLANIFICADOR: [FIFO] Decisión: Ejecutando " + solicitud.getNombreArchivo() + " (es el primero en la cola)");
+
+    // --- ¡INICIO DEL ARREGLO! ---
+
+    // 1. Ejecutamos la solicitud (como antes)
+    int bloqueProcesado = ejecutarSolicitud(solicitud);
+
+    // 2. ¡ACTUALIZAMOS EL CABEZAL! (Esto es lo que faltaba)
+    if (bloqueProcesado != -1) {
+        this.posicionCabezal = bloqueProcesado;
+        log("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
+    }
+    // --- FIN DEL ARREGLO ---
+
+    return solicitud;
+}
 
     // 2. Política SSTF
     public SolicitudIO ejecutarSSTF(Cola<SolicitudIO> colaIO) {
