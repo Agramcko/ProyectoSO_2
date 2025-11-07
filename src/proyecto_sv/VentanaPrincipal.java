@@ -1388,6 +1388,8 @@ private void actualizarPermisosGUI() {
     btnGenerarReporte.setEnabled(esAdmin);
     btnGenerarAleatorios.setEnabled(esAdmin);
     btnReiniciar.setEnabled(esAdmin);
+    btnPausarTimer.setEnabled(esAdmin);
+    spinnerTamano.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)
