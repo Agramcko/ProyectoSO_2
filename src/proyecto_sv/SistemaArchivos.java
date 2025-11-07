@@ -455,4 +455,132 @@ public int getContadorArchivosAleatorios() {
 public void incrementarContadorArchivosAleatorios() {
     this.contadorArchivosAleatorios++;
 }
+/**
+ * ¡NUEVO MÉTODO MEJORADO!
+ * Renombra el 'directorioActual' (el que está seleccionado).
+ * Usa el puntero 'getPadre()' para funcionar.
+ */
+public boolean renombrarNodoActual(String nombreNuevo) {
+    
+    NodoArbol nodoActual = this.directorioActual;
+
+    // 1. No podemos renombrar la raíz
+    if (nodoActual == this.raiz) {
+        log("PLANIFICADOR: Error. No se puede renombrar el directorio raíz.");
+        return false;
+    }
+
+    // 2. Validar que el nombre nuevo no esté vacío
+    if (nombreNuevo == null || nombreNuevo.trim().isEmpty()) {
+        log("PLANIFICADOR: Error. El nombre nuevo no puede estar vacío.");
+        return false;
+    }
+
+    // 3. Obtener el padre y validar el nombre
+    Directorio padre = nodoActual.getPadre();
+    if (padre == null) {
+         log("PLANIFICADOR: Error. El nodo no tiene padre (Huérfano).");
+         return false; // Esto no debería pasar si el Paso 1 está bien
+    }
+
+    // 4. Validar que el nombre nuevo NO exista ya en el padre
+    if (padre.buscarHijo(nombreNuevo) != null) {
+        log("PLANIFICADOR: Error. El nombre '" + nombreNuevo + "' ya existe.");
+        return false;
+    }
+
+    // 5. ¡El cambio!
+    log("PLANIFICADOR: Renombrado '" + nodoActual.getNombre() + "' a '" + nombreNuevo + "'.");
+    nodoActual.setNombre(nombreNuevo);
+    return true;
+}
+
+/**
+ * ¡NUEVO MÉTODO MEJORADO!
+ * Elimina el 'directorioActual' (el que está seleccionado).
+ * Usa el puntero 'getPadre()' para funcionar.
+ */
+public boolean eliminarDirectorioActual() {
+    
+    Directorio dirAEliminar = this.directorioActual;
+
+    // 1. No podemos eliminar la raíz
+    if (dirAEliminar == this.raiz) {
+        log("PLANIFICADOR: Error. No se puede eliminar el directorio raíz.");
+        return false;
+    }
+    
+    // (Esta función solo debe ser llamada por el botón 'Eliminar Directorio',
+    // así que asumimos que es un directorio)
+
+    // 2. Obtener el padre
+    Directorio padre = dirAEliminar.getPadre();
+    if (padre == null) {
+         log("PLANIFICADOR: Error. El nodo no tiene padre (Huérfano).");
+         return false;
+    }
+
+    // 3. Llamar al ayudante recursivo para vaciarlo
+    // (Este método 'eliminarDirectorioRecursivo' ya lo tenías y está bien)
+    log("PLANIFICADOR: Eliminación recursiva iniciada para: " + dirAEliminar.getNombre());
+    eliminarDirectorioRecursivo(dirAEliminar);
+
+    // 4. Una vez vacío, eliminar el directorio del árbol (¡desde el padre!)
+    padre.eliminarHijo(dirAEliminar);
+
+    // 5. Mover al usuario de vuelta al padre (para no estar en un limbo)
+    this.directorioActual = padre;
+
+    log("PLANIFICADOR: Directorio eliminado exitosamente: " + dirAEliminar.getNombre());
+    return true;
+}
+/**
+ * ¡NUEVO MÉTODO PÚBLICO!
+ * Punto de entrada para re-conectar los punteros 'padre' (que son transient)
+ * después de cargar desde la serialización.
+ */
+public void reconectarPadres() {
+    // La raíz no tiene padre (padre = null), lo cual es correcto.
+    // Empezamos a reconectar a los hijos de la raíz.
+    reconectarPadresRecursivo(this.raiz);
+}
+
+/**
+ * ¡NUEVO MÉTODO PRIVADO (AYUDANTE RECURSIVO)!
+ * Recorre el árbol y asigna los punteros 'padre'.
+ */
+/**
+ * ¡NUEVO MÉTODO PRIVADO (AYUDANTE RECURSIVO)!
+ * (VERSIÓN CORREGIDA - 'hijoActual' en lugar de 'hiloActual')
+ * Recorre el árbol y asigna los punteros 'padre'.
+ */
+private void reconectarPadresRecursivo(Directorio padre) {
+    // Seguridad: si el directorio no tiene hijos (o no es un dir)
+    if (padre == null || padre.getHijos() == null) {
+        return;
+    }
+
+    // Recorremos la lista de hijos de este 'padre'
+    // 1. La variable se llama 'hijoActual'
+    NodoLista<NodoArbol> hijoActual = padre.getHijos().getInicio();
+    
+    // 2. El 'while' debe usar 'hijoActual'
+    while (hijoActual != null) {
+        
+        NodoArbol nodoHijo = hijoActual.getDato();
+        
+        // 1. ¡LA RE-CONEXIÓN!
+        // Le decimos al hijo quién es su padre
+        nodoHijo.setPadre(padre);
+        
+        // 2. Si este hijo también es un directorio, 
+        //    hacemos la llamada recursiva para sus propios hijos.
+        if (nodoHijo instanceof Directorio) {
+            reconectarPadresRecursivo((Directorio) nodoHijo);
+        }
+        
+        // 3. El 'siguiente' debe usar 'hijoActual'
+        hijoActual = hijoActual.getSiguiente();
+    }
+}
 }

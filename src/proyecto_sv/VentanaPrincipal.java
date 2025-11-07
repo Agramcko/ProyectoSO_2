@@ -728,42 +728,31 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     }//GEN-LAST:event_btnGenerarReporteActionPerformed
 
     private void btnEliminarDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarDirectorioActionPerformed
-        // Esta operación es instantánea (pero compleja) y NO usa el planificador.
+        // 1. Confirmación (¡Importante!)
+    int confirm = JOptionPane.showConfirmDialog(this,
+        "¿Seguro que quieres eliminar este directorio y todo su contenido?\n" +
+        "¡Esta acción es recursiva y no se puede deshacer!",
+        "Confirmar Eliminación",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.WARNING_MESSAGE);
 
-        // 1. Obtenemos el nombre del campo 'txtNombreArchivo'
-        String nombre = txtNombreArchivo.getText();
+    if (confirm != JOptionPane.YES_OPTION) {
+        return; // El usuario canceló
+    }
 
-        if (nombre.trim().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Debe ingresar un nombre de directorio en el campo 'Nombre'.",
-                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    // 2. Llamamos a la nueva función del backend
+    boolean exito = simulador.getSistemaArchivos().eliminarDirectorioActual();
 
-        // 2. Advertencia al usuario (¡esto es destructivo!)
-        int confirm = javax.swing.JOptionPane.showConfirmDialog(this,
-            "¿Está seguro de que desea eliminar el directorio '" + nombre + "'?\n" +
-            "¡TODOS los archivos y subdirectorios dentro de él se borrarán permanentemente!",
-            "Confirmar Eliminación Recursiva",
-            javax.swing.JOptionPane.YES_NO_OPTION,
-            javax.swing.JOptionPane.WARNING_MESSAGE);
-
-        if (confirm != javax.swing.JOptionPane.YES_OPTION) {
-            return; // El usuario canceló
-        }
-
-        // 3. Llamamos al backend directamente
-        boolean exito = simulador.getSistemaArchivos().eliminarDirectorio(nombre);
-
-        if (exito) {
-            // 4. Limpiamos campos y actualizamos la GUI
-            txtNombreArchivo.setText("");
-            actualizarGUICompleta(); // Para que desaparezca del JTree
-        } else {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "No se pudo eliminar el directorio.",
-                "Error al Eliminar Directorio", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
+    if (exito) {
+        // Refrescamos toda la GUI para ver el cambio
+        actualizarGUICompleta();
+    } else {
+        // El backend ya envió el error al log
+        JOptionPane.showMessageDialog(this, 
+            "No se pudo eliminar el directorio.\n(Revisa el log o si intentas eliminar 'root').", 
+            "Error al Eliminar", 
+            JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnEliminarDirectorioActionPerformed
 
     private void btnCrearDirectorioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearDirectorioActionPerformed
@@ -797,35 +786,23 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     }//GEN-LAST:event_btnCrearDirectorioActionPerformed
 
     private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRenombrarActionPerformed
-        // Esta operación es instantánea y NO usa el planificador.
+       String nombreNuevo = txtNuevoNombre.getText();
 
-        // 1. Obtenemos los nombres
-        String nombreViejo = txtNombreArchivo.getText(); // El nombre actual
-        String nombreNuevo = txtNuevoNombre.getText();   // El nombre deseado
+    // Llamamos a la nueva función del backend
+    boolean exito = simulador.getSistemaArchivos().renombrarNodoActual(nombreNuevo);
 
-        if (nombreViejo.trim().isEmpty() || nombreNuevo.trim().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "Debe ingresar el nombre actual Y el nombre nuevo.",
-                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        // 2. Llamamos al backend directamente
-        boolean exito = simulador.getSistemaArchivos().renombrarNodo(nombreViejo, nombreNuevo);
-
-        if (exito) {
-            // 3. Limpiamos campos y actualizamos la GUI
-            txtNombreArchivo.setText("");
-            txtNuevoNombre.setText("");
-
-            // ¡Forzamos la actualización INMEDIATA de la GUI!
-            actualizarGUICompleta();
-        } else {
-            // (El SistemaArchivos ya imprimió el error en consola)
-            javax.swing.JOptionPane.showMessageDialog(this,
-                "No se pudo renombrar. Verifique los nombres (quizás ya existe).",
-                "Error al Renombrar", javax.swing.JOptionPane.ERROR_MESSAGE);
-        }
+    if (exito) {
+        // Limpiamos el campo de texto
+        txtNuevoNombre.setText("");
+        // Refrescamos toda la GUI para ver el cambio
+        actualizarGUICompleta();
+    } else {
+        // El backend ya envió el error al log
+        JOptionPane.showMessageDialog(this, 
+            "No se pudo renombrar el nodo.\n(Revisa el log o si intentas renombrar 'root').", 
+            "Error al Renombrar", 
+            JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
     private void txtNuevoNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNuevoNombreActionPerformed
@@ -850,33 +827,59 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     }//GEN-LAST:event_btnLeerArchivoActionPerformed
 
     private void btnEliminarArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarArchivoActionPerformed
-        // 1. Obtener el nombre del archivo del JTree
-        // (Forma simple: usar el mismo campo de texto de "Nombre")
-        String nombre = txtNombreArchivo.getText();
+        // --- ¡INICIO DE LA LÓGICA MEJORADA! ---
 
-        // (Forma avanzada: ...)
-        // ...
+    // 1. Obtener el nodo de la GUI seleccionado
+    javax.swing.tree.DefaultMutableTreeNode nodoSwing = 
+            (javax.swing.tree.DefaultMutableTreeNode) arbolArchivos.getLastSelectedPathComponent();
 
-        if (nombre == null || nombre.trim().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para eliminar.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+    if (nodoSwing == null) {
+        JOptionPane.showMessageDialog(this, 
+            "Por favor, seleccione un archivo del árbol para eliminar.", 
+            "Error de Selección", 
+            JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        // 2. ¡LA CLAVE! Pedir al simulador que ENCOLE la solicitud de borrado
-        simulador.nuevaSolicitudUsuario(
-            TipoOperacion.ELIMINAR_ARCHIVO,
-            nombre,
-            0 // El tamaño no importa para eliminar
-        );
+    // 2. Obtener el objeto de BACKEND
+    Object objetoBackend = nodoSwing.getUserObject();
 
-        // 3. Limpiar el campo
-        txtNombreArchivo.setText("");
+    // 3. Validar que sea un Archivo
+    if (!(objetoBackend instanceof Archivo)) {
+        JOptionPane.showMessageDialog(this, 
+            "El elemento seleccionado no es un archivo (es un directorio).", 
+            "Error de Selección", 
+            JOptionPane.ERROR_MESSAGE);
+        return;
+    }
 
-        System.out.println("GUI: Solicitud para ELIMINAR '" + nombre + "' fue encolada.");
+    // 4. Obtener el nombre del archivo seleccionado
+    String nombreArchivo = ((Archivo) objetoBackend).getNombre();
 
-        // --- ¡¡LÍNEA AÑADIDA!! ---
-        // Actualizamos la GUI INMEDIATAMENTE para ver la cola "en espera"
-        actualizarGUICompleta();
+    // --- FIN DE LA LÓGICA MEJORADA! ---
+
+    // 5. Confirmación (Opcional pero recomendado)
+    int confirm = JOptionPane.showConfirmDialog(this,
+        "¿Seguro que quieres eliminar el archivo '" + nombreArchivo + "'?",
+        "Confirmar Eliminación",
+        JOptionPane.YES_NO_OPTION,
+        JOptionPane.WARNING_MESSAGE);
+
+    if (confirm != JOptionPane.YES_OPTION) {
+        return; // El usuario canceló
+    }
+
+    // 6. Encolar la solicitud (¡Esta es la lógica que ya teníamos!)
+    // El 'directorioActual' del simulador es el padre correcto,
+    // porque el JTree listener no lo cambia al seleccionar un archivo.
+    simulador.nuevaSolicitudUsuario(
+        TipoOperacion.ELIMINAR_ARCHIVO,
+        nombreArchivo,
+        0 // El tamaño no importa para eliminar
+    );
+
+    // 7. Actualizamos la GUI para ver la cola
+    actualizarGUICompleta();
     }//GEN-LAST:event_btnEliminarArchivoActionPerformed
 
     private void btnCrearArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearArchivoActionPerformed

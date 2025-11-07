@@ -4,16 +4,22 @@
  */
 package proyecto_sv;
 
+// --- ¡ARREGLO 1! ---
+// La importación 'Serializable' debe ir aquí, después del 'package'.
+import java.io.Serializable;
+
 /**
  * @author Alessandro Gramcko
  * @author massimo Gramcko
  */
-
-import java.io.Serializable;
 public abstract class NodoArbol implements Serializable {
-    protected String nombre;
-    protected Directorio padre; // Referencia al directorio padre
     
+    protected String nombre;
+    
+    // --- ¡ARREGLO 2! ---
+    // Solo necesitamos UNA variable 'padre'. 
+    // La hacemos 'transient' para que no se guarde en el archivo .ser
+    protected transient Directorio padre; 
 
     public NodoArbol(String nombre) {
         this.nombre = nombre;
@@ -29,6 +35,9 @@ public abstract class NodoArbol implements Serializable {
         this.nombre = nombre;
     }
 
+    // --- ¡ARREGLO 3! ---
+    // Solo necesitamos UN grupo de 'getPadre' y 'setPadre'.
+    // Borramos los duplicados.
     public Directorio getPadre() {
         return padre;
     }
@@ -36,18 +45,18 @@ public abstract class NodoArbol implements Serializable {
     public void setPadre(Directorio padre) {
         this.padre = padre;
     }
-   
+    
     
     // Método abstracto para que las subclases definan su tamaño
     public abstract int getTamanoEnBloques();
     
     
     /**
- * Permite al JTree mostrar el nombre del nodo.
- */
-@Override
-public String toString() {
-    return this.nombre;
-}
+     * Permite al JTree mostrar el nombre del nodo.
+     */
+    @Override
+    public String toString() {
+        return this.nombre;
+    }
     
 }

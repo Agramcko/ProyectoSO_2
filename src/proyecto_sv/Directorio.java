@@ -50,8 +50,8 @@ public class Directorio extends NodoArbol implements Serializable {
 
     // Métodos para manejar hijos
     public void agregarHijo(NodoArbol hijo) {
-        hijo.setPadre(this); // Establecemos el padre del hijo
         this.hijos.agregarAlFinal(hijo);
+        hijo.setPadre(this); // Establecemos el padre del hijo
     }
 
     // (Necesitaremos más métodos aquí, como buscarHijo, eliminarHijo, etc.)
