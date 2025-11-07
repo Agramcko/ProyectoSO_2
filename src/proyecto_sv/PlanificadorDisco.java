@@ -4,44 +4,53 @@
  */
 package proyecto_sv;
 
+
+import java.io.Serializable;
 /**
  * @author Alessandro Gramcko
  * @author massimo Gramcko
  */
-import java.io.Serializable;
 
-    public class PlanificadorDisco {
+
+    /**
+ * @author Alessandro Gramcko
+ * @author massimo Gramcko
+ */
+public class PlanificadorDisco {
     
     // Referencia al "Backend"
     private SistemaArchivos sistemaArchivos;
     
     private int posicionCabezal = 0; // Para SSTF, SCAN, etc.
     private enum Direccion { SUBIENDO, BAJANDO }
-    private Direccion direccionSCAN = Direccion.SUBIENDO; // Empezamos "subiendo"
+    private Direccion direccionSCAN = Direccion.SUBIENDO;
     
-    // --- ¡INICIO DE CAMBIOS DE LOGGER! ---
-    // NO usamos 'transient' aquí porque PlanificadorDisco
-    // se crea de cero (new) cada vez, no se serializa.
+    // ¡LA VARIABLE DEL LOGGER!
     private ILogger logger = null;
-    // --- FIN DE CAMBIOS DE LOGGER! ---
     
     public PlanificadorDisco(SistemaArchivos sa) {
         this.sistemaArchivos = sa; // Recibe el backend del Simulador
     }
 
     /**
-     * MODIFICADO: Método privado que ejecuta la solicitud LLAMANDO al backend.
+     * Permite actualizar la referencia al Sistema de Archivos
+     * (usado para cargar estado).
+     */
+    public void setSistemaArchivos(SistemaArchivos sa) {
+        this.sistemaArchivos = sa;
+    }
+
+    /**
+     * Método privado que ejecuta la solicitud LLAMANDO al backend.
      */
     private int ejecutarSolicitud(SolicitudIO solicitud) {
         boolean exito = false;
-        int bloqueProcesado = -1; // Para guardar el bloque
+        int bloqueProcesado = -1; 
 
-        // --- REEMPLAZADO ---
         if (solicitud.getTipo() == TipoOperacion.CREAR_ARCHIVO) {
-            log("PLANIFICADOR: Ejecutando CREAR " + solicitud.getNombreArchivo());
-
+            // El log de 'CREAR' ahora lo maneja SistemaArchivos
+            // para poder reportar "DISCO LLENO"
             Directorio padre = solicitud.getDirectorioPadre();
-            
             bloqueProcesado = sistemaArchivos.crearArchivo(
                 solicitud.getNombreArchivo(), 
                 solicitud.getTamanoEnBloques(),
@@ -51,7 +60,6 @@ import java.io.Serializable;
 
         } else if (solicitud.getTipo() == TipoOperacion.ELIMINAR_ARCHIVO) {
             log("PLANIFICADOR: Ejecutando ELIMINAR " + solicitud.getNombreArchivo());
-
             bloqueProcesado = sistemaArchivos.eliminarArchivo(
                 solicitud.getNombreArchivo(),
                 solicitud.getDirectorioPadre()
@@ -60,70 +68,68 @@ import java.io.Serializable;
         
         } else if (solicitud.getTipo() == TipoOperacion.LEER_ARCHIVO) {
             log("PLANIFICADOR: Ejecutando LEER " + solicitud.getNombreArchivo());
-            
             bloqueProcesado = sistemaArchivos.leerArchivo(
                 solicitud.getNombreArchivo(),
                 solicitud.getDirectorioPadre()
             );
             exito = (bloqueProcesado != -1);
         }
-        // --- FIN REEMPLAZO ---
 
         if (exito) {
             log("PLANIFICADOR: Operación completada con éxito.");
         } else {
-            log("PLANIFICADOR: Operación falló.");
+            // El log de "fallo" (ej. DISCO LLENO)
+            // se maneja ahora dentro de SistemaArchivos.
+            log("PLANIFICADOR: Operación falló (revisar logs anteriores).");
         }
 
         return bloqueProcesado;
     }
 
-    // --- Políticas de Planificación ---
+    // --- Políticas de Planificación (¡CON LOGS EXPLÍCITOS!) ---
 
     // 1. Política FIFO
     public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
         if (colaIO.estaVacia()) {
-            // --- REEMPLAZADO ---
-            log("PLANIFICADOR: [FIFO] No hay solicitudes en la cola.");
+           // log("PLANIFICADOR: [FIFO] No hay solicitudes en la cola.");
             return null;
         }
         
         SolicitudIO solicitud = colaIO.desencolar();
         
-        // --- MENSAJE DE LOG AÑADIDO ---
-        log("PLANIFICADOR: [FIFO] Ejecutando " + solicitud.getNombreArchivo());
+        // --- ¡LOG EXPLÍCITO! ---
+        log("PLANIFICADOR: [FIFO] Decisión: Ejecutando " + solicitud.getNombreArchivo() + " (es el primero en la cola)");
         
         ejecutarSolicitud(solicitud);
         
         return solicitud;
     }
 
-    // 2. Política SSTF (Shortest Seek Time First)
+    // 2. Política SSTF
     public SolicitudIO ejecutarSSTF(Cola<SolicitudIO> colaIO) {
         if (colaIO.estaVacia()) {
-            log("PLANIFICADOR: [SSTF] No hay solicitudes en la cola.");
-            return null; // No hay trabajo
+           // log("PLANIFICADOR: [SSTF] No hay solicitudes en la cola.");
+            return null;
         }
         
-        // --- REEMPLAZADO ---
-        log("PLANIFICADOR: [SSTF] Ejecutando lógica... (Cabezal en " + this.posicionCabezal + ")");
+        log("PLANIFICADOR: [SSTF] Buscando... (Cabezal actual en bloque " + this.posicionCabezal + ")");
         
         ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
         NodoLista<SolicitudIO> nodoActual = lista.getInicio();
         
         SolicitudIO solicitudOptima = null;
         int distanciaMinima = Integer.MAX_VALUE;
+        int posOptima = -1;
 
         while (nodoActual != null) {
             SolicitudIO solActual = nodoActual.getDato();
-            
             int posActual = getPosicionSolicitud(solActual);
-            
             int distancia = Math.abs(posActual - this.posicionCabezal);
 
             if (distancia < distanciaMinima) {
                 distanciaMinima = distancia;
                 solicitudOptima = solActual;
+                posOptima = posActual;
             }
             
             nodoActual = nodoActual.getSiguiente();
@@ -133,8 +139,9 @@ import java.io.Serializable;
             return null; 
         }
 
-        // --- MENSAJE DE LOG AÑADIDO ---
-        log("PLANIFICADOR: [SSTF] Eligió " + solicitudOptima.getNombreArchivo() + " (Distancia: " + distanciaMinima + ")");
+        // --- ¡LOG EXPLÍCITO! ---
+        log("PLANIFICADOR: [SSTF] Decisión: Elegido " + solicitudOptima.getNombreArchivo() + 
+            " (Bloque " + posOptima + ") con distancia " + distanciaMinima);
         
         lista.eliminar(solicitudOptima);
         
@@ -142,30 +149,28 @@ import java.io.Serializable;
         
         if (bloqueProcesado != -1) {
             this.posicionCabezal = bloqueProcesado;
-            // --- REEMPLAZADO ---
             log("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
         }
 
         return solicitudOptima;
     }
 
-    // 3. Política SCAN (Elevador)
+    // 3. Política SCAN
     public SolicitudIO ejecutarSCAN(Cola<SolicitudIO> colaIO) {
         if (colaIO.estaVacia()) {
-            log("PLANIFICADOR: [SCAN] No hay solicitudes en la cola.");
+           // log("PLANIFICADOR: [SCAN] No hay solicitudes en la cola.");
             return null;
         }
 
-        // --- REEMPLAZADO ---
-        log("PLANIFICADOR: [SCAN] Ejecutando lógica... (Dirección: " + direccionSCAN + ", Cabezal en " + this.posicionCabezal + ")");
+        log("PLANIFICADOR: [SCAN] Buscando... (Dirección: " + direccionSCAN + ", Cabezal en " + this.posicionCabezal + ")");
 
         ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
         NodoLista<SolicitudIO> nodoActual = lista.getInicio();
         
         SolicitudIO solicitudOptima = null;
         int distanciaMinima = Integer.MAX_VALUE;
+        int posOptima = -1;
 
-        // Búsqueda en la dirección actual
         while (nodoActual != null) {
             SolicitudIO solActual = nodoActual.getDato();
             int posActual = getPosicionSolicitud(solActual);
@@ -182,14 +187,13 @@ import java.io.Serializable;
                 if (distancia < distanciaMinima) {
                     distanciaMinima = distancia;
                     solicitudOptima = solActual;
+                    posOptima = posActual;
                 }
             }
             nodoActual = nodoActual.getSiguiente();
         }
 
-        // Si no encontramos nada, invertimos la dirección
         if (solicitudOptima == null) {
-            // --- REEMPLAZADO ---
             log("PLANIFICADOR: [SCAN] Llegó al final, invirtiendo dirección.");
             
             if (this.direccionSCAN == Direccion.SUBIENDO) {
@@ -201,46 +205,43 @@ import java.io.Serializable;
             return ejecutarSCAN(colaIO);
         }
 
-        // --- MENSAJE DE LOG AÑADIDO ---
-        log("PLANIFICADOR: [SCAN] Eligió " + solicitudOptima.getNombreArchivo());
+        // --- ¡LOG EXPLÍCITO! ---
+        log("PLANIFICADOR: [SCAN] Decisión: Elegido " + solicitudOptima.getNombreArchivo() + 
+            " (Bloque " + posOptima + ", en dirección " + direccionSCAN + ")");
 
         lista.eliminar(solicitudOptima);
         int bloqueProcesado = ejecutarSolicitud(solicitudOptima);
         
         if (bloqueProcesado != -1) {
             this.posicionCabezal = bloqueProcesado;
-            // --- REEMPLAZADO ---
             log("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
         }
 
         return solicitudOptima;
     }
     
-    // 4. Política C-SCAN (Circular SCAN)
+    // 4. Política C-SCAN
     public SolicitudIO ejecutarCSCAN(Cola<SolicitudIO> colaIO) {
         if (colaIO.estaVacia()) {
-            log("PLANIFICADOR: [C-SCAN] No hay solicitudes en la cola.");
+           // log("PLANIFICADOR: [C-SCAN] No hay solicitudes en la cola.");
             return null;
         }
 
-        // --- REEMPLAZADO ---
-        log("PLANIFICADOR: [C-SCAN] Ejecutando lógica... (Siempre subiendo, Cabezal en " + this.posicionCabezal + ")");
+        log("PLANIFICADOR: [C-SCAN] Buscando... (Cabezal en " + this.posicionCabezal + ")");
 
         ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
         NodoLista<SolicitudIO> nodoActual = lista.getInicio();
         
-        SolicitudIO solicitudOptima = null; // La que está más cerca "hacia adelante"
+        SolicitudIO solicitudOptima = null;
         int distanciaMinima = Integer.MAX_VALUE;
         
-        SolicitudIO solicitudMasBaja = null; // La que está más cerca del "inicio" (para el salto)
+        SolicitudIO solicitudMasBaja = null;
         int posMasBaja = Integer.MAX_VALUE;
 
-        // Recorremos TODA la cola
         while (nodoActual != null) {
             SolicitudIO solActual = nodoActual.getDato();
             int posActual = getPosicionSolicitud(solActual);
 
-            // A. Buscamos solicitudes que estén "hacia adelante"
             if (posActual >= this.posicionCabezal) {
                 int distancia = posActual - this.posicionCabezal;
                 if (distancia < distanciaMinima) {
@@ -249,7 +250,6 @@ import java.io.Serializable;
                 }
             }
 
-            // B. Al mismo tiempo, encontramos la solicitud más cercana al "inicio"
             if (posActual < posMasBaja) {
                 posMasBaja = posActual;
                 solicitudMasBaja = solActual;
@@ -258,11 +258,8 @@ import java.io.Serializable;
             nodoActual = nodoActual.getSiguiente();
         }
 
-        // Si no encontramos nada "hacia adelante", saltamos al inicio
         if (solicitudOptima == null) {
-            // --- REEMPLAZADO ---
-            log("PLANIFICADOR: [C-SCAN] Llegó al final, volviendo al inicio (Bloque " + posMasBaja + ")");
-            
+            log("PLANIFICADOR: [C-SCAN] Llegó al final, saltando al inicio (Bloque " + posMasBaja + ")");
             solicitudOptima = solicitudMasBaja;
         }
         
@@ -270,15 +267,15 @@ import java.io.Serializable;
              return null;
         }
 
-        // --- MENSAJE DE LOG AÑADIDO ---
-        log("PLANIFICADOR: [C-SCAN] Eligió " + solicitudOptima.getNombreArchivo());
+        // --- ¡LOG EXPLÍCITO! ---
+        int posFinalElegida = getPosicionSolicitud(solicitudOptima);
+        log("PLANIFICADOR: [C-SCAN] Decisión: Elegido " + solicitudOptima.getNombreArchivo() + " (Bloque " + posFinalElegida + ")");
 
         lista.eliminar(solicitudOptima);
         int bloqueProcesado = ejecutarSolicitud(solicitudOptima);
         
         if (bloqueProcesado != -1) {
             this.posicionCabezal = bloqueProcesado;
-            // --- REEMPLAZADO ---
             log("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
         }
 
@@ -294,7 +291,6 @@ import java.io.Serializable;
             return this.sistemaArchivos.getDisco().getPrimerBloqueLibre();
         }
         
-        // (Modificado para incluir LEER)
         if (solicitud.getTipo() == TipoOperacion.ELIMINAR_ARCHIVO ||
             solicitud.getTipo() == TipoOperacion.LEER_ARCHIVO ||
             solicitud.getTipo() == TipoOperacion.ACTUALIZAR_ARCHIVO) {
@@ -306,12 +302,10 @@ import java.io.Serializable;
             }
         }
         
-        // Fallback
         return this.posicionCabezal;
     }
 
-    // --- ¡INICIO DE CAMBIOS DE LOGGER! ---
-    // --- MÉTODOS NUEVOS ---
+    // --- MÉTODOS DEL LOGGER ---
     
     /**
      * Recibe el logger desde el Simulador.
@@ -330,5 +324,4 @@ import java.io.Serializable;
             System.out.println(mensaje); // Fallback
         }
     }
-    // --- FIN DE CAMBIOS DE LOGGER! ---
 }

@@ -1099,7 +1099,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
  * y lo dibuja en los componentes de la GUI.
  */
 private void actualizarGUICompleta() {
-    System.out.println("GUI: Actualizando vistas...");
+    //System.out.println("GUI: Actualizando vistas...");
     
     // 1. Actualizar el Árbol (JTree)
     actualizarArbol();

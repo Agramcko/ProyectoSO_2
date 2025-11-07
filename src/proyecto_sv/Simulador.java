@@ -4,21 +4,24 @@
  */
 package proyecto_sv;
 
-/**
- * @author Alessandro Gramcko
- * @author massimo Gramcko
- */
+// --- ¡IMPORTS AÑADIDOS! ---
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
-import java.io.File;
+// --- FIN IMPORTS ---
 
+/**
 
+ * @author Alessandro Gramcko
+
+ * @author massimo Gramcko
+
+ */
 public class Simulador {
-    
     
     // 1. Contiene el "Backend"
     private SistemaArchivos sistemaArchivos;
@@ -36,9 +39,8 @@ public class Simulador {
     
     public Simulador() {
         // Inicializa todos los componentes
-        this.sistemaArchivos = cargarEstado(); // Disco de 100 bloques
+        this.sistemaArchivos = cargarEstado();
         
-        // Pasa el "backend" al planificador para que pueda usarlo
         this.planificador = new PlanificadorDisco(this.sistemaArchivos);
         
         this.colaDeProcesos = new Cola<>();
@@ -54,28 +56,23 @@ public class Simulador {
      */
     public void nuevaSolicitudUsuario(TipoOperacion tipo, String nombre, int tamano) {
         
-        // 1. Se crea la solicitud
         SolicitudIO solicitud = new SolicitudIO(tipo, nombre, tamano, 
-                                    sistemaArchivos.getDirectorioActual());
+                                        sistemaArchivos.getDirectorioActual());
         
-        // 2. Se crea el proceso
         Proceso p = new Proceso(solicitud);
         p.setEstado(EstadoProceso.LISTO);
         
-        // 3. El proceso va a la cola de listos (para la GUI)
         colaDeProcesos.encolar(p);
-        
-        // 4. La solicitud de E/S va a la cola del disco
         colaDeIO.encolar(solicitud);
         
-        System.out.println("Nuevo Proceso " + p.getPid() + " en cola de listos.");
-        System.out.println("Nueva SolicitudIO de " + tipo + " en cola de E/S.");
+        // --- LOG CORREGIDO ---
+        log("SIMULADOR: Nuevo Proceso " + p.getPid() + " en cola de listos.");
+        log("SIMULADOR: Nueva SolicitudIO de " + tipo + " en cola de E/S.");
     }
     
     /**
-     * NUEVO MÉTODO: Busca un proceso en la cola de listos
-     * basado en la solicitud de E/S que generó, lo marca como
-     * TERMINADO y lo elimina de la cola.
+     * Busca un proceso en la cola de listos
+     * y lo marca como TERMINADO.
      */
     private void terminarProceso(SolicitudIO solicitudCompletada) {
         if (solicitudCompletada == null) return;
@@ -83,20 +80,16 @@ public class Simulador {
         NodoLista<Proceso> nodoP = colaDeProcesos.getListaInterna().getInicio();
         while (nodoP != null) {
             
-            // Comparamos si es la misma solicitud
-            // (Compara por referencia de objeto, que es lo que queremos)
             if (nodoP.getDato().getSolicitud() == solicitudCompletada) {
                 
                 Proceso p = nodoP.getDato();
                 
-                // 1. Cambiamos su estado
                 p.setEstado(EstadoProceso.TERMINADO);
-                System.out.println("Proceso " + p.getPid() + " ha TERMINADO.");
+                // --- LOG CORREGIDO ---
+                log("SIMULADOR: Proceso " + p.getPid() + " ha TERMINADO.");
                 
-                // 2. Lo eliminamos de la cola de "Listos"
                 this.colaDeProcesos.getListaInterna().eliminar(p);
                 
-                // Rompemos el ciclo, ya lo encontramos
                 break; 
             }
             nodoP = nodoP.getSiguiente();
@@ -104,79 +97,59 @@ public class Simulador {
     }
     
     /**
- * ¡NUEVO MÉTODO!
- * Carga el estado del SistemaArchivos desde el disco.
- * Si no existe, crea uno nuevo.
- */
-private SistemaArchivos cargarEstado() {
-    try (FileInputStream fis = new FileInputStream(NOMBRE_ARCHIVO_ESTADO);
-         ObjectInputStream ois = new ObjectInputStream(fis)) {
-        
-        // 1. Lee el objeto completo desde el archivo
-        SistemaArchivos saCargado = (SistemaArchivos) ois.readObject();
-        
-        // --- ¡AÑADE ESTA LÍNEA! ---
-        // Re-conecta todos los punteros 'padre' que se perdieron (transient)
-        saCargado.reconectarPadres();
-        // --- FIN ---
-        
-        System.out.println("¡Éxito! Estado del disco cargado desde " + NOMBRE_ARCHIVO_ESTADO);
-        return saCargado;
+     * Carga el estado del SistemaArchivos desde el disco.
+     */
+    private SistemaArchivos cargarEstado() {
+        try (FileInputStream fis = new FileInputStream(NOMBRE_ARCHIVO_ESTADO);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            
+            SistemaArchivos saCargado = (SistemaArchivos) ois.readObject();
+            
+            // Re-conecta todos los punteros 'padre'
+            saCargado.reconectarPadres();
+            
+            // --- LOG CORREGIDO ---
+            log("SIMULADOR: ¡Éxito! Estado del disco cargado desde " + NOMBRE_ARCHIVO_ESTADO);
+            return saCargado;
 
-    } catch (java.io.FileNotFoundException e) {
-        System.out.println("No se encontró archivo de estado. Creando uno nuevo...");
-        // Si no hay archivo, crea un sistema de archivos nuevo
-        
-        // (Tu actualización de 150 bloques)
-        return new SistemaArchivos(150); 
+        } catch (java.io.FileNotFoundException e) {
+            log("SIMULADOR: No se encontró archivo de estado. Creando uno nuevo (150 bloques)...");
+            return new SistemaArchivos(150); 
 
-    } catch (IOException | ClassNotFoundException e) {
-        System.err.println("Error al cargar el estado. Creando uno nuevo.");
-        e.printStackTrace();
-        // Si hay otro error, también crea uno nuevo
-        
-        // (Tu actualización de 150 bloques)
-        return new SistemaArchivos(150);
+        } catch (IOException | ClassNotFoundException e) {
+            log("SIMULADOR: Error al cargar el estado. Creando uno nuevo (150 bloques).");
+            e.printStackTrace();
+            return new SistemaArchivos(150);
+        }
     }
-}
 
     /**
-     * ¡NUEVO MÉTODO!
      * Guarda el estado actual del SistemaArchivos en el disco.
      */
     public void guardarEstado() {
         try (FileOutputStream fos = new FileOutputStream(NOMBRE_ARCHIVO_ESTADO);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             
-            // Escribe el objeto sistemaArchivos (y todo lo que contiene) en el archivo
             oos.writeObject(this.sistemaArchivos);
             
-            System.out.println("¡Éxito! Estado del disco guardado en " + NOMBRE_ARCHIVO_ESTADO);
+            // --- LOG CORREGIDO ---
+            log("SIMULADOR: ¡Éxito! Estado del disco guardado en " + NOMBRE_ARCHIVO_ESTADO);
 
         } catch (IOException e) {
-            System.err.println("Error al guardar el estado.");
+            log("SIMULADOR: Error al guardar el estado.");
             e.printStackTrace();
         }
     }
 
     /**
-     * Este método simula un "tick" del reloj del SO.
-     * Le dice al planificador que ejecute UNA solicitud de la cola.
-     * La GUI (en Fase 4) llamará a esto repetidamente.
-     /**
-     * MODIFICADO: Este método simula un "tick" del reloj del SO.
-     */
-    /**
-     * MODIFICADO: Este método simula un "tick" del reloj del SO.
-     * ¡Ahora obedece a la política de planificación seleccionada!
+     * Simula un "tick" del reloj del SO.
      */
     public void ejecutarTickPlanificador() {
         
-        System.out.println("Planificador va a ejecutar una operación...");
+        // log("SIMULADOR: Tick del planificador..."); // (Opcional: es muy ruidoso)
         
         SolicitudIO solicitudProcesada = null;
         
-        // 1. ¡NUEVO! Leemos la política actual
         switch (politicaActual) {
             
             case FIFO:
@@ -196,69 +169,84 @@ private SistemaArchivos cargarEstado() {
                 break;
         }
         
-        // 2. Llama al método para "terminar" el proceso (esto es de antes)
         terminarProceso(solicitudProcesada);
     }
     
-    // --- Getters para que la GUI pueda "ver" el estado ---
+    // --- Getters y Setters ---
     
     public SistemaArchivos getSistemaArchivos() { return sistemaArchivos; }
     public Cola<Proceso> getColaDeProcesos() { return colaDeProcesos; }
     public Cola<SolicitudIO> getColaDeIO() { return colaDeIO; }
     
     public void setModo(ModoUsuario modo) {
-    this.modoActual = modo;
-}
+        this.modoActual = modo;
+    }
 
-public ModoUsuario getModo() {
-    return this.modoActual;
-}
-public void setPolitica(PoliticaPlanificacion politica) {
-    this.politicaActual = politica;
-}
+    public ModoUsuario getModo() {
+        return this.modoActual;
+    }
+    public void setPolitica(PoliticaPlanificacion politica) {
+        this.politicaActual = politica;
+    }
 
-public PoliticaPlanificacion getPolitica() {
-    return this.politicaActual;
-}
+    public PoliticaPlanificacion getPolitica() {
+        return this.politicaActual;
+    }
 
-/**
- * ¡NUEVO MÉTODO!
- * Elimina el archivo de estado guardado (.ser) del disco.
- * Esto fuerza un reinicio limpio la próxima vez que se ejecute.
- */
-public boolean reiniciarEstado() {
-    try {
-        // (Asegúrate de que 'NOMBRE_ARCHIVO_ESTADO' sea el nombre
-        // que definiste en tu método guardar/cargar)
-        File archivoGuardado = new File(NOMBRE_ARCHIVO_ESTADO);
+    /**
+     * Elimina el archivo de estado guardado (.ser) del disco.
+     */
+    public boolean reiniciarEstado() {
+        try {
+            File archivoGuardado = new File(NOMBRE_ARCHIVO_ESTADO);
 
-        if (archivoGuardado.exists()) {
-            if (archivoGuardado.delete()) {
-                System.out.println("REINICIO: Archivo 'estado_disco.ser' eliminado.");
-                return true;
-            } else {
-                System.err.println("REINICIO: No se pudo eliminar 'estado_disco.ser'.");
-                return false;
+            if (archivoGuardado.exists()) {
+                if (archivoGuardado.delete()) {
+                    log("SIMULADOR: Archivo 'estado_disco.ser' eliminado.");
+                    return true;
+                } else {
+                    log("SIMULADOR: No se pudo eliminar 'estado_disco.ser'.");
+                    return false;
+                }
             }
+            return true; 
+
+        } catch (SecurityException e) {
+            log("SIMULADOR: Error de seguridad al eliminar el archivo.");
+            e.printStackTrace();
+            return false;
         }
-        // Si no existía, también es un éxito (ya estaba reiniciado)
-        return true; 
-
-    } catch (SecurityException e) {
-        System.err.println("REINICIO: Error de seguridad al eliminar el archivo.");
-        e.printStackTrace();
-        return false;
     }
-}
-/**
- * Recibe el logger desde la GUI (VentanaPrincipal)
- * y lo pasa al sistema de archivos.
- */
-public void setLogger(ILogger logger) {
-    this.logger = logger;
-
-    if (this.sistemaArchivos != null) {
-        this.sistemaArchivos.setLogger(logger);
+    
+    // --- ¡MÉTODO setLogger CORREGIDO! ---
+    /**
+     * Recibe el logger desde la GUI (VentanaPrincipal)
+     * y lo pasa a AMBOS sub-módulos.
+     */
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+        
+        // Pasa el logger al Sistema de Archivos
+        if (this.sistemaArchivos != null) {
+            this.sistemaArchivos.setLogger(logger);
+        }
+        
+        // --- ¡LA LÍNEA QUE FALTABA! ---
+        // Pasa el logger al Planificador de Disco
+        if (this.planificador != null) {
+            this.planificador.setLogger(logger);
+        }
     }
-}
+    
+    // --- ¡MÉTODO AYUDANTE DE LOG AÑADIDO! ---
+    /**
+     * Ayudante de log para los mensajes del propio Simulador.
+     */
+    private void log(String mensaje) {
+        if (this.logger != null) {
+            this.logger.log(mensaje); // ¡Lo envía a la GUI!
+        } else {
+            System.out.println(mensaje); // Fallback
+        }
+    }
 }
