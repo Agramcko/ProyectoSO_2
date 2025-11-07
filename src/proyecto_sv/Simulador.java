@@ -104,32 +104,36 @@ public class Simulador {
     }
     
     /**
-     * ¡NUEVO MÉTODO!
-     * Carga el estado del SistemaArchivos desde el disco.
-     * Si no existe, crea uno nuevo.
-     */
-    private SistemaArchivos cargarEstado() {
-        try (FileInputStream fis = new FileInputStream(NOMBRE_ARCHIVO_ESTADO);
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
-            
-            // Lee el objeto completo desde el archivo
-            SistemaArchivos saCargado = (SistemaArchivos) ois.readObject();
-            
-            System.out.println("¡Éxito! Estado del disco cargado desde " + NOMBRE_ARCHIVO_ESTADO);
-            return saCargado;
+ * ¡NUEVO MÉTODO!
+ * Carga el estado del SistemaArchivos desde el disco.
+ * Si no existe, crea uno nuevo.
+ */
+private SistemaArchivos cargarEstado() {
+    try (FileInputStream fis = new FileInputStream(NOMBRE_ARCHIVO_ESTADO);
+         ObjectInputStream ois = new ObjectInputStream(fis)) {
+        
+        // Lee el objeto completo desde el archivo
+        SistemaArchivos saCargado = (SistemaArchivos) ois.readObject();
+        
+        System.out.println("¡Éxito! Estado del disco cargado desde " + NOMBRE_ARCHIVO_ESTADO);
+        return saCargado;
 
-        } catch (java.io.FileNotFoundException e) {
-            System.out.println("No se encontró archivo de estado. Creando uno nuevo...");
-            // Si no hay archivo, crea un sistema de archivos nuevo
-            return new SistemaArchivos(100); // Tamaño por defecto (100 bloques)
+    } catch (java.io.FileNotFoundException e) {
+        System.out.println("No se encontró archivo de estado. Creando uno nuevo...");
+        // Si no hay archivo, crea un sistema de archivos nuevo
+        
+        // --- ¡LÍNEA ACTUALIZADA! ---
+        return new SistemaArchivos(150); // Tamaño por defecto (150 bloques)
 
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("Error al cargar el estado. Creando uno nuevo.");
-            e.printStackTrace();
-            // Si hay otro error, también crea uno nuevo
-            return new SistemaArchivos(100);
-        }
+    } catch (IOException | ClassNotFoundException e) {
+        System.err.println("Error al cargar el estado. Creando uno nuevo.");
+        e.printStackTrace();
+        // Si hay otro error, también crea uno nuevo
+        
+        // --- ¡LÍNEA ACTUALIZADA! ---
+        return new SistemaArchivos(150);
     }
+}
 
     /**
      * ¡NUEVO MÉTODO!

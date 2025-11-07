@@ -74,11 +74,14 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
     }
     // --- FIN DE LA NUEVA LÓGICA ---
 
-    // 4. Establecemos el layout del disco (tu código existente)
-    int totalBloquesDisco = 100; 
-    int filas = (int) Math.ceil(Math.sqrt(totalBloquesDisco));
-    int columnas = filas;
-    panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
+    // 4. Establecemos el layout del disco (MODIFICADO)
+
+// ¡Obtenemos el tamaño real del backend!
+int totalBloquesDisco = simulador.getSistemaArchivos().getDisco().getNumBloquesTotal();
+
+int filas = (int) Math.ceil(Math.sqrt(totalBloquesDisco));
+int columnas = filas;
+panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     
     // --- INICIO DEL CÓDIGO ACTUALIZADO (Paso 4) ---
     // 5. Iniciamos el Timer (MODIFICADO)
@@ -390,15 +393,12 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelAccionesLayout.createSequentialGroup()
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNuevoNombre))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAccionesLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnPausarTimer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addGroup(panelAccionesLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnCrearArchivo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(panelAccionesLayout.createSequentialGroup()
                                 .addComponent(lblNombre)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -407,28 +407,24 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                                 .addComponent(lblTamano)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 65, Short.MAX_VALUE))
-                            .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                .addGap(0, 110, Short.MAX_VALUE))
+                            .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAccionesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAccionesLayout.createSequentialGroup()
+                        .addGap(10, 10, 10)
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNuevoNombre))
+                    .addGroup(panelAccionesLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnPausarTimer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addComponent(btnRenombrar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnCrearArchivo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
         panelAccionesLayout.setVerticalGroup(
@@ -442,30 +438,30 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTamano)
                     .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addComponent(btnCrearArchivo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnEliminarArchivo)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnPausarTimer)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 82, Short.MAX_VALUE)
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(btnRenombrar)
-                .addGap(27, 27, 27)
-                .addComponent(btnLeerArchivo)
-                .addGap(18, 18, 18)
+                .addGap(15, 15, 15)
+                .addComponent(btnCrearArchivo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnEliminarArchivo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnCrearDirectorio)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarDirectorio)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                .addComponent(btnPausarTimer)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnLeerArchivo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnGenerarAleatorios)
+                .addGap(18, 18, 18)
+                .addComponent(btnGenerarReporte)
                 .addGap(18, 18, 18)
                 .addComponent(btnReiniciar)
-                .addGap(5, 5, 5)
-                .addComponent(btnGenerarAleatorios)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnGenerarReporte)
                 .addContainerGap())
         );
 
@@ -534,7 +530,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelSistemaLayout.createSequentialGroup()
                         .addComponent(jScrollPane3)
                         .addGap(2, 2, 2))
-                    .addComponent(scrollBuffer, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE)
+                    .addComponent(scrollBuffer, javax.swing.GroupLayout.DEFAULT_SIZE, 363, Short.MAX_VALUE)
                     .addGroup(panelSistemaLayout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -584,7 +580,7 @@ public VentanaPrincipal(ModoUsuario modoInicial) {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 1063, Short.MAX_VALUE)
+            .addComponent(splitPanePrincipal, javax.swing.GroupLayout.Alignment.TRAILING)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

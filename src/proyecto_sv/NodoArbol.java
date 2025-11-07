@@ -13,6 +13,7 @@ import java.io.Serializable;
 public abstract class NodoArbol implements Serializable {
     protected String nombre;
     protected Directorio padre; // Referencia al directorio padre
+    
 
     public NodoArbol(String nombre) {
         this.nombre = nombre;
@@ -35,9 +36,11 @@ public abstract class NodoArbol implements Serializable {
     public void setPadre(Directorio padre) {
         this.padre = padre;
     }
+   
     
     // Método abstracto para que las subclases definan su tamaño
     public abstract int getTamanoEnBloques();
+    
     
     /**
  * Permite al JTree mostrar el nombre del nodo.

@@ -27,7 +27,7 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="splitPanePrincipal" alignment="1" pref="1063" max="32767" attributes="0"/>
+          <Component id="splitPanePrincipal" alignment="1" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -195,16 +195,13 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
-                                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" alignment="1" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="txtNuevoNombre" max="32767" attributes="0"/>
+                                      <Component id="btnPausarTimer" max="32767" attributes="0"/>
                                   </Group>
-                                  <Group type="102" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
                                       <Group type="103" groupAlignment="0" attributes="0">
-                                          <Component id="btnCrearArchivo" alignment="1" max="32767" attributes="0"/>
                                           <Group type="102" alignment="0" attributes="0">
                                               <Component id="lblNombre" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
@@ -214,37 +211,29 @@
                                               <Component id="lblTamano" min="-2" max="-2" attributes="0"/>
                                               <EmptySpace max="-2" attributes="0"/>
                                               <Component id="spinnerTamano" min="-2" pref="72" max="-2" attributes="0"/>
-                                              <EmptySpace min="0" pref="65" max="32767" attributes="0"/>
+                                              <EmptySpace min="0" pref="110" max="32767" attributes="0"/>
                                           </Group>
-                                          <Component id="btnEliminarArchivo" alignment="0" max="32767" attributes="0"/>
-                                          <Component id="btnRenombrar" alignment="0" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <Group type="102" alignment="0" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="btnLeerArchivo" max="32767" attributes="0"/>
-                                  </Group>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="1" attributes="0">
-                                          <Component id="btnCrearDirectorio" max="32767" attributes="0"/>
-                                          <Component id="btnEliminarDirectorio" max="32767" attributes="0"/>
-                                      </Group>
-                                  </Group>
-                                  <Group type="102" alignment="1" attributes="0">
-                                      <EmptySpace max="-2" attributes="0"/>
-                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="btnLeerArchivo" alignment="0" max="32767" attributes="0"/>
                                           <Component id="btnGenerarReporte" max="32767" attributes="0"/>
                                           <Component id="btnGenerarAleatorios" max="32767" attributes="0"/>
+                                          <Component id="btnReiniciar" alignment="0" max="32767" attributes="0"/>
                                       </Group>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
+                                      <EmptySpace min="-2" pref="10" max="-2" attributes="0"/>
+                                      <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="btnReiniciar" max="32767" attributes="0"/>
+                                      <Component id="txtNuevoNombre" max="32767" attributes="0"/>
                                   </Group>
                                   <Group type="102" alignment="0" attributes="0">
                                       <EmptySpace max="-2" attributes="0"/>
-                                      <Component id="btnPausarTimer" max="32767" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="btnRenombrar" alignment="1" max="32767" attributes="0"/>
+                                          <Component id="btnCrearArchivo" alignment="1" max="32767" attributes="0"/>
+                                          <Component id="btnEliminarArchivo" max="32767" attributes="0"/>
+                                          <Component id="btnCrearDirectorio" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="btnEliminarDirectorio" alignment="0" max="32767" attributes="0"/>
+                                      </Group>
                                   </Group>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
@@ -264,31 +253,31 @@
                                   <Component id="lblTamano" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="spinnerTamano" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Component id="btnCrearArchivo" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="btnEliminarArchivo" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                              <Component id="btnPausarTimer" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="82" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
                                   <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="txtNuevoNombre" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="btnRenombrar" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                              <Component id="btnLeerArchivo" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="15" max="-2" attributes="0"/>
+                              <Component id="btnCrearArchivo" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnEliminarArchivo" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnCrearDirectorio" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
                               <Component id="btnEliminarDirectorio" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="102" max="32767" attributes="0"/>
+                              <Component id="btnPausarTimer" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnLeerArchivo" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                              <Component id="btnGenerarAleatorios" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <Component id="btnGenerarReporte" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="btnReiniciar" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="5" max="-2" attributes="0"/>
-                              <Component id="btnGenerarAleatorios" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="btnGenerarReporte" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
@@ -527,7 +516,7 @@
                                       <Component id="jScrollPane3" max="32767" attributes="0"/>
                                       <EmptySpace min="2" pref="2" max="-2" attributes="0"/>
                                   </Group>
-                                  <Component id="scrollBuffer" alignment="0" pref="396" max="32767" attributes="0"/>
+                                  <Component id="scrollBuffer" alignment="0" pref="363" max="32767" attributes="0"/>
                                   <Group type="102" alignment="0" attributes="0">
                                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                                       <EmptySpace max="-2" attributes="0"/>
