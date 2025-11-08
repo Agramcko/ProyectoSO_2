@@ -1419,6 +1419,7 @@ private void actualizarPermisosGUI() {
     btnPausarTimer.setEnabled(esAdmin);
     spinnerTamano.setEnabled(esAdmin);
     btnLimpiarBuffer.setEnabled(esAdmin);
+    comboPolitica.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)
