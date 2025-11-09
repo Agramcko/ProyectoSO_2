@@ -816,19 +816,45 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     }//GEN-LAST:event_btnRenombrarActionPerformed
 
     private void btnLeerArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLeerArchivoActionPerformed
-        String nombre = txtNombreArchivo.getText();
-        if (nombre == null || nombre.trim().isEmpty()) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Debe ingresar un nombre de archivo para leer.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+       // 1. Obtener el path del nodo seleccionado en el JTree
+        TreePath pathSeleccionado = arbolArchivos.getSelectionPath();
+        
+        if (pathSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione un archivo para leer.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
+        // 2. Obtener nuestro objeto NodoArbol personalizado
+        DefaultMutableTreeNode nodoJTree = (DefaultMutableTreeNode) pathSeleccionado.getLastPathComponent();
+        NodoArbol nodoArbol = (NodoArbol) nodoJTree.getUserObject();
+
+        // 3. ¡VALIDACIÓN IMPORTANTE!
+        //    Asegurarnos de que NO sea un directorio.
+        if (nodoArbol instanceof Directorio) {
+            JOptionPane.showMessageDialog(this, "No se puede leer un directorio. Por favor, seleccione un archivo.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        // 4. Si es un archivo, obtener su nombre
+        String nombreArchivo = nodoArbol.getNombre();
+
+        // --- ¡¡¡ESTA ES LA CORRECCIÓN!!! ---
+        
+        // 5. Usamos el método que descubrimos en tu botón "Crear Archivo"
+        //    (Asume que 'nuevaSolicitudUsuario' usará el 'directorioActual'
+        //    que ya está seleccionado en el backend)
         simulador.nuevaSolicitudUsuario(
             TipoOperacion.LEER_ARCHIVO,
-            nombre,
-            0 // Tamaño no aplica
+            nombreArchivo, 
+            0 // El tamaño es 0 (irrelevante para una lectura)
         );
-
-        System.out.println("GUI: Solicitud para LEER '" + nombre + "' fue encolada.");
+        
+        // --- FIN DE LA CORRECCIÓN ---
+        
+        // 6. Usamos nuestro logger de GUI
+        log("GUI: Solicitud para LEER '" + nombreArchivo + "' fue encolada.");
+        
+        // 7. Actualizamos la GUI para ver la solicitud en la cola
         actualizarGUICompleta();
     }//GEN-LAST:event_btnLeerArchivoActionPerformed
 
