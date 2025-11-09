@@ -46,97 +46,77 @@ public class SistemaArchivos implements Serializable {
     
     // (Opcional pero recomendado) Un setter para cambiar de directorio
     public void setDirectorioActual(Directorio dir) {
-    if (dir != null) {
-        this.directorioActual = dir;
-        System.out.println("Directorio actual cambiado a: " + dir.getNombre());
+        if (dir != null) {
+            this.directorioActual = dir;
+            // --- ¡LOG MEJORADO! ---
+            log("SIMULADOR: Directorio actual cambiado a: " + dir.getNombre());
+        }
     }
-}
     public BufferCache getBufferCache() {
-    return this.buffer;
-}
+        return this.buffer;
+    }
 
     // --- Lógica CRUD (Backend) ---
-    // [cite: 36]
     
     /**
-     * Crea un archivo en el directorio actual.
-     * Esta es la operación que debe ser gestionada por un PROCESO [cite: 15, 16]
+     * MODIFICADO: Crea un archivo en el directorio especificado.
+     * ¡Ahora devuelve el idPrimerBloque!
+     * ¡Y AHORA USA EL LOGGER CON EMOJIS!
      */
-    /**
- * MODIFICADO: Crea un archivo en el directorio especificado.
- * ¡Ahora devuelve el idPrimerBloque!
- */
-/**
- * MODIFICADO: Crea un archivo en el directorio especificado.
- * ¡Ahora devuelve el idPrimerBloque!
- * ¡Y AHORA USA EL LOGGER!
- */
-public int crearArchivo(String nombre, int tamanoEnBloques, Directorio directorioPadre) {
+    public int crearArchivo(String nombre, int tamanoEnBloques, Directorio directorioPadre) {
+        
+        // --- ¡EMOJI AÑADIDO! ---
+        if (tamanoEnBloques > disco.getNumBloquesLibres()) {
+            log("PLANIFICADOR: ⛔ ¡DISCO LLENO! No hay " + tamanoEnBloques + " bloques libres para '" + nombre + "'.");
+            return -1; // Falla
+        }
+
+        // --- ¡EMOJI AÑADIDO! ---
+        if (directorioPadre.buscarHijo(nombre) != null) {
+            log("PLANIFICADOR: ❌ Error. El nombre '" + nombre + "' ya existe.");
+            return -1; // Falla
+        }
+
+        Archivo nuevoArchivo = new Archivo(nombre, tamanoEnBloques);
+        int primerBloque = disco.asignarBloques(nuevoArchivo, tamanoEnBloques);
+
+        // --- ¡EMOJI AÑADIDO! ---
+        if (primerBloque == -1) {
+            log("PLANIFICADOR: ⛔ ¡DISCO LLENO! No se pudieron asignar los " + tamanoEnBloques + " bloques (fragmentación o error).");
+            return -1; // Falla
+        }
+
+        nuevoArchivo.setIdPrimerBloque(primerBloque);
+        directorioPadre.agregarHijo(nuevoArchivo); // ¡Usamos el padre!
+
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: ✅ Archivo creado: " + nombre + ", inicia en bloque " + primerBloque);
+        return primerBloque; // ¡Éxito!
+    }
     
-    // --- CAMBIO 1 (Log de Error) ---
-    if (tamanoEnBloques > disco.getNumBloquesLibres()) {
-        log("PLANIFICADOR: ¡DISCO LLENO! No hay " + tamanoEnBloques + " bloques libres para '" + nombre + "'.");
-        return -1; // Falla
-    }
-
-    // --- CAMBIO 2 (Log de Error) ---
-    if (directorioPadre.buscarHijo(nombre) != null) {
-        log("PLANIFICADOR: Error. El nombre '" + nombre + "' ya existe.");
-        return -1; // Falla
-    }
-
-    Archivo nuevoArchivo = new Archivo(nombre, tamanoEnBloques);
-    int primerBloque = disco.asignarBloques(nuevoArchivo, tamanoEnBloques);
-
-    // --- CAMBIO 3 (Log de Error - ¡EL MÁS IMPORTANTE!) ---
-    if (primerBloque == -1) {
-        log("PLANIFICADOR: ¡DISCO LLENO! No se pudieron asignar los " + tamanoEnBloques + " bloques (fragmentación o error).");
-        return -1; // Falla
-    }
-
-    nuevoArchivo.setIdPrimerBloque(primerBloque);
-    directorioPadre.agregarHijo(nuevoArchivo); // ¡Usamos el padre!
-
-    // --- CAMBIO 4 (Log de Éxito) ---
-    log("PLANIFICADOR: Archivo creado: " + nombre + ", inicia en bloque " + primerBloque);
-    return primerBloque; // ¡Éxito!
-}
     /**
-     * Elimina un archivo del directorio actual.
-     */
-    /**
-     * Elimina un archivo del directorio actual.
-     * ¡VERSIÓN ACTUALIZADA!
-     */
-    /**
- * MODIFICADO: Elimina un archivo del directorio especificado.
- * ¡Ahora devuelve el idPrimerBloque!
- */
-/**
      * MODIFICADO: Elimina un archivo del directorio especificado.
-     * ¡Ahora también invalida el BufferCache!
+     * ¡Ahora también invalida el BufferCache y usa EMOJIS!
      */
     public int eliminarArchivo(String nombre, Directorio directorioPadre) {
         NodoArbol nodo = directorioPadre.buscarHijo(nombre);
         
         if (nodo == null || !(nodo instanceof Archivo)) {
-            System.err.println("Error: Archivo '" + nombre + "' no encontrado.");
+            // --- ¡LOG MEJORADO! ---
+            log("PLANIFICADOR: ❌ Error: Archivo '" + nombre + "' no encontrado.");
             return -1; // Falla
         }
         
         Archivo archivoAEliminar = (Archivo) nodo;
         int idPrimerBloque = archivoAEliminar.getIdPrimerBloque();
         
-        // --- ¡NUEVA LÓGICA DE BORRADO! ---
-        // Reemplazamos la llamada simple a 'disco.liberarBloques()'
+        // --- ¡LOG MEJORADO! ---
+        log("PLANIFICADOR: 🗑️ Liberando e invalidando bloques para " + nombre + "...");
         
         int idBloqueActual = idPrimerBloque;
-        System.out.println("ELIMINANDO: Liberando e invalidando bloques...");
-        
         while (idBloqueActual != -1) {
             Bloque bloque = disco.getBloque(idBloqueActual);
             
-            // Seguridad para evitar bucles infinitos si algo sale mal
             if (bloque == null || !bloque.estaOcupado()) {
                 break; 
             }
@@ -157,430 +137,350 @@ public int crearArchivo(String nombre, int tamanoEnBloques, Directorio directori
         // 3. Eliminar del árbol de directorios
         directorioPadre.eliminarHijo(archivoAEliminar);
         
-        System.out.println("Archivo eliminado: " + nombre);
+        // --- ¡LOG MEJORADO! ---
+        log("PLANIFICADOR: 🗑️ Archivo eliminado: " + nombre);
         return idPrimerBloque; // Éxito
     }
-    
-    // (Implementar crearDirectorio, eliminarDirectorio[cite: 47], etc.)
-/**
- * Simula la lectura de un archivo.
- * Devuelve el idPrimerBloque.
- */
-/**
- * MODIFICADO: Simula la lectura de un archivo.
- * ¡Ahora utiliza el BufferCache!
- */
-public int leerArchivo(String nombre, Directorio directorioPadre) {
-    NodoArbol nodo = directorioPadre.buscarHijo(nombre);
-    
-    if (nodo == null || !(nodo instanceof Archivo)) {
-        System.err.println("Error: Archivo '" + nombre + "' no encontrado para leer.");
-        return -1; // Falla
+        
+    /**
+     * MODIFICADO: Simula la lectura de un archivo.
+     * ¡Ahora utiliza el BufferCache y loggea en una línea!
+     */
+    public int leerArchivo(String nombre, Directorio directorioPadre) {
+        NodoArbol nodo = directorioPadre.buscarHijo(nombre);
+        
+        if (nodo == null || !(nodo instanceof Archivo)) {
+            // --- ¡LOG MEJORADO! ---
+            log("PLANIFICADOR: ❌ Error: Archivo '" + nombre + "' no encontrado para leer.");
+            return -1; // Falla
+        }
+        
+        Archivo archivo = (Archivo) nodo;
+        int idBloqueActual = archivo.getIdPrimerBloque();
+        
+        // --- ¡LÓGICA DE LOG MEJORADA! ---
+        // Usamos un StringBuilder para construir la línea de log
+        StringBuilder sb = new StringBuilder();
+        
+        // Recorremos la cadena de bloques
+        while (idBloqueActual != -1) {
+            
+            // --- ¡LÓGICA DEL BUFFER (Como estaba antes) ---
+            Bloque bloqueLeido = buffer.leer(idBloqueActual);
+            
+            if (bloqueLeido == null) {
+                bloqueLeido = disco.getBloque(idBloqueActual);
+                
+                if (bloqueLeido != null) {
+                    buffer.escribir(bloqueLeido);
+                }
+            }
+            // --- FIN LÓGICA DEL BUFFER ---
+            
+            if (bloqueLeido == null) break; // Seguridad
+            
+            // Añadimos el bloque al string
+            sb.append("[").append(bloqueLeido.getId()).append("] -> ");
+            idBloqueActual = bloqueLeido.getPunteroSiguiente();
+        }
+        sb.append("FIN");
+        
+        // Imprimimos la línea completa en el log
+        log("PLANIFICADOR: 📖 Simulación de LECTURA: " + sb.toString());
+        // --- FIN LÓGICA DE LOG ---
+        
+        return archivo.getIdPrimerBloque(); // Éxito
     }
     
-    Archivo archivo = (Archivo) nodo;
-    int idBloqueActual = archivo.getIdPrimerBloque();
+    /**
+     * Renombra un archivo o directorio en el directorio actual.
+     * ¡LOGS MEJORADOS!
+     */
     
-    System.out.print("Simulación de LECTURA: Leyendo bloques -> ");
+    /**
+     * Crea un nuevo directorio dentro del directorio actual.
+     * ¡LOGS MEJORADOS!
+     */
+    public boolean crearDirectorio(String nombre) {
+
+        if (nombre == null || nombre.trim().isEmpty()) {
+            log("PLANIFICADOR: ❌ Error Crear Dir: El nombre no puede estar vacío.");
+            return false;
+        }
+
+        if (directorioActual.buscarHijo(nombre) != null) {
+            log("PLANIFICADOR: ❌ Error Crear Dir: El nombre '" + nombre + "' ya existe.");
+            return false;
+        }
+
+        Directorio nuevoDir = new Directorio(nombre);
+        directorioActual.agregarHijo(nuevoDir);
+
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: ✅ Directorio creado: " + nombre);
+        return true;
+    }
     
-    // Recorremos la cadena de bloques
-    while (idBloqueActual != -1) {
-        
-        // --- ¡¡LÓGICA DEL BUFFER AÑADIDA!! ---
-        
-        // 1. Intentamos leer del buffer
-        Bloque bloqueLeido = buffer.leer(idBloqueActual);
-        
-        // 2. Si es null (Cache MISS), lo leemos del disco
-        if (bloqueLeido == null) {
-            bloqueLeido = disco.getBloque(idBloqueActual);
-            
-            // 3. Y lo escribimos en el buffer para la próxima vez
-            if (bloqueLeido != null) {
-                buffer.escribir(bloqueLeido);
+    /**
+     * Punto de entrada para eliminar un directorio desde la GUI.
+     * ¡LOGS MEJORADOS!
+     */
+    public boolean eliminarDirectorio(String nombre) {
+        NodoArbol nodo = directorioActual.buscarHijo(nombre);
+
+        if (nodo == null) {
+            log("PLANIFICADOR: ❌ Error Eliminar Dir: No se encontró '" + nombre + "'.");
+            return false;
+        }
+
+        if (!(nodo instanceof Directorio)) {
+            log("PLANIFICADOR: ❌ Error Eliminar Dir: '" + nombre + "' no es un directorio.");
+            return false;
+        }
+
+        Directorio dirAEliminar = (Directorio) nodo;
+
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: 🗑️ Eliminación recursiva iniciada para: " + nombre);
+        eliminarDirectorioRecursivo(dirAEliminar);
+
+        directorioActual.eliminarHijo(dirAEliminar);
+
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: 🗑️ Directorio eliminado exitosamente: " + nombre);
+        return true;
+    }
+
+    /**
+     * Ayudante recursivo para vaciar un directorio.
+     * ¡LOGS MEJORADOS!
+     */
+    private void eliminarDirectorioRecursivo(Directorio dir) {
+
+        while (!dir.getHijos().estaVacia()) {
+            NodoArbol hijo = dir.getHijos().getInicio().getDato();
+
+            if (hijo instanceof Archivo) {
+                // --- ¡EMOJI AÑADIDO! ---
+                log("PLANIFICADOR: 🗑️ Borrando archivo interno: " + hijo.getNombre());
+                eliminarArchivo(hijo.getNombre(), dir);
+
+            } else if (hijo instanceof Directorio) {
+                // --- ¡EMOJI AÑADIDO! ---
+                log("PLANIFICADOR: 🗑️ Entrando a subdirectorio: " + hijo.getNombre());
+                eliminarDirectorioRecursivo((Directorio) hijo);
+                dir.eliminarHijo(hijo);
             }
         }
-        // Si no era null, fue un ¡Cache HIT! y nos ahorramos el disco.
-        
-        // --- FIN LÓGICA DEL BUFFER ---
-        
-        if (bloqueLeido == null) break; // Seguridad
-        
-        System.out.print(bloqueLeido.getId() + " -> ");
-        idBloqueActual = bloqueLeido.getPunteroSiguiente();
     }
-    System.out.println("FIN");
     
-    return archivo.getIdPrimerBloque(); // Éxito
-}
-/**
- * ¡NUEVO MÉTODO!
- * Renombra un archivo o directorio en el directorio actual.
- * Es una operación instantánea (metadatos).
- * Devuelve 'true' si fue exitoso.
- */
-public boolean renombrarNodo(String nombreViejo, String nombreNuevo) {
+    /**
+     * Punto de entrada para crear el reporte.
+     * ¡LOGS MEJORADOS!
+     */
+    public boolean generarReporteDeEstado() {
+        StringBuilder sb = new StringBuilder();
 
-    // 1. Validar que el nombre nuevo no esté vacío
-    if (nombreNuevo == null || nombreNuevo.trim().isEmpty()) {
-        System.err.println("Renombrar: El nombre nuevo no puede estar vacío.");
-        return false;
-    }
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
+        sb.append("--- REPORTE DEL SISTEMA DE ARCHIVOS ---\n");
+        sb.append("Generado: ").append(dtf.format(LocalDateTime.now())).append("\n");
+        sb.append("---------------------------------------\n\n");
+        sb.append("ESTRUCTURA DEL DIRECTORIO:\n");
 
-    // 2. Validar que el nombre nuevo NO exista ya
-    if (directorioActual.buscarHijo(nombreNuevo) != null) {
-        System.err.println("Renombrar: El nombre '" + nombreNuevo + "' ya existe.");
-        return false;
-    }
+        generarReporteRecursivo(this.raiz, sb, "");
 
-    // 3. Buscar el nodo (archivo/directorio) viejo
-    NodoArbol nodoARenombrar = directorioActual.buscarHijo(nombreViejo);
+        sb.append("\n\n---------------------------------------\n");
+        sb.append("ESTADO DEL DISCO (SD):\n");
+        sb.append("Total de Bloques: ").append(disco.getNumBloquesTotal()).append("\n");
+        sb.append("Bloques Libres: ").append(disco.getNumBloquesLibres()).append("\n");
+        sb.append("Bloques Ocupados: ").append(disco.getNumBloquesTotal() - disco.getNumBloquesLibres()).append("\n");
 
-    if (nodoARenombrar == null) {
-        System.err.println("Renombrar: No se encontró '" + nombreViejo + "'.");
-        return false;
-    }
-
-    // 4. ¡El cambio! (Usando el método del Paso 3)
-    nodoARenombrar.setNombre(nombreNuevo);
-
-    System.out.println("Renombrar: '" + nombreViejo + "' ahora es '" + nombreNuevo + "'.");
-    return true;
-}
-/**
- * ¡NUEVO MÉTODO!
- * Crea un nuevo directorio dentro del directorio actual.
- * Es una operación instantánea (metadatos).
- * Devuelve 'true' si fue exitoso.
- */
-public boolean crearDirectorio(String nombre) {
-
-    // 1. Validar que el nombre no esté vacío
-    if (nombre == null || nombre.trim().isEmpty()) {
-        System.err.println("Crear Dir: El nombre no puede estar vacío.");
-        return false;
-    }
-
-    // 2. Validar que el nombre NO exista ya
-    if (directorioActual.buscarHijo(nombre) != null) {
-        System.err.println("Crear Dir: El nombre '" + nombre + "' ya existe.");
-        return false;
-    }
-
-    // 3. Crear el objeto Directorio
-    Directorio nuevoDir = new Directorio(nombre);
-
-    // 4. Añadirlo al árbol (al directorio actual)
-    directorioActual.agregarHijo(nuevoDir);
-
-    System.out.println("Directorio creado: " + nombre);
-    return true;
-}
-/**
- * ¡NUEVO MÉTODO PÚBLICO!
- * Punto de entrada para eliminar un directorio desde la GUI.
- * Llama al ayudante recursivo y luego elimina el directorio en sí.
- */
-public boolean eliminarDirectorio(String nombre) {
-    // 1. Buscar el directorio en el directorio actual
-    NodoArbol nodo = directorioActual.buscarHijo(nombre);
-
-    if (nodo == null) {
-        System.err.println("Eliminar Dir: No se encontró '" + nombre + "'.");
-        return false;
-    }
-
-    if (!(nodo instanceof Directorio)) {
-        System.err.println("Eliminar Dir: '" + nombre + "' no es un directorio.");
-        return false;
-    }
-
-    Directorio dirAEliminar = (Directorio) nodo;
-
-    // 2. Llamar al ayudante recursivo para vaciarlo
-    System.out.println("Eliminación recursiva iniciada para: " + nombre);
-    eliminarDirectorioRecursivo(dirAEliminar);
-
-    // 3. Una vez vacío, eliminar el directorio del árbol
-    directorioActual.eliminarHijo(dirAEliminar);
-
-    System.out.println("Directorio eliminado exitosamente: " + nombre);
-    return true;
-}
-
-/**
- * ¡NUEVO MÉTODO PRIVADO (AYUDANTE RECURSIVO)!
- * Vacía un directorio de todo su contenido.
- */
-private void eliminarDirectorioRecursivo(Directorio dir) {
-
-    // Usamos un 'while' porque la lista de hijos se modificará en cada iteración
-    while (!dir.getHijos().estaVacia()) {
-
-        // Obtenemos el primer hijo
-        NodoArbol hijo = dir.getHijos().getInicio().getDato();
-
-        if (hijo instanceof Archivo) {
-            // Si es un archivo, usamos nuestro método 'eliminarArchivo'
-            // (que ya maneja la liberación de bloques y el buffer)
-            System.out.println("Borrando archivo: " + hijo.getNombre());
-            // ¡Importante! Usamos la versión de 'eliminarArchivo' que
-            // recibe el directorio padre donde buscar.
-            eliminarArchivo(hijo.getNombre(), dir);
-
-        } else if (hijo instanceof Directorio) {
-            // Si es un sub-directorio, llamamos a esta misma función
-            System.out.println("Entrando a subdirectorio: " + hijo.getNombre());
-            eliminarDirectorioRecursivo((Directorio) hijo);
-
-            // Cuando la recursión termina, el sub-directorio está vacío
-            // y ahora podemos eliminarlo de la lista de 'dir'
-            dir.eliminarHijo(hijo);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("reporte_disco.txt"))) {
+            writer.write(sb.toString());
+            // --- ¡EMOJI AÑADIDO! ---
+            log("SIMULADOR: 📈 ¡Reporte 'reporte_disco.txt' generado exitosamente!");
+            return true;
+        } catch (IOException e) {
+            // --- ¡EMOJI AÑADIDO! ---
+            log("SIMULADOR: ❌ Error al escribir el reporte: " + e.getMessage());
+            e.printStackTrace();
+            return false;
         }
     }
-    // Cuando el 'while' termina, 'dir' está vacío.
-}
-// Pega esto dentro de la clase SistemaArchivos
 
-/**
- * ¡NUEVO MÉTODO PÚBLICO!
- * Punto de entrada para crear el reporte.
- * Crea un StringBuilder y llama al ayudante recursivo.
- */
-public boolean generarReporteDeEstado() {
-    // 1. Usamos un StringBuilder para construir el reporte en memoria
-    StringBuilder sb = new StringBuilder();
+    /**
+     * Ayudante recursivo para el reporte (¡con emojis!).
+     */
+    private void generarReporteRecursivo(NodoArbol nodo, StringBuilder sb, String indentacion) {
+        if (nodo == null) return;
+        sb.append(indentacion); 
 
-    // 2. Encabezado del reporte
-    DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-    sb.append("--- REPORTE DEL SISTEMA DE ARCHIVOS ---\n");
-    sb.append("Generado: ").append(dtf.format(LocalDateTime.now())).append("\n");
-    sb.append("---------------------------------------\n\n");
-    sb.append("ESTRUCTURA DEL DIRECTORIO:\n");
+        if (nodo instanceof Directorio) {
+            sb.append("📁 ").append(nodo.getNombre()).append("/\n"); // Emoji de Directorio
 
-    // 3. Llamada al ayudante recursivo (empezando desde la raíz)
-    generarReporteRecursivo(this.raiz, sb, "");
+            Directorio dir = (Directorio) nodo;
+            NodoLista<NodoArbol> hijoActual = dir.getHijos().getInicio();
+            while (hijoActual != null) {
+                generarReporteRecursivo(hijoActual.getDato(), sb, indentacion + "  ");
+                hijoActual = hijoActual.getSiguiente();
+            }
 
-    // 4. Información del Disco
-    sb.append("\n\n---------------------------------------\n");
-    sb.append("ESTADO DEL DISCO (SD):\n");
-    sb.append("Total de Bloques: ").append(disco.getNumBloquesTotal()).append("\n");
-    sb.append("Bloques Libres: ").append(disco.getNumBloquesLibres()).append("\n");
-    sb.append("Bloques Ocupados: ").append(disco.getNumBloquesTotal() - disco.getNumBloquesLibres()).append("\n");
+        } else if (nodo instanceof Archivo) {
+            Archivo archivo = (Archivo) nodo;
+            sb.append("📄 ").append(archivo.getNombre()); // Emoji de Archivo
+            sb.append(" (Tamaño: ").append(archivo.getTamanoEnBloques()).append(" bloques)\n");
 
-    // 5. Escribir el StringBuilder a un archivo .txt
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter("reporte_disco.txt"))) {
-        writer.write(sb.toString());
-        System.out.println("¡Reporte 'reporte_disco.txt' generado exitosamente!");
-        return true;
-    } catch (IOException e) {
-        System.err.println("Error al escribir el reporte: " + e.getMessage());
-        e.printStackTrace();
-        return false;
+            sb.append(indentacion).append("     └ (Bloques: ");
+            int idBloqueActual = archivo.getIdPrimerBloque();
+            while (idBloqueActual != -1) {
+                sb.append("[").append(idBloqueActual).append("] -> ");
+                Bloque bloque = disco.getBloque(idBloqueActual);
+                if (bloque == null) break;
+                idBloqueActual = bloque.getPunteroSiguiente();
+            }
+            sb.append("FIN)\n");
+        }
     }
-}
+    
+    /**
+     * Recibe el logger desde el Simulador
+     * y lo pasa al BufferCache.
+     */
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
 
-/**
- * ¡NUEVO MÉTODO PRIVADO (AYUDANTE RECURSIVO)!
- * Recorre el árbol y añade la información al StringBuilder.
- */
-private void generarReporteRecursivo(NodoArbol nodo, StringBuilder sb, String indentacion) {
-    if (nodo == null) return;
+        if (this.buffer != null) {
+            this.buffer.setLogger(logger);
+        }
+    }
+    
+    /**
+     * ¡NUEVO MÉTODO AYUDANTE!
+     * Ayudante de log. Si tenemos un logger GUI, lo usa.
+     */
+    private void log(String mensaje) {
+        if (this.logger != null) {
+            this.logger.log(mensaje); // ¡Lo envía a la GUI!
+        } else {
+            System.out.println(mensaje); // Fallback
+        }
+    }
+    
+    /**
+     * Devuelve el valor actual del contador de archivos
+     */
+    public int getContadorArchivosAleatorios() {
+        return this.contadorArchivosAleatorios;
+    }
 
-    sb.append(indentacion); // Aplica la sangría
+    /**
+     * Incrementa el contador de archivos
+     */
+    public void incrementarContadorArchivosAleatorios() {
+        this.contadorArchivosAleatorios++;
+    }
+   
 
-    if (nodo instanceof Directorio) {
-        // Si es un Directorio
-        sb.append("📁 ").append(nodo.getNombre()).append("/\n");
+    /**
+     * Elimina el 'directorioActual'.
+     * ¡LOGS MEJORADOS!
+     */
+    public boolean eliminarDirectorioActual() {
+        
+        Directorio dirAEliminar = this.directorioActual;
 
-        // Llamada recursiva para cada hijo
-        Directorio dir = (Directorio) nodo;
-        NodoLista<NodoArbol> hijoActual = dir.getHijos().getInicio();
+        if (dirAEliminar == this.raiz) {
+            log("PLANIFICADOR: ❌ Error. No se puede eliminar el directorio raíz.");
+            return false;
+        }
+        
+        Directorio padre = dirAEliminar.getPadre();
+        if (padre == null) {
+             log("PLANIFICADOR: ❌ Error. El nodo no tiene padre (Huérfano).");
+             return false;
+        }
+
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: 🗑️ Eliminación recursiva iniciada para: " + dirAEliminar.getNombre());
+        eliminarDirectorioRecursivo(dirAEliminar);
+
+        padre.eliminarHijo(dirAEliminar);
+        this.directorioActual = padre;
+
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: 🗑️ Directorio eliminado exitosamente: " + dirAEliminar.getNombre());
+        return true;
+    }
+    
+    /**
+     * Punto de entrada para re-conectar los punteros 'padre'
+     */
+    public void reconectarPadres() {
+        reconectarPadresRecursivo(this.raiz);
+    }
+
+    /**
+     * Ayudante recursivo para re-conectar los punteros 'padre'.
+     */
+    private void reconectarPadresRecursivo(Directorio padre) {
+        if (padre == null || padre.getHijos() == null) {
+            return;
+        }
+
+        NodoLista<NodoArbol> hijoActual = padre.getHijos().getInicio();
+        
         while (hijoActual != null) {
-            generarReporteRecursivo(hijoActual.getDato(), sb, indentacion + "  ");
+            
+            NodoArbol nodoHijo = hijoActual.getDato();
+            
+            // 1. ¡LA RE-CONEXIÓN!
+            nodoHijo.setPadre(padre);
+            
+            // 2. Si este hijo también es un directorio, 
+            //    hacemos la llamada recursiva para sus propios hijos.
+            if (nodoHijo instanceof Directorio) {
+                reconectarPadresRecursivo((Directorio) nodoHijo);
+            }
+            
             hijoActual = hijoActual.getSiguiente();
         }
-
-    } else if (nodo instanceof Archivo) {
-        // Si es un Archivo
-        Archivo archivo = (Archivo) nodo;
-        sb.append("📄 ").append(archivo.getNombre());
-        sb.append(" (Tamaño: ").append(archivo.getTamanoEnBloques()).append(" bloques)\n");
-
-        // Detalle de la cadena de bloques
-        sb.append(indentacion).append("     └ (Bloques: ");
-        int idBloqueActual = archivo.getIdPrimerBloque();
-        while (idBloqueActual != -1) {
-            sb.append("[").append(idBloqueActual).append("] -> ");
-            Bloque bloque = disco.getBloque(idBloqueActual);
-            if (bloque == null) break;
-            idBloqueActual = bloque.getPunteroSiguiente();
-        }
-        sb.append("FIN)\n");
     }
-}
-/**
- * Recibe el logger desde el Simulador
- * y lo pasa al BufferCache.
- */
-public void setLogger(ILogger logger) {
-    this.logger = logger;
-
-    if (this.buffer != null) {
-        this.buffer.setLogger(logger);
-    }
-}
-/**
- * ¡NUEVO MÉTODO AYUDANTE!
- * Ayudante de log. Si tenemos un logger GUI, lo usa.
- * Si no, usa el System.out por defecto.
- */
-private void log(String mensaje) {
-    if (this.logger != null) {
-        this.logger.log(mensaje); // ¡Lo envía a la GUI!
-    } else {
-        System.out.println(mensaje); // Fallback
-    }
-}
-/**
- * Devuelve el valor actual del contador de archivos
- */
-public int getContadorArchivosAleatorios() {
-    return this.contadorArchivosAleatorios;
-}
-
-/**
- * Incrementa el contador de archivos
- */
-public void incrementarContadorArchivosAleatorios() {
-    this.contadorArchivosAleatorios++;
-}
-/**
- * ¡NUEVO MÉTODO MEJORADO!
- * Renombra el 'directorioActual' (el que está seleccionado).
- * Usa el puntero 'getPadre()' para funcionar.
- */
-public boolean renombrarNodoActual(String nombreNuevo) {
     
-    NodoArbol nodoActual = this.directorioActual;
+    /**
+ * ¡NUEVO MÉTODO MEJORADO!
+ * Renombra un NodoArbol específico (archivo o directorio)
+ * que se le pasa como parámetro.
+ */
+public boolean renombrarNodo(NodoArbol nodoARenombrar, String nombreNuevo) {
 
     // 1. No podemos renombrar la raíz
-    if (nodoActual == this.raiz) {
-        log("PLANIFICADOR: Error. No se puede renombrar el directorio raíz.");
+    if (nodoARenombrar == this.raiz) {
+        log("PLANIFICADOR: ❌ Error. No se puede renombrar el directorio raíz.");
         return false;
     }
 
-    // 2. Validar que el nombre nuevo no esté vacío
+    // 2. Validar nombre nuevo
     if (nombreNuevo == null || nombreNuevo.trim().isEmpty()) {
-        log("PLANIFICADOR: Error. El nombre nuevo no puede estar vacío.");
+        log("PLANIFICADOR: ❌ Error. El nombre nuevo no puede estar vacío.");
         return false;
     }
 
-    // 3. Obtener el padre y validar el nombre
-    Directorio padre = nodoActual.getPadre();
+    // 3. Obtener el padre
+    Directorio padre = nodoARenombrar.getPadre();
     if (padre == null) {
-         log("PLANIFICADOR: Error. El nodo no tiene padre (Huérfano).");
-         return false; // Esto no debería pasar si el Paso 1 está bien
+         log("PLANIFICADOR: ❌ Error. El nodo no tiene padre (Huérfano).");
+         return false;
     }
 
     // 4. Validar que el nombre nuevo NO exista ya en el padre
     if (padre.buscarHijo(nombreNuevo) != null) {
-        log("PLANIFICADOR: Error. El nombre '" + nombreNuevo + "' ya existe.");
+        log("PLANIFICADOR: ❌ Error. El nombre '" + nombreNuevo + "' ya existe.");
         return false;
     }
 
     // 5. ¡El cambio!
-    log("PLANIFICADOR: Renombrado '" + nodoActual.getNombre() + "' a '" + nombreNuevo + "'.");
-    nodoActual.setNombre(nombreNuevo);
+    log("PLANIFICADOR: ✏️ Renombrado '" + nodoARenombrar.getNombre() + "' a '" + nombreNuevo + "'.");
+    nodoARenombrar.setNombre(nombreNuevo);
     return true;
-}
-
-/**
- * ¡NUEVO MÉTODO MEJORADO!
- * Elimina el 'directorioActual' (el que está seleccionado).
- * Usa el puntero 'getPadre()' para funcionar.
- */
-public boolean eliminarDirectorioActual() {
-    
-    Directorio dirAEliminar = this.directorioActual;
-
-    // 1. No podemos eliminar la raíz
-    if (dirAEliminar == this.raiz) {
-        log("PLANIFICADOR: Error. No se puede eliminar el directorio raíz.");
-        return false;
-    }
-    
-    // (Esta función solo debe ser llamada por el botón 'Eliminar Directorio',
-    // así que asumimos que es un directorio)
-
-    // 2. Obtener el padre
-    Directorio padre = dirAEliminar.getPadre();
-    if (padre == null) {
-         log("PLANIFICADOR: Error. El nodo no tiene padre (Huérfano).");
-         return false;
-    }
-
-    // 3. Llamar al ayudante recursivo para vaciarlo
-    // (Este método 'eliminarDirectorioRecursivo' ya lo tenías y está bien)
-    log("PLANIFICADOR: Eliminación recursiva iniciada para: " + dirAEliminar.getNombre());
-    eliminarDirectorioRecursivo(dirAEliminar);
-
-    // 4. Una vez vacío, eliminar el directorio del árbol (¡desde el padre!)
-    padre.eliminarHijo(dirAEliminar);
-
-    // 5. Mover al usuario de vuelta al padre (para no estar en un limbo)
-    this.directorioActual = padre;
-
-    log("PLANIFICADOR: Directorio eliminado exitosamente: " + dirAEliminar.getNombre());
-    return true;
-}
-/**
- * ¡NUEVO MÉTODO PÚBLICO!
- * Punto de entrada para re-conectar los punteros 'padre' (que son transient)
- * después de cargar desde la serialización.
- */
-public void reconectarPadres() {
-    // La raíz no tiene padre (padre = null), lo cual es correcto.
-    // Empezamos a reconectar a los hijos de la raíz.
-    reconectarPadresRecursivo(this.raiz);
-}
-
-/**
- * ¡NUEVO MÉTODO PRIVADO (AYUDANTE RECURSIVO)!
- * Recorre el árbol y asigna los punteros 'padre'.
- */
-/**
- * ¡NUEVO MÉTODO PRIVADO (AYUDANTE RECURSIVO)!
- * (VERSIÓN CORREGIDA - 'hijoActual' en lugar de 'hiloActual')
- * Recorre el árbol y asigna los punteros 'padre'.
- */
-private void reconectarPadresRecursivo(Directorio padre) {
-    // Seguridad: si el directorio no tiene hijos (o no es un dir)
-    if (padre == null || padre.getHijos() == null) {
-        return;
-    }
-
-    // Recorremos la lista de hijos de este 'padre'
-    // 1. La variable se llama 'hijoActual'
-    NodoLista<NodoArbol> hijoActual = padre.getHijos().getInicio();
-    
-    // 2. El 'while' debe usar 'hijoActual'
-    while (hijoActual != null) {
-        
-        NodoArbol nodoHijo = hijoActual.getDato();
-        
-        // 1. ¡LA RE-CONEXIÓN!
-        // Le decimos al hijo quién es su padre
-        nodoHijo.setPadre(padre);
-        
-        // 2. Si este hijo también es un directorio, 
-        //    hacemos la llamada recursiva para sus propios hijos.
-        if (nodoHijo instanceof Directorio) {
-            reconectarPadresRecursivo((Directorio) nodoHijo);
-        }
-        
-        // 3. El 'siguiente' debe usar 'hijoActual'
-        hijoActual = hijoActual.getSiguiente();
-    }
 }
 }

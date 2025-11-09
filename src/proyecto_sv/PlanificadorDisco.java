@@ -4,18 +4,6 @@
  */
 package proyecto_sv;
 
-
-import java.io.Serializable;
-/**
- * @author Alessandro Gramcko
- * @author massimo Gramcko
- */
-
-
-    /**
- * @author Alessandro Gramcko
- * @author massimo Gramcko
- */
 public class PlanificadorDisco {
     
     // Referencia al "Backend"
@@ -35,9 +23,12 @@ public class PlanificadorDisco {
     /**
      * Permite actualizar la referencia al Sistema de Archivos
      * (usado para cargar estado).
+     * ¡ADEMÁS! Resetea la dirección del SCAN.
      */
     public void setSistemaArchivos(SistemaArchivos sa) {
         this.sistemaArchivos = sa;
+        // Resetea el elevador a "subiendo" para pruebas consistentes.
+        this.direccionSCAN = Direccion.SUBIENDO;
     }
 
     /**
@@ -48,8 +39,7 @@ public class PlanificadorDisco {
         int bloqueProcesado = -1; 
 
         if (solicitud.getTipo() == TipoOperacion.CREAR_ARCHIVO) {
-            // El log de 'CREAR' ahora lo maneja SistemaArchivos
-            // para poder reportar "DISCO LLENO"
+            // El log de 'CREAR' (y su emoji ✅) se maneja en SistemaArchivos
             Directorio padre = solicitud.getDirectorioPadre();
             bloqueProcesado = sistemaArchivos.crearArchivo(
                 solicitud.getNombreArchivo(), 
@@ -59,7 +49,8 @@ public class PlanificadorDisco {
             exito = (bloqueProcesado != -1);
 
         } else if (solicitud.getTipo() == TipoOperacion.ELIMINAR_ARCHIVO) {
-            log("PLANIFICADOR: Ejecutando ELIMINAR " + solicitud.getNombreArchivo());
+            // --- ¡EMOJI AÑADIDO! ---
+            log("PLANIFICADOR: 🗑️ Ejecutando ELIMINAR " + solicitud.getNombreArchivo());
             bloqueProcesado = sistemaArchivos.eliminarArchivo(
                 solicitud.getNombreArchivo(),
                 solicitud.getDirectorioPadre()
@@ -67,7 +58,8 @@ public class PlanificadorDisco {
             exito = (bloqueProcesado != -1);
         
         } else if (solicitud.getTipo() == TipoOperacion.LEER_ARCHIVO) {
-            log("PLANIFICADOR: Ejecutando LEER " + solicitud.getNombreArchivo());
+            // --- ¡EMOJI AÑADIDO! ---
+            log("PLANIFICADOR: 📖 Ejecutando LEER " + solicitud.getNombreArchivo());
             bloqueProcesado = sistemaArchivos.leerArchivo(
                 solicitud.getNombreArchivo(),
                 solicitud.getDirectorioPadre()
@@ -76,43 +68,40 @@ public class PlanificadorDisco {
         }
 
         if (exito) {
-            log("PLANIFICADOR: Operación completada con éxito.");
+            log("PLANIFICADOR: ✅ Operación completada con éxito.");
         } else {
-            // El log de "fallo" (ej. DISCO LLENO)
+            // El log de "fallo" (ej. ⛔ DISCO LLENO)
             // se maneja ahora dentro de SistemaArchivos.
-            log("PLANIFICADOR: Operación falló (revisar logs anteriores).");
+            log("PLANIFICADOR: ❌ Operación falló (revisar logs anteriores).");
         }
 
         return bloqueProcesado;
     }
 
-    // --- Políticas de Planificación (¡CON LOGS EXPLÍCITOS!) ---
+    // --- Políticas de Planificación (¡CON EMOJIS!) ---
 
-   // 1. Política FIFO
-public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
-    if (colaIO.estaVacia()) {
-        // log("PLANIFICADOR: [FIFO] No hay solicitudes en la cola.");
-        return null;
+    // 1. Política FIFO
+    public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
+        if (colaIO.estaVacia()) {
+            // log("PLANIFICADOR: [FIFO] No hay solicitudes en la cola.");
+            return null;
+        }
+
+        SolicitudIO solicitud = colaIO.desencolar();
+
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: [FIFO] ➡️ Decisión: Ejecutando " + solicitud.getNombreArchivo() + " (es el primero en la cola)");
+
+        int bloqueProcesado = ejecutarSolicitud(solicitud);
+
+        if (bloqueProcesado != -1) {
+            this.posicionCabezal = bloqueProcesado;
+            // --- ¡EMOJI AÑADIDO! ---
+            log("PLANIFICADOR: 📍 Cabezal movido a bloque " + this.posicionCabezal);
+        }
+        
+        return solicitud;
     }
-
-    SolicitudIO solicitud = colaIO.desencolar();
-
-    log("PLANIFICADOR: [FIFO] Decisión: Ejecutando " + solicitud.getNombreArchivo() + " (es el primero en la cola)");
-
-    // --- ¡INICIO DEL ARREGLO! ---
-
-    // 1. Ejecutamos la solicitud (como antes)
-    int bloqueProcesado = ejecutarSolicitud(solicitud);
-
-    // 2. ¡ACTUALIZAMOS EL CABEZAL! (Esto es lo que faltaba)
-    if (bloqueProcesado != -1) {
-        this.posicionCabezal = bloqueProcesado;
-        log("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
-    }
-    // --- FIN DEL ARREGLO ---
-
-    return solicitud;
-}
 
     // 2. Política SSTF
     public SolicitudIO ejecutarSSTF(Cola<SolicitudIO> colaIO) {
@@ -121,7 +110,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
             return null;
         }
         
-        log("PLANIFICADOR: [SSTF] Buscando... (Cabezal actual en bloque " + this.posicionCabezal + ")");
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: [SSTF] 🧠 Buscando... (Cabezal actual en bloque " + this.posicionCabezal + ")");
         
         ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
         NodoLista<SolicitudIO> nodoActual = lista.getInicio();
@@ -148,8 +138,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
             return null; 
         }
 
-        // --- ¡LOG EXPLÍCITO! ---
-        log("PLANIFICADOR: [SSTF] Decisión: Elegido " + solicitudOptima.getNombreArchivo() + 
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: [SSTF] 🧠 Decisión: Elegido " + solicitudOptima.getNombreArchivo() + 
             " (Bloque " + posOptima + ") con distancia " + distanciaMinima);
         
         lista.eliminar(solicitudOptima);
@@ -158,7 +148,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
         
         if (bloqueProcesado != -1) {
             this.posicionCabezal = bloqueProcesado;
-            log("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
+            // --- ¡EMOJI AÑADIDO! ---
+            log("PLANIFICADOR: 📍 Cabezal movido a bloque " + this.posicionCabezal);
         }
 
         return solicitudOptima;
@@ -171,7 +162,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
             return null;
         }
 
-        log("PLANIFICADOR: [SCAN] Buscando... (Dirección: " + direccionSCAN + ", Cabezal en " + this.posicionCabezal + ")");
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: [SCAN] ↕️ Buscando... (Dirección: " + direccionSCAN + ", Cabezal en " + this.posicionCabezal + ")");
 
         ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
         NodoLista<SolicitudIO> nodoActual = lista.getInicio();
@@ -203,7 +195,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
         }
 
         if (solicitudOptima == null) {
-            log("PLANIFICADOR: [SCAN] Llegó al final, invirtiendo dirección.");
+            // --- ¡EMOJI AÑADIDO! ---
+            log("PLANIFICADOR: [SCAN] ↕️ Llegó al final, invirtiendo dirección.");
             
             if (this.direccionSCAN == Direccion.SUBIENDO) {
                 this.direccionSCAN = Direccion.BAJANDO;
@@ -214,8 +207,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
             return ejecutarSCAN(colaIO);
         }
 
-        // --- ¡LOG EXPLÍCITO! ---
-        log("PLANIFICADOR: [SCAN] Decisión: Elegido " + solicitudOptima.getNombreArchivo() + 
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: [SCAN] ↕️ Decisión: Elegido " + solicitudOptima.getNombreArchivo() + 
             " (Bloque " + posOptima + ", en dirección " + direccionSCAN + ")");
 
         lista.eliminar(solicitudOptima);
@@ -223,7 +216,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
         
         if (bloqueProcesado != -1) {
             this.posicionCabezal = bloqueProcesado;
-            log("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
+            // --- ¡EMOJI AÑADIDO! ---
+            log("PLANIFICADOR: 📍 Cabezal movido a bloque " + this.posicionCabezal);
         }
 
         return solicitudOptima;
@@ -236,7 +230,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
             return null;
         }
 
-        log("PLANIFICADOR: [C-SCAN] Buscando... (Cabezal en " + this.posicionCabezal + ")");
+        // --- ¡EMOJI AÑADIDO! ---
+        log("PLANIFICADOR: [C-SCAN] 🔄 Buscando... (Cabezal en " + this.posicionCabezal + ")");
 
         ListaEnlazada<SolicitudIO> lista = colaIO.getListaInterna();
         NodoLista<SolicitudIO> nodoActual = lista.getInicio();
@@ -268,7 +263,8 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
         }
 
         if (solicitudOptima == null) {
-            log("PLANIFICADOR: [C-SCAN] Llegó al final, saltando al inicio (Bloque " + posMasBaja + ")");
+            // --- ¡EMOJI AÑADIDO! ---
+            log("PLANIFICADOR: [C-SCAN] 🔄 Llegó al final, saltando al inicio (Bloque " + posMasBaja + ")");
             solicitudOptima = solicitudMasBaja;
         }
         
@@ -276,16 +272,17 @@ public SolicitudIO ejecutarFIFO(Cola<SolicitudIO> colaIO) {
              return null;
         }
 
-        // --- ¡LOG EXPLÍCITO! ---
+        // --- ¡EMOJI AÑADIDO! ---
         int posFinalElegida = getPosicionSolicitud(solicitudOptima);
-        log("PLANIFICADOR: [C-SCAN] Decisión: Elegido " + solicitudOptima.getNombreArchivo() + " (Bloque " + posFinalElegida + ")");
+        log("PLANIFICADOR: [C-SCAN] 🔄 Decisión: Elegido " + solicitudOptima.getNombreArchivo() + " (Bloque " + posFinalElegida + ")");
 
         lista.eliminar(solicitudOptima);
         int bloqueProcesado = ejecutarSolicitud(solicitudOptima);
         
         if (bloqueProcesado != -1) {
             this.posicionCabezal = bloqueProcesado;
-            log("PLANIFICADOR: Cabezal movido a bloque " + this.posicionCabezal);
+            // --- ¡EMOJI AÑADIDO! ---
+            log("PLANIFICADOR: 📍 Cabezal movido a bloque " + this.posicionCabezal);
         }
 
         return solicitudOptima;

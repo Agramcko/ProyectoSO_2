@@ -4,11 +4,6 @@
  */
 package proyecto_sv;
 
-/**
- *
- * @author massi
- */
-
 import java.io.Serializable;
 
 /**
@@ -32,8 +27,8 @@ public class BufferCache implements Serializable {
         this.tamanoMaximo = tamano;
         this.cache = new ListaEnlazada<>();
         
-        // --- REEMPLAZADO ---
-        log("Buffer de " + tamano + " bloques inicializado.");
+        // --- ¡EMOJI AÑADIDO! ---
+        log("BUFFER: ⚙️ Buffer de " + tamano + " bloques inicializado.");
     }
     
     /**
@@ -44,62 +39,112 @@ public class BufferCache implements Serializable {
     public Bloque leer(int idBloque) {
         // Recorremos la lista enlazada buscando el bloque
         NodoLista<Bloque> actual = cache.getInicio();
+        
         while (actual != null) {
             if (actual.getDato().getId() == idBloque) {
-                // ¡¡Cache HIT!! Lo encontramos.
-                
-                // --- REEMPLAZADO ---
-                log("BUFFER: Cache HIT para bloque " + idBloque);
-                
-                return actual.getDato();
+                // --- ¡EMOJI AÑADIDO! ---
+                log("BUFFER: ⚡ ¡Cache HIT! para bloque " + idBloque);
+                return actual.getDato(); // ¡Cache Hit!
             }
             actual = actual.getSiguiente();
         }
-        
-        // ¡¡Cache MISS!! No estaba.
-        
-        // --- REEMPLAZADO ---
-        log("BUFFER: Cache MISS para bloque " + idBloque);
-        
-        return null;
+
+        // --- ¡EMOJI AÑADIDO! ---
+        log("BUFFER: 🐢 Cache MISS para bloque " + idBloque);
+        return null; // ¡Cache Miss!
     }
-    
+
     /**
-     * Escribe un bloque en el caché (lo añade).
-     * Si el caché está lleno, saca el más antiguo (FIFO).
-     * @param bloque El bloque leído del disco, para guardarlo en caché.
+     * Escribe un bloque en el caché.
+     * Maneja la política de evicción (expulsión) FIFO si el caché está lleno.
+     * @param bloque El bloque a escribir.
      */
     public void escribir(Bloque bloque) {
-        if (bloque == null) return;
         
-        // --- REEMPLAZADO ---
-        log("BUFFER: Escribiendo bloque " + bloque.getId() + " en cache.");
-        
-        // Política de reemplazo FIFO:
-        // Si la lista está llena (o supera el tamaño)...
-        if (cache.getTamano() >= this.tamanoMaximo) {
-            // ...sacamos el primero que entró (el del inicio).
-            Bloque antiguo = cache.eliminarDelInicio();
-            
-            // --- REEMPLAZADO ---
-            log("BUFFER: Cache lleno. Eliminado bloque " + antiguo.getId() + " (FIFO).");
+        // 1. Revisa si el bloque ya existe (para evitar duplicados)
+        // (Esto es opcional, pero es una buena práctica)
+        if (leer(bloque.getId()) != null) {
+            // Ya está en el caché, no hacemos nada.
+            return;
         }
-        
-        // Añadimos el nuevo bloque al final.
+
+        // 2. Revisa si el caché está lleno
+        if (cache.getTamano() >= tamanoMaximo) {
+            // Está lleno. Elimina el primer bloque (el más antiguo)
+            Bloque bloqueEliminado = cache.eliminarDelInicio();
+            
+            // --- ¡EMOJI AÑADIDO! ---
+            if (bloqueEliminado != null) {
+                log("BUFFER: ♻️ Cache lleno. Eliminado bloque " + bloqueEliminado.getId() + " (FIFO).");
+            }
+        }
+
+        // 3. Añade el nuevo bloque al final de la lista
         cache.agregarAlFinal(bloque);
+        // --- ¡EMOJI AÑADIDO! ---
+        log("BUFFER: 💾 Escribiendo bloque " + bloque.getId() + " en cache.");
+    }
+
+    /**
+     * Devuelve la lista interna para la GUI.
+     */
+    public ListaEnlazada<Bloque> getCacheInterno() {
+        return this.cache;
     }
     
     /**
-     * Invalida (elimina) un bloque del caché.
-     * Esto es crucial para cuando ELIMINAMOS un archivo.
-     * @param idBloque El ID del bloque a eliminar del caché.
+     * Devuelve cuántos bloques están actualmente en el caché.
+     */
+    public int getTamanoActual() {
+        return this.cache.getTamano();
+    }
+    
+    /**
+     * Devuelve el tamaño máximo del caché.
+     */
+    public int getTamanoMaximo() {
+        return this.tamanoMaximo;
+    }
+    
+    /**
+     * ¡NUEVO MÉTODO!
+     * Vacía el buffer por completo.
+     * Útil para pruebas de planificador de disco.
+     */
+    public void limpiar() {
+        this.cache = new ListaEnlazada<>();
+        
+        // (Opcional) Registra el evento en el log
+        log("BUFFER: 🧹 ¡Caché limpiado manualmente!");
+    }
+
+
+    // --- MÉTODOS DEL LOGGER ---
+    
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+    }
+    
+    private void log(String mensaje) {
+        if (this.logger != null) {
+            this.logger.log(mensaje);
+        } else {
+            System.out.println(mensaje);
+        }
+    }
+    /**
+     * ¡MÉTODO NUEVO QUE FALTABA!
+     * Busca un bloque en el caché por su ID y lo elimina.
+     * Esto es crucial para cuando un archivo se borra del disco,
+     * para que no quede una copia "fantasma" en el caché.
+     *
+     * @param idBloque El ID del bloque a eliminar/invalidar.
      */
     public void invalidar(int idBloque) {
+        // 1. Busca el bloque en la lista
+        NodoLista<Bloque> actual = cache.getInicio();
         Bloque bloqueAInvalidar = null;
         
-        // No podemos eliminar por ID, debemos pasar el objeto Bloque.
-        // Así que primero lo buscamos.
-        NodoLista<Bloque> actual = cache.getInicio();
         while (actual != null) {
             if (actual.getDato().getId() == idBloque) {
                 bloqueAInvalidar = actual.getDato();
@@ -107,49 +152,13 @@ public class BufferCache implements Serializable {
             }
             actual = actual.getSiguiente();
         }
-        
-        // Si lo encontramos, usamos el método 'eliminar(dato)' de ListaEnlazada
+
+        // 2. Si lo encuentra, lo elimina
         if (bloqueAInvalidar != null) {
-            boolean exito = cache.eliminar(bloqueAInvalidar);
-            if (exito) {
-                
-                // --- REEMPLAZADO ---
-                log("BUFFER: Invalidado bloque " + idBloque + " del cache.");
-            }
+            cache.eliminar(bloqueAInvalidar);
+            // --- ¡EMOJI AÑADIDO! ---
+            log("BUFFER: 👻 Bloque " + idBloque + " invalidado (eliminado) del caché.");
         }
     }
     
-    public ListaEnlazada<Bloque> getCacheInterno() {
-        return this.cache;
-    }
-
-    /**
-     * Recibe el logger desde el SistemaArchivos.
-     */
-    public void setLogger(ILogger logger) {
-        this.logger = logger;
-    }
-
-    /**
-     * Ayudante de log. Si tenemos un logger GUI, lo usa.
-     * Si no, usa el System.out por defecto.
-     */
-    private void log(String mensaje) {
-        if (this.logger != null) {
-            this.logger.log(mensaje); // ¡Lo envía a la GUI!
-        } else {
-            System.out.println(mensaje); // Fallback
-        }
-    }
-    /**
- * ¡NUEVO MÉTODO!
- * Vacía el buffer por completo.
- * Útil para pruebas de planificador de disco.
- */
-public void limpiar() {
-    this.cache = new ListaEnlazada<>();
-
-    // (Opcional) Registra el evento en el log
-    log("BUFFER: ¡Caché limpiado manualmente!");
-}
 }

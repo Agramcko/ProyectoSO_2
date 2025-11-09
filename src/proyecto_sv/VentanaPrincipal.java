@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.Enumeration;
+import javax.swing.tree.TreePath;
 
 public class VentanaPrincipal extends javax.swing.JFrame implements ILogger {
 
@@ -174,8 +175,6 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
         btnCrearArchivo = new javax.swing.JButton();
         btnEliminarArchivo = new javax.swing.JButton();
         btnLeerArchivo = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        txtNuevoNombre = new javax.swing.JTextField();
         btnRenombrar = new javax.swing.JButton();
         btnCrearDirectorio = new javax.swing.JButton();
         btnEliminarDirectorio = new javax.swing.JButton();
@@ -309,15 +308,6 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
             }
         });
 
-        jLabel2.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
-        jLabel2.setText("Nuevo Nombre:");
-
-        txtNuevoNombre.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNuevoNombreActionPerformed(evt);
-            }
-        });
-
         btnRenombrar.setBackground(new java.awt.Color(51, 153, 255));
         btnRenombrar.setFont(new java.awt.Font("Segoe UI Black", 1, 12)); // NOI18N
         btnRenombrar.setForeground(new java.awt.Color(255, 255, 255));
@@ -414,11 +404,6 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
                             .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                     .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtNuevoNombre))
-                    .addGroup(panelAccionesLayout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(btnRenombrar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -439,11 +424,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
                 .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTamano)
                     .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(txtNuevoNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                .addGap(53, 53, 53)
                 .addComponent(btnRenombrar)
                 .addGap(15, 15, 15)
                 .addComponent(btnCrearArchivo)
@@ -453,7 +434,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
                 .addComponent(btnCrearDirectorio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarDirectorio)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 102, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
                 .addComponent(btnPausarTimer)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLeerArchivo)
@@ -802,28 +783,37 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     }//GEN-LAST:event_btnCrearDirectorioActionPerformed
 
     private void btnRenombrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRenombrarActionPerformed
-       String nombreNuevo = txtNuevoNombre.getText();
+     // 1. Obtener el path del nodo seleccionado en el JTree
+        TreePath pathSeleccionado = arbolArchivos.getSelectionPath();
+        
+        if (pathSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione un archivo o directorio para renombrar.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
-    // Llamamos a la nueva función del backend
-    boolean exito = simulador.getSistemaArchivos().renombrarNodoActual(nombreNuevo);
+        // 2. Obtener nuestro objeto NodoArbol personalizado
+        DefaultMutableTreeNode nodoJTree = (DefaultMutableTreeNode) pathSeleccionado.getLastPathComponent();
+        NodoArbol nodoArbol = (NodoArbol) nodoJTree.getUserObject();
 
-    if (exito) {
-        // Limpiamos el campo de texto
-        txtNuevoNombre.setText("");
-        // Refrescamos toda la GUI para ver el cambio
-        actualizarGUICompleta();
-    } else {
-        // El backend ya envió el error al log
-        JOptionPane.showMessageDialog(this, 
-            "No se pudo renombrar el nodo.\n(Revisa el log o si intentas renombrar 'root').", 
-            "Error al Renombrar", 
-            JOptionPane.ERROR_MESSAGE);
-    }
+        // 3. Preguntar al usuario por el nuevo nombre
+        String nombreNuevo = JOptionPane.showInputDialog(this, "Ingrese el nuevo nombre para '" + nodoArbol.getNombre() + "':", "Renombrar", JOptionPane.QUESTION_MESSAGE);
+
+        if (nombreNuevo != null && !nombreNuevo.trim().isEmpty()) {
+            
+            // --- ¡ESTA ES LA LÍNEA CORREGIDA! ---
+            // Llamamos al método "intermediario" en 'simulador',
+            // quitando el ".getSistemaArchivos()"
+            boolean exito = simulador.renombrarNodo(nodoArbol, nombreNuevo);
+            
+            if (exito) {
+                // Si tuvo éxito, actualizamos la GUI
+                actualizarGUICompleta();
+            } else {
+                // Si falló (ej. "nombre ya existe"), el error ya se mostró
+                // en el log del planificador.
+            }
+        }
     }//GEN-LAST:event_btnRenombrarActionPerformed
-
-    private void txtNuevoNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNuevoNombreActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtNuevoNombreActionPerformed
 
     private void btnLeerArchivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLeerArchivoActionPerformed
         String nombre = txtNombreArchivo.getText();
@@ -1065,7 +1055,6 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboPolitica;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
@@ -1089,7 +1078,6 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     private javax.swing.JSplitPane splitPaneVisuals;
     private javax.swing.JTable tablaAsignacion;
     private javax.swing.JTextField txtNombreArchivo;
-    private javax.swing.JTextField txtNuevoNombre;
     // End of variables declaration//GEN-END:variables
 
 // --- INICIO MÉTODOS DE ACTUALIZACIÓN DE GUI ---
@@ -1410,7 +1398,6 @@ private void actualizarPermisosGUI() {
     
     // --- ¡NUEVAS LÍNEAS! ---
     btnRenombrar.setEnabled(esAdmin);
-    txtNuevoNombre.setEnabled(esAdmin);
     btnCrearDirectorio.setEnabled(esAdmin);
     btnEliminarDirectorio.setEnabled(esAdmin);
     btnGenerarReporte.setEnabled(esAdmin);

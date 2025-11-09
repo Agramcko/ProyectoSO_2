@@ -249,4 +249,13 @@ public class Simulador {
             System.out.println(mensaje); // Fallback
         }
     }
+    /**
+ * ¡MÉTODO INTERMEDIARIO QUE FALTABA!
+ * Recibe la llamada de la GUI para renombrar un nodo
+ * y la pasa al Sistema de Archivos.
+ */
+public boolean renombrarNodo(NodoArbol nodoARenombrar, String nombreNuevo) {
+    // Simplemente pasa la solicitud al backend
+    return this.sistemaArchivos.renombrarNodo(nodoARenombrar, nombreNuevo);
+}
 }
