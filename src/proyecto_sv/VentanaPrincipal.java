@@ -1490,6 +1490,7 @@ private void actualizarPermisosGUI() {
     spinnerTamano.setEnabled(esAdmin);
     btnLimpiarBuffer.setEnabled(esAdmin);
     comboPolitica.setEnabled(esAdmin);
+    btnVerEstadisticas.setEnabled(esAdmin);
     // --- FIN LÍNEAS NUEVAS ---
     
     // Permisos de LECTURA (Todos)
