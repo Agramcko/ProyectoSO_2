@@ -19,6 +19,10 @@ public class BufferCache implements Serializable {
     // Usamos 'transient' para que no intente guardarse en el archivo .ser
     private transient ILogger logger = null;
     
+    // --- VARIABLES DE ESTADÍSTICA ---
+    private transient int contadorHits = 0;
+    private transient int contadorMisses = 0;
+    
     /**
      * Constructor
      * @param tamano La cantidad de bloques que el buffer puede retener.
@@ -27,7 +31,6 @@ public class BufferCache implements Serializable {
         this.tamanoMaximo = tamano;
         this.cache = new ListaEnlazada<>();
         
-        // --- ¡EMOJI AÑADIDO! ---
         log("BUFFER: ⚙️ Buffer de " + tamano + " bloques inicializado.");
     }
     
@@ -44,6 +47,10 @@ public class BufferCache implements Serializable {
             if (actual.getDato().getId() == idBloque) {
                 // --- ¡EMOJI AÑADIDO! ---
                 log("BUFFER: ⚡ ¡Cache HIT! para bloque " + idBloque);
+                
+                // --- ¡CONTADOR AÑADIDO! ---
+                this.contadorHits++;
+                
                 return actual.getDato(); // ¡Cache Hit!
             }
             actual = actual.getSiguiente();
@@ -51,6 +58,10 @@ public class BufferCache implements Serializable {
 
         // --- ¡EMOJI AÑADIDO! ---
         log("BUFFER: 🐢 Cache MISS para bloque " + idBloque);
+        
+        // --- ¡CONTADOR AÑADIDO! ---
+        this.contadorMisses++;
+        
         return null; // ¡Cache Miss!
     }
 
@@ -62,9 +73,7 @@ public class BufferCache implements Serializable {
     public void escribir(Bloque bloque) {
         
         // 1. Revisa si el bloque ya existe (para evitar duplicados)
-        // (Esto es opcional, pero es una buena práctica)
         if (leer(bloque.getId()) != null) {
-            // Ya está en el caché, no hacemos nada.
             return;
         }
 
@@ -73,7 +82,6 @@ public class BufferCache implements Serializable {
             // Está lleno. Elimina el primer bloque (el más antiguo)
             Bloque bloqueEliminado = cache.eliminarDelInicio();
             
-            // --- ¡EMOJI AÑADIDO! ---
             if (bloqueEliminado != null) {
                 log("BUFFER: ♻️ Cache lleno. Eliminado bloque " + bloqueEliminado.getId() + " (FIFO).");
             }
@@ -81,7 +89,6 @@ public class BufferCache implements Serializable {
 
         // 3. Añade el nuevo bloque al final de la lista
         cache.agregarAlFinal(bloque);
-        // --- ¡EMOJI AÑADIDO! ---
         log("BUFFER: 💾 Escribiendo bloque " + bloque.getId() + " en cache.");
     }
 
@@ -107,38 +114,22 @@ public class BufferCache implements Serializable {
     }
     
     /**
-     * ¡NUEVO MÉTODO!
      * Vacía el buffer por completo.
      * Útil para pruebas de planificador de disco.
      */
     public void limpiar() {
         this.cache = new ListaEnlazada<>();
         
-        // (Opcional) Registra el evento en el log
+        // Reiniciamos contadores al limpiar (opcional, pero recomendado)
+        this.contadorHits = 0;
+        this.contadorMisses = 0;
+        
         log("BUFFER: 🧹 ¡Caché limpiado manualmente!");
     }
 
-
-    // --- MÉTODOS DEL LOGGER ---
-    
-    public void setLogger(ILogger logger) {
-        this.logger = logger;
-    }
-    
-    private void log(String mensaje) {
-        if (this.logger != null) {
-            this.logger.log(mensaje);
-        } else {
-            System.out.println(mensaje);
-        }
-    }
     /**
-     * ¡MÉTODO NUEVO QUE FALTABA!
      * Busca un bloque en el caché por su ID y lo elimina.
-     * Esto es crucial para cuando un archivo se borra del disco,
-     * para que no quede una copia "fantasma" en el caché.
-     *
-     * @param idBloque El ID del bloque a eliminar/invalidar.
+     * Esto es crucial para cuando un archivo se borra del disco.
      */
     public void invalidar(int idBloque) {
         // 1. Busca el bloque en la lista
@@ -156,9 +147,30 @@ public class BufferCache implements Serializable {
         // 2. Si lo encuentra, lo elimina
         if (bloqueAInvalidar != null) {
             cache.eliminar(bloqueAInvalidar);
-            // --- ¡EMOJI AÑADIDO! ---
             log("BUFFER: 👻 Bloque " + idBloque + " invalidado (eliminado) del caché.");
         }
     }
     
+    // --- MÉTODOS GETTER PARA ESTADÍSTICAS ---
+    public int getContadorHits() {
+        return this.contadorHits;
+    }
+
+    public int getContadorMisses() {
+        return this.contadorMisses;
+    }
+
+    // --- MÉTODOS DEL LOGGER ---
+    
+    public void setLogger(ILogger logger) {
+        this.logger = logger;
+    }
+    
+    private void log(String mensaje) {
+        if (this.logger != null) {
+            this.logger.log(mensaje);
+        } else {
+            System.out.println(mensaje);
+        }
+    }
 }

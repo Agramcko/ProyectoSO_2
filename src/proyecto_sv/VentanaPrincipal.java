@@ -182,6 +182,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
         btnGenerarAleatorios = new javax.swing.JButton();
         btnReiniciar = new javax.swing.JButton();
         btnPausarTimer = new javax.swing.JButton();
+        btnVerEstadisticas = new javax.swing.JButton();
         panelSistema = new javax.swing.JPanel();
         comboPolitica = new javax.swing.JComboBox<>();
         jLabel1 = new javax.swing.JLabel();
@@ -378,39 +379,42 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
             }
         });
 
+        btnVerEstadisticas.setBackground(new java.awt.Color(255, 255, 0));
+        btnVerEstadisticas.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnVerEstadisticas.setText("Ver Estadísticas");
+        btnVerEstadisticas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnVerEstadisticasActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout panelAccionesLayout = new javax.swing.GroupLayout(panelAcciones);
         panelAcciones.setLayout(panelAccionesLayout);
         panelAccionesLayout.setHorizontalGroup(
             panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panelAccionesLayout.createSequentialGroup()
-                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAccionesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnPausarTimer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(panelAccionesLayout.createSequentialGroup()
-                                .addComponent(lblNombre)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtNombreArchivo))
-                            .addGroup(panelAccionesLayout.createSequentialGroup()
-                                .addComponent(lblTamano)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 110, Short.MAX_VALUE))
-                            .addComponent(btnLeerArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnGenerarReporte, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnReiniciar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(panelAccionesLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnRenombrar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnCrearArchivo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelAccionesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(panelAccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(btnVerEstadisticas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnPausarTimer, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelAccionesLayout.createSequentialGroup()
+                        .addComponent(lblNombre)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNombreArchivo))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, panelAccionesLayout.createSequentialGroup()
+                        .addComponent(lblTamano)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(spinnerTamano, javax.swing.GroupLayout.PREFERRED_SIZE, 72, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 110, Short.MAX_VALUE))
+                    .addComponent(btnLeerArchivo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGenerarReporte, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnGenerarAleatorios, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnReiniciar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnRenombrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCrearArchivo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEliminarArchivo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnCrearDirectorio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnEliminarDirectorio, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         panelAccionesLayout.setVerticalGroup(
@@ -434,7 +438,9 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
                 .addComponent(btnCrearDirectorio)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnEliminarDirectorio)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addComponent(btnVerEstadisticas)
+                .addGap(18, 18, 18)
                 .addComponent(btnPausarTimer)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnLeerArchivo)
@@ -978,6 +984,56 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     log("SIMULADOR: Buffer de bloques limpiado por el Admin.");
     }//GEN-LAST:event_btnLimpiarBufferActionPerformed
 
+    private void btnVerEstadisticasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerEstadisticasActionPerformed
+       try {
+            // --- 1. OBTENER DATOS DEL BUFFER (HITS / MISSES) ---
+            // Accedemos a través de: Simulador -> SistemaArchivos -> BufferCache
+            int hits = simulador.getSistemaArchivos().getBufferCache().getContadorHits();
+            int misses = simulador.getSistemaArchivos().getBufferCache().getContadorMisses();
+            int totalBuffer = hits + misses;
+            
+            // Calculamos porcentaje (evitando dividir por cero)
+            double hitRatio = (totalBuffer > 0) ? ((double)hits / totalBuffer) * 100.0 : 0.0;
+
+            // --- 2. OBTENER DATOS DEL DISCO (USO) ---
+            int totalBloques = simulador.getSistemaArchivos().getDisco().getNumBloquesTotal();
+            int libresBloques = simulador.getSistemaArchivos().getDisco().getNumBloquesLibres();
+            int usadosBloques = totalBloques - libresBloques;
+            
+            double usoDisco = (totalBloques > 0) ? ((double)usadosBloques / totalBloques) * 100.0 : 0.0;
+
+            // --- 3. OBTENER DATOS DE OPERACIONES (OK / FAIL) ---
+            int opsOk = simulador.getSistemaArchivos().getOpsExitosas();
+            int opsFail = simulador.getSistemaArchivos().getOpsFallidas();
+            int totalOps = opsOk + opsFail;
+
+            // --- 4. CONSTRUIR EL MENSAJE BONITO ---
+            StringBuilder msg = new StringBuilder();
+            msg.append("===== 📊 ESTADÍSTICAS EN TIEMPO REAL =====\n\n");
+            
+            msg.append("💾 ALMACENAMIENTO:\n");
+            msg.append(String.format(" - Uso de Disco:      %.1f%% (%d/%d bloques)\n", usoDisco, usadosBloques, totalBloques));
+            msg.append(String.format(" - Bloques Libres:    %d\n\n", libresBloques));
+            
+            msg.append("⚡ BUFFER CACHÉ (Rendimiento):\n");
+            msg.append(String.format(" - Tasa de Aciertos:  %.1f%%\n", hitRatio));
+            msg.append(" - Hits (RAM):        " + hits + "\n");
+            msg.append(" - Misses (Disco):    " + misses + "\n\n");
+            
+            msg.append("⚙️ OPERACIONES DEL SISTEMA:\n");
+            msg.append(" - Total Intentos:    " + totalOps + "\n");
+            msg.append(" - ✅ Exitosas:        " + opsOk + "\n");
+            msg.append(" - ❌ Fallidas:        " + opsFail + "\n");
+
+            // --- 5. MOSTRAR LA PANTALLA EMERGENTE ---
+            javax.swing.JOptionPane.showMessageDialog(this, msg.toString(), "Estadísticas del Sistema", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
+            System.err.println("Error al mostrar estadísticas: " + e.getMessage());
+            javax.swing.JOptionPane.showMessageDialog(this, "Aún no hay datos suficientes o el simulador no ha iniciado.", "Información", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_btnVerEstadisticasActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1078,6 +1134,7 @@ panelDisco.setLayout(new java.awt.GridLayout(filas, columnas, 2, 2));
     private javax.swing.JButton btnPausarTimer;
     private javax.swing.JButton btnReiniciar;
     private javax.swing.JButton btnRenombrar;
+    private javax.swing.JButton btnVerEstadisticas;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JComboBox<String> comboPolitica;
     private javax.swing.JLabel jLabel1;

@@ -24,6 +24,10 @@ public class SistemaArchivos implements Serializable {
     private transient ILogger logger = null;
     private int contadorArchivosAleatorios = 0;
 
+    // --- VARIABLES DE ESTADÍSTICA ---
+    private transient int opsExitosas = 0;
+    private transient int opsFallidas = 0;
+
     public SistemaArchivos(int tamanoDisco) {
         this.disco = new DiscoSD(tamanoDisco);
         // Creamos el directorio raíz
@@ -61,56 +65,55 @@ public class SistemaArchivos implements Serializable {
     /**
      * MODIFICADO: Crea un archivo en el directorio especificado.
      * ¡Ahora devuelve el idPrimerBloque!
-     * ¡Y AHORA USA EL LOGGER CON EMOJIS!
+     * ¡Y AHORA USA EL LOGGER CON EMOJIS Y ESTADÍSTICAS!
      */
     public int crearArchivo(String nombre, int tamanoEnBloques, Directorio directorioPadre) {
         
-        // --- ¡EMOJI AÑADIDO! ---
         if (tamanoEnBloques > disco.getNumBloquesLibres()) {
             log("PLANIFICADOR: ⛔ ¡DISCO LLENO! No hay " + tamanoEnBloques + " bloques libres para '" + nombre + "'.");
+            this.opsFallidas++; // <--- ESTADÍSTICA FALLO
             return -1; // Falla
         }
 
-        // --- ¡EMOJI AÑADIDO! ---
         if (directorioPadre.buscarHijo(nombre) != null) {
             log("PLANIFICADOR: ❌ Error. El nombre '" + nombre + "' ya existe.");
+            this.opsFallidas++; // <--- ESTADÍSTICA FALLO
             return -1; // Falla
         }
 
         Archivo nuevoArchivo = new Archivo(nombre, tamanoEnBloques);
         int primerBloque = disco.asignarBloques(nuevoArchivo, tamanoEnBloques);
 
-        // --- ¡EMOJI AÑADIDO! ---
         if (primerBloque == -1) {
             log("PLANIFICADOR: ⛔ ¡DISCO LLENO! No se pudieron asignar los " + tamanoEnBloques + " bloques (fragmentación o error).");
+            this.opsFallidas++; // <--- ESTADÍSTICA FALLO
             return -1; // Falla
         }
 
         nuevoArchivo.setIdPrimerBloque(primerBloque);
         directorioPadre.agregarHijo(nuevoArchivo); // ¡Usamos el padre!
 
-        // --- ¡EMOJI AÑADIDO! ---
         log("PLANIFICADOR: ✅ Archivo creado: " + nombre + ", inicia en bloque " + primerBloque);
+        this.opsExitosas++; // <--- ESTADÍSTICA ÉXITO
         return primerBloque; // ¡Éxito!
     }
     
     /**
      * MODIFICADO: Elimina un archivo del directorio especificado.
-     * ¡Ahora también invalida el BufferCache y usa EMOJIS!
+     * ¡Ahora también invalida el BufferCache y usa EMOJIS y ESTADÍSTICAS!
      */
     public int eliminarArchivo(String nombre, Directorio directorioPadre) {
         NodoArbol nodo = directorioPadre.buscarHijo(nombre);
         
         if (nodo == null || !(nodo instanceof Archivo)) {
-            // --- ¡LOG MEJORADO! ---
             log("PLANIFICADOR: ❌ Error: Archivo '" + nombre + "' no encontrado.");
+            this.opsFallidas++; // <--- ESTADÍSTICA FALLO
             return -1; // Falla
         }
         
         Archivo archivoAEliminar = (Archivo) nodo;
         int idPrimerBloque = archivoAEliminar.getIdPrimerBloque();
         
-        // --- ¡LOG MEJORADO! ---
         log("PLANIFICADOR: 🗑️ Liberando e invalidando bloques para " + nombre + "...");
         
         int idBloqueActual = idPrimerBloque;
@@ -137,21 +140,21 @@ public class SistemaArchivos implements Serializable {
         // 3. Eliminar del árbol de directorios
         directorioPadre.eliminarHijo(archivoAEliminar);
         
-        // --- ¡LOG MEJORADO! ---
         log("PLANIFICADOR: 🗑️ Archivo eliminado: " + nombre);
+        this.opsExitosas++; // <--- ESTADÍSTICA ÉXITO
         return idPrimerBloque; // Éxito
     }
         
     /**
      * MODIFICADO: Simula la lectura de un archivo.
-     * ¡Ahora utiliza el BufferCache y loggea en una línea!
+     * ¡Ahora utiliza el BufferCache, loggea en una línea y cuenta ESTADÍSTICAS!
      */
     public int leerArchivo(String nombre, Directorio directorioPadre) {
         NodoArbol nodo = directorioPadre.buscarHijo(nombre);
         
         if (nodo == null || !(nodo instanceof Archivo)) {
-            // --- ¡LOG MEJORADO! ---
             log("PLANIFICADOR: ❌ Error: Archivo '" + nombre + "' no encontrado para leer.");
+            this.opsFallidas++; // <--- ESTADÍSTICA FALLO
             return -1; // Falla
         }
         
@@ -159,7 +162,6 @@ public class SistemaArchivos implements Serializable {
         int idBloqueActual = archivo.getIdPrimerBloque();
         
         // --- ¡LÓGICA DE LOG MEJORADA! ---
-        // Usamos un StringBuilder para construir la línea de log
         StringBuilder sb = new StringBuilder();
         
         // Recorremos la cadena de bloques
@@ -185,21 +187,14 @@ public class SistemaArchivos implements Serializable {
         }
         sb.append("FIN");
         
-        // Imprimimos la línea completa en el log
         log("PLANIFICADOR: 📖 Simulación de LECTURA: " + sb.toString());
-        // --- FIN LÓGICA DE LOG ---
         
+        this.opsExitosas++; // <--- ESTADÍSTICA ÉXITO
         return archivo.getIdPrimerBloque(); // Éxito
     }
     
     /**
-     * Renombra un archivo o directorio en el directorio actual.
-     * ¡LOGS MEJORADOS!
-     */
-    
-    /**
      * Crea un nuevo directorio dentro del directorio actual.
-     * ¡LOGS MEJORADOS!
      */
     public boolean crearDirectorio(String nombre) {
 
@@ -216,14 +211,12 @@ public class SistemaArchivos implements Serializable {
         Directorio nuevoDir = new Directorio(nombre);
         directorioActual.agregarHijo(nuevoDir);
 
-        // --- ¡EMOJI AÑADIDO! ---
         log("PLANIFICADOR: ✅ Directorio creado: " + nombre);
         return true;
     }
     
     /**
      * Punto de entrada para eliminar un directorio desde la GUI.
-     * ¡LOGS MEJORADOS!
      */
     public boolean eliminarDirectorio(String nombre) {
         NodoArbol nodo = directorioActual.buscarHijo(nombre);
@@ -240,20 +233,17 @@ public class SistemaArchivos implements Serializable {
 
         Directorio dirAEliminar = (Directorio) nodo;
 
-        // --- ¡EMOJI AÑADIDO! ---
         log("PLANIFICADOR: 🗑️ Eliminación recursiva iniciada para: " + nombre);
         eliminarDirectorioRecursivo(dirAEliminar);
 
         directorioActual.eliminarHijo(dirAEliminar);
 
-        // --- ¡EMOJI AÑADIDO! ---
         log("PLANIFICADOR: 🗑️ Directorio eliminado exitosamente: " + nombre);
         return true;
     }
 
     /**
      * Ayudante recursivo para vaciar un directorio.
-     * ¡LOGS MEJORADOS!
      */
     private void eliminarDirectorioRecursivo(Directorio dir) {
 
@@ -261,12 +251,10 @@ public class SistemaArchivos implements Serializable {
             NodoArbol hijo = dir.getHijos().getInicio().getDato();
 
             if (hijo instanceof Archivo) {
-                // --- ¡EMOJI AÑADIDO! ---
                 log("PLANIFICADOR: 🗑️ Borrando archivo interno: " + hijo.getNombre());
                 eliminarArchivo(hijo.getNombre(), dir);
 
             } else if (hijo instanceof Directorio) {
-                // --- ¡EMOJI AÑADIDO! ---
                 log("PLANIFICADOR: 🗑️ Entrando a subdirectorio: " + hijo.getNombre());
                 eliminarDirectorioRecursivo((Directorio) hijo);
                 dir.eliminarHijo(hijo);
@@ -276,7 +264,6 @@ public class SistemaArchivos implements Serializable {
     
     /**
      * Punto de entrada para crear el reporte.
-     * ¡LOGS MEJORADOS!
      */
     public boolean generarReporteDeEstado() {
         StringBuilder sb = new StringBuilder();
@@ -297,11 +284,9 @@ public class SistemaArchivos implements Serializable {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("reporte_disco.txt"))) {
             writer.write(sb.toString());
-            // --- ¡EMOJI AÑADIDO! ---
             log("SIMULADOR: 📈 ¡Reporte 'reporte_disco.txt' generado exitosamente!");
             return true;
         } catch (IOException e) {
-            // --- ¡EMOJI AÑADIDO! ---
             log("SIMULADOR: ❌ Error al escribir el reporte: " + e.getMessage());
             e.printStackTrace();
             return false;
@@ -379,11 +364,10 @@ public class SistemaArchivos implements Serializable {
     public void incrementarContadorArchivosAleatorios() {
         this.contadorArchivosAleatorios++;
     }
-   
+    
 
     /**
      * Elimina el 'directorioActual'.
-     * ¡LOGS MEJORADOS!
      */
     public boolean eliminarDirectorioActual() {
         
@@ -400,14 +384,12 @@ public class SistemaArchivos implements Serializable {
              return false;
         }
 
-        // --- ¡EMOJI AÑADIDO! ---
         log("PLANIFICADOR: 🗑️ Eliminación recursiva iniciada para: " + dirAEliminar.getNombre());
         eliminarDirectorioRecursivo(dirAEliminar);
 
         padre.eliminarHijo(dirAEliminar);
         this.directorioActual = padre;
 
-        // --- ¡EMOJI AÑADIDO! ---
         log("PLANIFICADOR: 🗑️ Directorio eliminado exitosamente: " + dirAEliminar.getNombre());
         return true;
     }
@@ -447,40 +429,55 @@ public class SistemaArchivos implements Serializable {
     }
     
     /**
- * ¡NUEVO MÉTODO MEJORADO!
- * Renombra un NodoArbol específico (archivo o directorio)
- * que se le pasa como parámetro.
- */
-public boolean renombrarNodo(NodoArbol nodoARenombrar, String nombreNuevo) {
+     * ¡NUEVO MÉTODO MEJORADO!
+     * Renombra un NodoArbol específico (archivo o directorio)
+     * que se le pasa como parámetro.
+     */
+    public boolean renombrarNodo(NodoArbol nodoARenombrar, String nombreNuevo) {
 
-    // 1. No podemos renombrar la raíz
-    if (nodoARenombrar == this.raiz) {
-        log("PLANIFICADOR: ❌ Error. No se puede renombrar el directorio raíz.");
-        return false;
+        // 1. No podemos renombrar la raíz
+        if (nodoARenombrar == this.raiz) {
+            log("PLANIFICADOR: ❌ Error. No se puede renombrar el directorio raíz.");
+            this.opsFallidas++; // <--- ESTADÍSTICA FALLO
+            return false;
+        }
+
+        // 2. Validar nombre nuevo
+        if (nombreNuevo == null || nombreNuevo.trim().isEmpty()) {
+            log("PLANIFICADOR: ❌ Error. El nombre nuevo no puede estar vacío.");
+            this.opsFallidas++; // <--- ESTADÍSTICA FALLO
+            return false;
+        }
+
+        // 3. Obtener el padre
+        Directorio padre = nodoARenombrar.getPadre();
+        if (padre == null) {
+             log("PLANIFICADOR: ❌ Error. El nodo no tiene padre (Huérfano).");
+             this.opsFallidas++; // <--- ESTADÍSTICA FALLO
+             return false;
+        }
+
+        // 4. Validar que el nombre nuevo NO exista ya en el padre
+        if (padre.buscarHijo(nombreNuevo) != null) {
+            log("PLANIFICADOR: ❌ Error. El nombre '" + nombreNuevo + "' ya existe.");
+            this.opsFallidas++; // <--- ESTADÍSTICA FALLO
+            return false;
+        }
+
+        // 5. ¡El cambio!
+        log("PLANIFICADOR: ✏️ Renombrado '" + nodoARenombrar.getNombre() + "' a '" + nombreNuevo + "'.");
+        nodoARenombrar.setNombre(nombreNuevo);
+        
+        this.opsExitosas++; // <--- ESTADÍSTICA ÉXITO
+        return true;
+    }
+    
+    // --- MÉTODOS GETTERS PARA ESTADÍSTICAS ---
+    public int getOpsExitosas() {
+        return this.opsExitosas;
     }
 
-    // 2. Validar nombre nuevo
-    if (nombreNuevo == null || nombreNuevo.trim().isEmpty()) {
-        log("PLANIFICADOR: ❌ Error. El nombre nuevo no puede estar vacío.");
-        return false;
+    public int getOpsFallidas() {
+        return this.opsFallidas;
     }
-
-    // 3. Obtener el padre
-    Directorio padre = nodoARenombrar.getPadre();
-    if (padre == null) {
-         log("PLANIFICADOR: ❌ Error. El nodo no tiene padre (Huérfano).");
-         return false;
-    }
-
-    // 4. Validar que el nombre nuevo NO exista ya en el padre
-    if (padre.buscarHijo(nombreNuevo) != null) {
-        log("PLANIFICADOR: ❌ Error. El nombre '" + nombreNuevo + "' ya existe.");
-        return false;
-    }
-
-    // 5. ¡El cambio!
-    log("PLANIFICADOR: ✏️ Renombrado '" + nodoARenombrar.getNombre() + "' a '" + nombreNuevo + "'.");
-    nodoARenombrar.setNombre(nombreNuevo);
-    return true;
-}
 }
